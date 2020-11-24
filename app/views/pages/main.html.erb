@@ -1,0 +1,82 @@
+<html>
+  <div class="header"> <!-- <header>text</header> ??? Hahaha, no. -->
+    Hello, cruel world!
+  </div>
+  <div class="small-header">
+    (like a hell, but still world)
+  </div>
+  <div class="information-left">
+    <pre class="ascii">
+        ___    __                __
+       /   |  / /_  ____  __  __/ /_
+      / /| | / __ \/ __ \/ / / / __/
+     / ___ |/ /_/ / /_/ / /_/ / /_
+    /_/  |_/_.___/\____/\__,_/\__/
+    </pre>
+    <pre>
+  There should have been a text about me, but, sadly, I don't know what to write... (︶︹︶)
+  So, it's just very simple web page. I don't know what are you searching here, really. </pre>
+    <!-- RSS -->
+    <pre class="ascii">
+        ____  __________
+       / __ \/ ___/ ___/
+      / /_/ /\__ \\__ \
+     / _, _/___/ /__/ /
+    /_/ |_|/____/____/
+    </pre>
+    <pre>
+  If you want get access to my blog, after register, you get private token in your <a href="edit">account settings</a>.
+  After that, you can setting up tags, or what you what to see. It's absolutely free and available to everyone, yay \(^-^)/ !
+  Instructions, or how to configure it for phone/tg/matrix you can see <a href="help/rss">here</a>.
+    </pre>
+  </div>
+  <div class="information-right">
+    <div class="block-login">
+    Logged as: <% if current_user.present? %><a href="edit"><%=current_user.login%></a><% else %>guest | <% end %> <%if current_user.present? %>| <%= link_to "Log out", "sign_out"%> <% else %> <%= link_to "Login", "sign_in"%> | <%= link_to "Register", "sign_up"%> <% end %>
+    </div>
+    <div class="block"> Some links:
+      <table>
+        <tbody>
+        <tr>
+          <th class="icon"></th>
+          <th></th>
+        </tr>
+        <tr>
+          <td><i class="fa fa-github"></i></td>
+          <td><a target="_blank" href="https://github.com/whiletruedoend">Github</a></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-video-camera"></i></td>
+          <td><a target="_blank" href="https://www.kinopoisk.ru/user/47902462/movies/list/type/50183/">Kinopoisk</a></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-list"></i></td>
+          <td><a target="_blank" href="https://myanimelist.net/profile/Whiletruedoend">My Anime List</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="block"> Contacts:
+      <table>
+        <tbody>
+        <tr>
+          <th class="icon"></th>
+          <th></th>
+        </tr>
+        <tr>
+          <td><i class="fa fa-telegram -o fa-fw"></i></td>
+          <td><a target="_blank" href="https://t.me/whiletruedoend">Telegram</a></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-commenting -o fa-fw"></td>
+          <td><a target="_blank" href="https://matrix.to/#/@whiletruedoend:matrix.org">Matrix</a> <--- prefer</td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-commenting-o -o fa-fw"></i></td>
+          <td><a target="_blank" href="xmpp:whiletruedoend@neko.im">Jabber</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</html>

@@ -1,0 +1,197 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/*
+ *= require font-awesome
+ */
+
+html {
+    background: black !important;
+}
+
+body {
+    color: white !important;
+    background: black !important;
+    font-family: Hack, serif;
+    line-height: 1.3rem;
+    letter-spacing: -0.010em;
+}
+
+a{
+    color: #10A0A0;
+    outline: none;
+    text-decoration: none;
+    border-bottom-color: transparent;
+}
+
+.information-left {
+    max-height: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    float: left;
+}
+
+.information-right {
+    float: right;
+    padding: 0 2.4em 2.4em 0;
+}
+
+.block-login{
+    border-left: solid 4px #211921 !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.5em 0 0.8em 2em;
+}
+
+.block{
+    border-left: solid 4px #211921 !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.8em 0 0.8em 4em;
+}
+
+.header {
+    padding-top: 0.5%;
+    padding-left: 0.5%;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.small-header {
+    font-style: italic;
+    margin-top: 0.2579%;
+    margin-left: 4.34567890%;
+}
+
+.ascii{
+    font-family: "AR PL New Kai", serif;
+}
+
+pre {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr, th, td{
+    padding: 0;
+}
+
+.icon {
+    width: 25px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+/*
+
+@media screen and (max-width:950px) {
+    pre { font-size:65%;}
+    .information-right { font-size:65%;}
+}
+
+@media screen and (max-width:1280px) {
+    pre { font-size:70%;}
+    .information-right { font-size:70%;}
+}
+
+@media screen and (max-width:1400px) {
+    pre { font-size:60%;}
+    .information-right { font-size:60%;}
+}*/
+
+@media screen and (min-width:100px) {
+    pre { font-size:40%; }
+    .information-right { float:left; font-size:40%; }
+}
+
+@media screen and (min-width:650px) {
+    pre { font-size:45%; }
+    .information-right { float: right; font-size:45%; }
+}
+
+@media screen and (min-width:798px) {
+    pre { font-size:55%; }
+    .information-right { float: right; font-size:55%; }
+}
+
+
+@media screen and (min-width:900px) {
+    pre { font-size:60%; }
+    .information-right { float: right; font-size:60%; }
+}
+
+@media screen and (min-width:1015px) {
+    pre { font-size:70%; }
+    .information-right { float: right; font-size:70%; }
+}
+
+
+@media screen and (min-width:1200px) {
+    pre { font-size:80%; }
+    .information-right { float: right; font-size:80%; }
+}
+
+@media screen and (min-width:1280px) {
+    pre { font-size:85%; }
+    .information-right { float: right; font-size:85%; }
+}
+
+@media screen and (min-width:1350px) {
+    pre { font-size:90%; }
+    .information-right { float: right; font-size:90%; }
+}
+
+@media screen and (min-width:1500px) {
+    pre { font-size:100%; }
+    .information-right { float: right; font-size:100%; }
+}

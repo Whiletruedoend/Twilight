@@ -1,0 +1,16 @@
+<div class="page-header">
+  <h1>Новый пост</h1></div></div>
+<%= form_with(model: Post.new) do |f| %>
+    <%= render 'shared/errors', object: @post %>
+  <div>
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+  </div>
+  <div>
+    <%= f.label :text %>
+    <%= f.text_area :text %>
+  </div>
+  <%= f.submit %>
+<% end %>
+<br>
+<%= link_to 'Войти', sign_in_url %>
