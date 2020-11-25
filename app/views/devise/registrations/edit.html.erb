@@ -1,44 +1,50 @@
 <h2>/home/<%= current_user.login %>/</h2>
 
-rss_token: <br><input type="text" size="27" value="<%= current_user.rss_token || "Token not generated!" %>" id="token_field" readonly>
-<button onclick="copy()">Copy</button>
+<div class="block">
+  rss_token: <br><input type="text" size="27" value="<%= current_user.rss_token || "Token not generated!" %>" id="token_field" readonly>
+  <button onclick="copy()">Copy</button>
+</div>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
-  <br><div class="field">
-    <%= f.label :login %><br />
-    <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
+  <div class="block">
+    <br><div class="field">
+      <%= f.label :login %><br />
+      <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
+    </div>
+
+    <div class="field">
+    <%= f.label :current_password %> <i>(enter your current password to confirm changes)</i><br />
+    <%= f.password_field :current_password, autocomplete: "current-password" %>
+    </div>
+
+    <br><div class="field">
+      <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+      <%= f.password_field :password, autocomplete: "new-password" %>
+      <% if @minimum_password_length %>
+        <br />
+        <em><%= @minimum_password_length %> characters minimum</em>
+      <% end %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password_confirmation %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    </div>
+
+    <br><div class="actions">
+      <%= f.submit "Update" %>
+    </div>
+  <% end %>
   </div>
 
-  <div class="field">
-  <%= f.label :current_password %> <i>(enter your current password to confirm changes)</i><br />
-  <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
+<div class="block">
+  <h3>Cancel my account</h3>
 
-  <br><div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <br><div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
-<br>
+  <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
+  <br>
+</div>
 <p><%= link_to "<--- Main page", root_path %></p>
 
 <script>

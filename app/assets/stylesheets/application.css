@@ -50,15 +50,30 @@ a{
 }
 
 .block-login{
-    border-left: solid 4px #211921 !important;
+    border-left: solid 4px #31303b !important;
     margin: 0.8em 0 1em 0;
     padding: 0.5em 0 0.8em 2em;
 }
 
 .block{
-    border-left: solid 4px #211921 !important;
+    border-left: solid 4px #31303b !important;
     margin: 0.8em 0 1em 0;
     padding: 0.8em 0 0.8em 4em;
+}
+
+input, button{
+    border-radius: 8px;
+    color: white;
+    background: #31303b;
+}
+
+textarea{
+    margin-bottom: 1%;
+    border-radius: 8px;
+    color: white;
+    background: #31303b;
+    width: 40%;
+    height: 30em;
 }
 
 .header {
@@ -93,6 +108,10 @@ tr, th, td{
 
 .icon {
     width: 25px;
+}
+
+.user-form {
+    border: solid #2E2F30;
 }
 
 .tooltip {
@@ -132,22 +151,6 @@ tr, th, td{
     visibility: visible;
     opacity: 1;
 }
-/*
-
-@media screen and (max-width:950px) {
-    pre { font-size:65%;}
-    .information-right { font-size:65%;}
-}
-
-@media screen and (max-width:1280px) {
-    pre { font-size:70%;}
-    .information-right { font-size:70%;}
-}
-
-@media screen and (max-width:1400px) {
-    pre { font-size:60%;}
-    .information-right { font-size:60%;}
-}*/
 
 @media screen and (min-width:100px) {
     pre { font-size:40%; }

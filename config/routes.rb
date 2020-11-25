@@ -10,8 +10,9 @@ Rails.application.routes.draw do
   get '/settings', to: 'pages#settings', as: :settings
 
   get '/sign_up', to: 'users#new', as: :sign_up
+  get '/rss', to: 'posts#rss', format: 'rss'
 
-  # get '/new_article', to: 'posts#new', as: :new_article
+  post '/posts/new', to: 'posts#new'
 
   root to: 'pages#main'
   #root 'index'

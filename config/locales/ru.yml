@@ -3,6 +3,12 @@ ru:
     messages:
       not_saved: "Проблемы:"
   activerecord:
+    attributes:
+      user:
+        login: Логин
+      post:
+        title: Название
+        content: Текст
     errors:
       messages:
         record_invalid: Запись не валидна!
@@ -13,6 +19,17 @@ ru:
               blank: Не указан текущий пароль!
             password:
               too_short: (Пароль слишком короткий!)
+    models:
+      user:
+        one: Пользователь
+        many: Пользователей
+        few: Пользователей
+        other: Пользователи
+      post:
+        one: Пост
+        many: Посты
+        few: Посты
+        other: Поста
   devise:
     registrations:
       user:
@@ -34,10 +51,3 @@ ru:
         wrong_size: "is the wrong size (should be %{file_size})"
         size_too_small: "is too small (should be at least %{file_size})"
         size_too_big: "is too big (should be at most %{file_size})"
-  attributes:
-    user:
-      login: Логин
-      locale: Язык
-    post:
-      title: Название статьи
-      text: Текст статьи

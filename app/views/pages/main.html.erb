@@ -42,6 +42,10 @@
           <th></th>
         </tr>
         <tr>
+          <td><i class="fa fa-rss"></i></td>
+          <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS (Please log in!)"%></a></td>
+        </tr>
+        <tr>
           <td><i class="fa fa-github"></i></td>
           <td><a target="_blank" href="https://github.com/whiletruedoend">Github</a></td>
         </tr>

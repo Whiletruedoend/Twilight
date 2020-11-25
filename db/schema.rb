@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_24_131000) do
+ActiveRecord::Schema.define(version: 2020_11_25_122637) do
 
   create_table "platform_posts", force: :cascade do |t|
     t.string "Identifier"
@@ -26,10 +26,12 @@ ActiveRecord::Schema.define(version: 2020_11_24_131000) do
 
   create_table "posts", force: :cascade do |t|
     t.string "title"
-    t.string "text"
+    t.string "content"
     t.integer "access"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
