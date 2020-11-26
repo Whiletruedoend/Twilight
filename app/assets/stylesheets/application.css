@@ -153,6 +153,10 @@ tr, th, td{
     opacity: 1;
 }
 
+h4{
+    margin: 0 0 1px 0;
+}
+
 @media screen and (min-width:100px) {
     pre { font-size:40%; }
     .information-right { float:left; font-size:40%; }

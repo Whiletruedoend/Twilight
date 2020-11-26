@@ -1,0 +1,8 @@
+<h1><%=@post.title%></h1>
+<h4>Дата: <%=@post.created_at%> | Автор: <%=@post.user.login%></h4>
+<h4>Теги: *not yet*</h4>
+
+<p><%=@post.content%></p>
+
+<p><%= link_to "<--- All posts", posts_path %></p>
+<p><%= link_to "<--- Main page", root_path %></p>

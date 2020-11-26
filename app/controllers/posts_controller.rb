@@ -7,6 +7,14 @@ class PostsController < ApplicationController
     redirect_to root_path unless current_user.is_admin
   end
 
+  def index
+    @post = params.has_key?(:user) ? Post.where(user: User.find_by_login(params[:user])).order(created_at: :desc) : Post.all.order(created_at: :desc)
+  end
+
+  def show
+    @post = Post.find(params[:id])
+  end
+
   def new
     @post = Post.new
   end
