@@ -62,6 +62,7 @@ a{
 }
 
 input, button{
+    border: solid #2E2F30;
     border-radius: 8px;
     color: white;
     background: #31303b;
