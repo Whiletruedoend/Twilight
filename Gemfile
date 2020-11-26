@@ -58,5 +58,7 @@ gem 'devise'
 #gem "therubyracer"
 #gem "less-rails"
 gem 'font-awesome-rails'
+gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
+gem 'rmagick'
 #gem 'authlogic'
 #gem 'scrypt'

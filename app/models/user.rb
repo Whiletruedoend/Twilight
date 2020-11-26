@@ -1,6 +1,8 @@
 class User < ApplicationRecord
+  acts_as_easy_captcha
+
   has_many :posts
-  validates :login, presence: true
+  validates :login, presence: true, uniqueness: true
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :rememberable, :validatable, :authentication_keys => [:login]
 

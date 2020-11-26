@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-
-  devise_for :user, path: ''
+  captcha_route
+  devise_for :user, path: '', controllers: {sessions: 'users/sessions', registrations:'users/registrations'}
 
   resources :posts
   resources :users
