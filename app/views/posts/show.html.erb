@@ -1,8 +1,13 @@
 <h1><%=@post.title%></h1>
-<h4>Дата: <%=@post.created_at%> | Автор: <%=@post.user.login%></h4>
-<h4>Теги: *not yet*</h4>
+<div class="post-header">
+  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%></h4>
+  <h4>Tags: *not yet*</h4>
+</div>
+<br><br><br>
 
-<p><%=@post.content%></p>
+<div class="post-title">
+  <p><%=markdown(@post.content)%></p>
+</div>
 
 <p><%= link_to "<--- All posts", posts_path %></p>
 <p><%= link_to "<--- Main page", root_path %></p>

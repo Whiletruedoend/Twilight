@@ -10,7 +10,11 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
-    super
+    if valid_captcha?(params[:user][:captcha])
+      super
+    else
+      redirect_to sign_in_url
+    end
   end
 
   # DELETE /resource/sign_out

@@ -18,11 +18,13 @@
     <div class="field">
       <%= f.label :password_confirmation %><br />
       <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-    </div><br />
+    </div>
 
     <p><%= f.label :captcha %><br />
-      <%= f.text_field :captcha %><br />
-      <%= captcha_tag %></p>
+      <%= captcha_tag %><br>
+      <%= f.text_field :captcha %>
+    </p>
+
     <p><%= f.submit "Sign up" %></p>
   <% end %>
 </div>

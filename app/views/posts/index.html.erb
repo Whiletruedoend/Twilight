@@ -1,11 +1,24 @@
-<h1>All posts</h1>
+<h1>All posts</h1><br />
 <% @post.each do |post| %>
-  ID:<%= post.id %><br>
-  Дата создания:<%= post.created_at %><br>
-  Автор: <%= post.user.login %><br>
+
+  <a href="/posts/<%= post.id %>">
+    <h1><%= post.title %>
+      <br>
+      <hr>
+    </h1>
+    <br>
+  </a>
+  Дата создания: <%= post.created_at %> | Автор: <a href="posts?user=<%=current_user.login%>"><%= post.user.login %></a>
   <br>
-  <%= post.title %><br>
-  <%= post.content %><br><br>
+  <br>
+  <div class="post-preview">  <% if post.content.length > 300 %>
+      <%= markdown(truncate(post.content, length: 300)) %>
+      <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
+    <% else %>
+      <%= markdown(post.content) %>
+    <% end %></div>
+  <br>
+  <br>
 <% end %>
 
 <p><%= link_to "<--- Main page", root_path %>

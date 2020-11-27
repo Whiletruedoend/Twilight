@@ -18,6 +18,28 @@
  *= require font-awesome
  */
 
+hr{
+    border: solid #31303b;
+    min-width: 50%;
+    float: left;
+}
+
+.post-header {
+    border-bottom: 1px solid white;
+    padding-bottom: 1%;
+    float: left;
+}
+
+.post-title {
+    border-bottom: 1px solid white;
+    padding-bottom: 1%;
+    width: 70%;
+}
+
+.post-preview{
+    max-width: 60%;
+}
+
 html {
     background: black !important;
 }

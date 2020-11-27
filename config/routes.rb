@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get '/settings', to: 'pages#settings', as: :settings
 
   get '/sign_up', to: 'users#new', as: :sign_up
+  get '/sign_in', to: 'sessions#new', as: :sign_in
   get '/rss', to: 'posts#rss', format: 'rss'
 
   post '/posts/new', to: 'posts#new'

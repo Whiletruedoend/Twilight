@@ -115,6 +115,8 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
+    markitup-rails (1.1.3)
+      rails (>= 3.1)
     method_source (1.0.0)
     mimemagic (0.3.5)
     mini_mime (1.0.2)
@@ -163,6 +165,7 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    redcarpet (3.5.0)
     regexp_parser (1.8.2)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -259,8 +262,10 @@ DEPENDENCIES
   font-awesome-rails
   jbuilder (~> 2.7)
   listen (~> 3.2)
+  markitup-rails
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.4)
+  redcarpet
   rmagick
   sass-rails (>= 6)
   selenium-webdriver

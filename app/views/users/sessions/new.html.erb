@@ -16,8 +16,13 @@
     <div class="field">
       <%= f.check_box :remember_me %>
       <%= f.label :remember_me %>
-    </div><br />
+    </div>
   <% end %>
+
+    <p><%= f.label :captcha %><br />
+      <%= captcha_tag %><br>
+      <%= f.text_field :captcha %>
+    </p>
 
   <div class="actions">
     <%= f.submit "Log in" %>

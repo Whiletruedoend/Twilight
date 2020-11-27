@@ -1,12 +1,12 @@
 EasyCaptcha.setup do |config|
   # Cache
-  # config.cache          = true
+  config.cache          = true
   # Cache temp dir from Rails.root
-  # config.cache_temp_dir = Rails.root + 'tmp' + 'captchas'
+  config.cache_temp_dir = Rails.root + 'tmp' + 'captchas'
   # Cache size
-  # config.cache_size     = 500
+  config.cache_size     = 500
   # Cache expire
-  # config.cache_expire   = 1.days
+  config.cache_expire   = 1.days
 
   # Chars
   # config.chars          = %w(2 3 4 5 6 7 9 A C D E F G H J K L M N P Q R S T U X Y Z)
