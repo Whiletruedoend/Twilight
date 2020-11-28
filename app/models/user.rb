@@ -1,12 +1,18 @@
 class User < ApplicationRecord
   acts_as_easy_captcha
-
-  has_many :posts
-  validates :login, presence: true, uniqueness: true
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :rememberable, :validatable, :authentication_keys => [:login]
 
+  has_many :posts
+  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: "item_tags", :as => :itemable, foreign_key: "item_id"
+  has_many :active_tags, -> { active("User") }, class_name: 'ItemTag', foreign_key: "item_id"
+
+  validates :login, presence: true, uniqueness: true
   before_create :generate_rss
+
+  def active_tags_names
+    self.active_tags.map { |s| s.tag.name }
+  end
 
   def generate_rss
     self.rss_token = SecureRandom.hex(16)

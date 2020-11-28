@@ -63,5 +63,7 @@ gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'rmagick'
 
 gem 'redcarpet'
+
+gem 'enumerize'
 #gem 'authlogic'
 #gem 'scrypt'

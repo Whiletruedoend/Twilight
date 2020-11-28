@@ -95,6 +95,8 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
     docile (1.3.2)
+    enumerize (2.3.1)
+      activesupport (>= 3.2)
     erubi (1.10.0)
     ffi (1.13.1)
     font-awesome-rails (4.7.0.5)
@@ -115,8 +117,6 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
-    markitup-rails (1.1.3)
-      rails (>= 3.1)
     method_source (1.0.0)
     mimemagic (0.3.5)
     mini_mime (1.0.2)
@@ -259,10 +259,10 @@ DEPENDENCIES
   capybara (>= 2.15)
   devise
   easy_captcha!
+  enumerize
   font-awesome-rails
   jbuilder (~> 2.7)
   listen (~> 3.2)
-  markitup-rails
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.4)
   redcarpet

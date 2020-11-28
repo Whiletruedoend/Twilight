@@ -6,8 +6,8 @@ xml.instruct!
 xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
   xml.channel do
-    xml.title 'Название блога'
-    xml.description 'Описание блога'
+    xml.title 'Title'
+    xml.description 'Description'
     xml.link root_url
     xml.language 'ru'
     xml.tag! 'atom:link', rel: 'self', type: 'application/rss+xml', href: 'home/rss'
