@@ -1,7 +1,7 @@
 <h1><%=@post.title%></h1>
 <div class="post-header">
   <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%></h4>
-  <h4>Tags: *not yet*</h4>
+  <h4>Tags: <%=@post.active_tags_names.join(' ')%></h4>
 </div>
 <br><br><br>
 

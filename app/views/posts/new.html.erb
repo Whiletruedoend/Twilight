@@ -7,6 +7,14 @@
     <%= f.label :title %><br />
     <%= f.text_field :title %>
   </div>
+
+  <div class="field">
+    <%= f.label :tags %><br />
+    <% Tag.all.each do |tag| %>
+      <%=check_box("tags", tag.id, {:checked => false})%><%=tag.name%>
+    <% end %>
+  </div>
+
   <div>
     <%= f.label :content %><br />
     <%= f.text_area :content %>

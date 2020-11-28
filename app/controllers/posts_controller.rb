@@ -24,6 +24,7 @@ class PostsController < ApplicationController
     @post.user = current_user
     @post.save!
     if @post.save
+      params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1]) } if params.has_key?(:tags)
       redirect_to root_path
     else
       render :new
@@ -36,6 +37,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:authenticity_token, :commit, :post => [:title, :content])
+    params.permit(:authenticity_token, :commit, :tags => {}, :post => [:title, :content])
   end
 end

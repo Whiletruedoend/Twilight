@@ -5,6 +5,30 @@
   <button onclick="copy()">Copy</button>
 </div>
 
+<div class="tags-right">
+  <div class="block-tags">
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="field">
+        <%= f.label :current_password %><br />
+        <%= f.password_field :current_password, autocomplete: "current-password" %>
+      </div>
+
+    <div class="field">
+      <%= f.label :tags %><br />
+      <% ItemTag.where(item:current_user).each do |item_tag| %>
+        <%=check_box("tags", item_tag.tag.id, {:checked => item_tag.enabled})%><%=item_tag.tag.name%>
+      <% end %>
+    </div>
+
+    <br><div class="actions">
+  <%= f.submit "Update tags" %>
+</div>
+  <% end %>
+  </div>
+</div>
+
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 

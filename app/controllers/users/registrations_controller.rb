@@ -10,23 +10,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #end
 
   # POST /resource
-   def create
-     if valid_captcha?(params[:user][:captcha])
-       super
-     else
-       redirect_to sign_up_url
-     end
-   end
+  def create
+    valid_captcha?(params[:user][:captcha]) ? super : redirect_to(sign_up_url)
+  end
 
   # GET /resource/edit
   #def edit
-    #super
+  #  super
   #end
 
   # PUT /resource
-  # def update
-    #super
-  #end
+  def update
+    if params.has_key?(:tags)
+      params[:tags].each do |tag|
+        item_tag = ItemTag.where(item: current_user, tag_id: tag[0]).first
+        item_tag.update(enabled: tag[1]) if item_tag.present?
+      end
+    end
+    super
+  end
 
   # DELETE /resource
   #def destroy
@@ -38,9 +40,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # in to be expired now. This is useful if the user wants to
   # cancel oauth signing in/up in the middle of the process,
   # removing all OAuth session data.
-   def cancel
-     super
-   end
+  #def cancel
+    #super
+  #end
 
   #protected
 
