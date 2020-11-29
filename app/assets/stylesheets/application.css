@@ -39,7 +39,9 @@ hr{
     float: left;
 }
 
-.post-title {
+.post-content {
+    font-family: "Bitstream Vera Sans", sans-serif;
+    color: #EFEFEF;
     border-bottom: 1px solid white;
     padding-bottom: 1%;
     width: 70%;
