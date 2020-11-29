@@ -24,7 +24,7 @@ class PostsController < ApplicationController
     @post.user = current_user
     @post.save!
     if @post.save
-      params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1]) } if params.has_key?(:tags)
+      params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: (tag[1].to_i)) } if params.has_key?(:tags)
       redirect_to root_path
     else
       render :new
@@ -32,7 +32,9 @@ class PostsController < ApplicationController
   end
 
   def rss
-    @posts = Post.order(created_at: :desc) if current_user.present? || (params.has_key?(:rss_token) && User.find_by_rss_token(params[:rss_token].to_s).present?)
+    item_posts = ItemTag.select { |item| (item.item_type == "Post") && (current_user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }
+    item_posts.map!{ |item| item.item_id }.reject { |v| v.nil? }
+    @posts = Post.where(id: item_posts).order(created_at: :desc) if current_user.present? || (params.has_key?(:rss_token) && User.find_by_rss_token(params[:rss_token].to_s).present?)
   end
 
   private
