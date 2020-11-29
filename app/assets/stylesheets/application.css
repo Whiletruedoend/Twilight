@@ -18,6 +18,15 @@
  *= require font-awesome
  */
 
+footer{
+    border-top: solid 2px #31303b !important;
+    bottom: 0;
+    padding: 1em;
+    position: fixed;
+    width: 100%;
+    text-align: center;
+}
+
 hr{
     border: solid #31303b;
     min-width: 50%;
@@ -129,7 +138,7 @@ textarea{
 }
 
 .ascii{
-    font-family: "AR PL New Kai", serif;
+    font-family: "Source Code Pro", monospace;
 }
 
 pre {
