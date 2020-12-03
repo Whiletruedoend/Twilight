@@ -70,6 +70,10 @@ a{
     border-bottom-color: transparent;
 }
 
+a:hover {
+    color: #0c6a6a;
+}
+
 .information-left {
     max-height: 100%;
     max-width: 100%;
@@ -84,7 +88,7 @@ a{
 
 .information-right {
     float: right;
-    padding: 0 2.4em 2.4em 0;
+    padding: 2% 2.4em 2.4em 0;
 }
 
 .edit_user{
@@ -128,15 +132,15 @@ textarea{
 
 .header {
     padding-top: 0.5%;
-    padding-left: 0.5%;
+    padding-left: 1.5%;
     font-weight: bold;
-    font-size: 2em;
+    font-size: 34px;
 }
 
 .small-header {
     font-style: italic;
     margin-top: 0.2579%;
-    margin-left: 4.34567890%;
+    margin-left: 13.654321%;
 }
 
 .ascii{

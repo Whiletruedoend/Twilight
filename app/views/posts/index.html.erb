@@ -12,10 +12,10 @@
   <br>
   <br>
   <div class="post-preview">  <% if post.content.length > 300 %>
-      <%= markdown(truncate(post.content, length: 300)) %>
+      <%= markdown(truncate(strip_tags(post.content), length: 300)) %>
       <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
     <% else %>
-      <%= markdown(post.content) %>
+      <%= markdown(strip_tags(post.content)) %>
     <% end %></div>
   <br>
   <br>
