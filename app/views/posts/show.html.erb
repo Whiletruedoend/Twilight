@@ -1,7 +1,9 @@
 <h1><%=@post.title%></h1>
 <div class="post-header">
-  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%></h4>
-  <h4>Tags: <%=@post.active_tags_names.join(' ')%></h4>
+  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%><% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a><% end %></h4>
+  <h4>Tags: <%tags = @post.active_tags_names.join(' ')%>
+    <%if tags.present?%> <%=tags%> <%else%> no tags <% end %>
+  </h4>
 </div>
 <br><br><br>
 

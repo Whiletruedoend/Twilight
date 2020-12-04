@@ -1,0 +1,30 @@
+<div class="markdown-container">
+  <div class="markdown-left">
+    <%= form_with(model: @post, local: true) do |f| %>
+      <%= render 'shared/errors', object: @post %>
+
+      <div class="field">
+        <%= f.label :title %><br />
+        <%= f.text_field :title %>
+      </div>
+
+      <div class="field">
+        <%= f.text_area :content %>
+      </div>
+
+      <div class="field">
+        <%= f.label :tags %><br />
+        <% ItemTag.where(item: @post).each do |item| %>
+          <%=check_box("tags", item.tag.id, {:checked => item.enabled})%><%=item.tag.name%>
+        <% end %>
+      </div>
+
+      <%= f.submit %> <% end %>
+  </div>
+
+  <div id="preview"></div>
+</div>
+<p><%= link_to "<--- Main page", root_path %></p>
+
+<%= javascript_include_tag 'showdown.min.js' %>
+<%= javascript_include_tag 'script.js' %>

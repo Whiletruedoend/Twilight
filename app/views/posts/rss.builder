@@ -15,8 +15,10 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
     for post in @posts
       xml.item do
         xml.title post.title
-        xml.description(h(post.content))
-        xml.creator post.user.login
+        xml.description(post.content)
+        #xml.content(post.content)
+        #xml.creator post.user.login
+        xml.author post.user.login
         xml.pubDate(post.created_at.rfc2822)
         xml.guid post_url(post)
         xml.link post_url(post)

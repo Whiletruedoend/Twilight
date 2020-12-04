@@ -15,6 +15,22 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
   end
 
+  def edit
+    @post = Post.find(params[:id])
+    redirect_to @post if @post.user != current_user
+  end
+
+  def update
+    @post = Post.find(params[:id])
+
+    if @post.update(posts_params[:post])
+      params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
+      redirect_to @post
+    else
+      render 'edit'
+    end
+  end
+
   def new
     @post = Post.new
   end
@@ -25,7 +41,7 @@ class PostsController < ApplicationController
     @post.save!
     if @post.save
       params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: (tag[1].to_i)) } if params.has_key?(:tags)
-      redirect_to root_path
+      redirect_to @post
     else
       render :new
     end
