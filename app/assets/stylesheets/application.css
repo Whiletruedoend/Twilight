@@ -45,7 +45,7 @@
 
 .markdown-left{
     resize: none;
-    width: 45%;
+    /* width: 45%; */
     padding-right: 0.5%;
 }
 
@@ -68,6 +68,7 @@
     color: white;
     background: #31303b;
     border: 2px solid white;
+    min-width: 100px;
     width: 700px;
     height: 800px;
     overflow: auto;
@@ -304,6 +305,7 @@ h4{
 }
 
 @media screen and (min-width:1500px) {
+    .markdown-left{ width: 45%; }
     pre { font-size:100%; }
     .information-right { float: right; font-size:100%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
