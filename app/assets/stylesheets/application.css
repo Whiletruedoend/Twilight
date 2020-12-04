@@ -44,9 +44,9 @@ body {
 
 .information-right {
     /* float: right; */
-    padding: 2% 2.4em 2.4em 0;
+    padding: 2% 0 0 5%;
     height: 100%;
-    width: 30%;
+    width: 25%;
 }
 
 .block{
