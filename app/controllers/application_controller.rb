@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :send_errors
+  before_action :send_errors if Rollbar.configuration.enabled
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
 
