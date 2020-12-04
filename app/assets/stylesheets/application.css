@@ -18,16 +18,80 @@
  *= require font-awesome
  */
 
-.field{
-    padding: 1% 0 1% 0;
+body {
+    color: white;
+    background: black;
+    font-family: Hack, serif;
+    line-height: 1.3rem;
+    letter-spacing: -0.010em;
 }
 
-.field input{
-    border: 1px solid white;
-    color: white;
-    border-radius: 8px;
-    background: #31303b;
+/* main page */
+
+.main{
+    width: 100%;
+    height: 100%;
+    display: flex;
 }
+
+.information-left {
+    max-height: 100%;
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    /* float: left; */
+}
+
+.information-right {
+    /* float: right; */
+    padding: 2% 2.4em 2.4em 0;
+    height: 100%;
+    width: 30%;
+}
+
+.block{
+    border-left: solid 4px #31303b !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.8em 0 0.8em 4em;
+}
+
+.block-login{
+    border-left: solid 4px #31303b !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.5em 0 0.8em 2em;
+}
+
+.ascii{
+    font-family: "Source Code Pro", monospace;
+}
+
+pre {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr, th, td{
+    padding: 0;
+}
+
+.icon {
+    width: 25px;
+}
+
+footer{
+    border-top: solid 2px #31303b !important;
+    bottom: 0;
+    padding: 1em;
+    position: static;
+    width: 100%;
+    text-align: center;
+}
+
+/* new post */
 
 .markdown-container{
     font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
@@ -75,20 +139,18 @@
     scrollbar-color: #202324 #454a4d;
 }
 
-footer{
-    border-top: solid 2px #31303b !important;
-    bottom: 0;
-    padding: 1em;
-    position: fixed;
-    width: 100%;
-    text-align: center;
+.field{
+    padding: 1% 0 1% 0;
 }
 
-hr{
-    border: solid #31303b;
-    min-width: 50%;
-    float: left;
+.field input{
+    border: 1px solid white;
+    color: white;
+    border-radius: 8px;
+    background: #31303b;
 }
+
+/* post */
 
 .post-header {
     border-bottom: 1px solid white;
@@ -108,13 +170,20 @@ hr{
     max-width: 60%;
 }
 
-body {
-    color: white;
-    background: black;
-    font-family: Hack, serif;
-    line-height: 1.3rem;
-    letter-spacing: -0.010em;
+/* tags */
+
+.tags-right {
+    float: right;
+    padding: 0 30% 0 0;
 }
+
+.block-tags{
+    border: solid 4px #31303b !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.8em 0.8em 0.8em 0.8em;
+}
+
+/* useful */
 
 a{
     color: #10A0A0;
@@ -127,44 +196,9 @@ a:hover {
     color: #0c6a6a;
 }
 
-.information-left {
-    max-height: 100%;
-    max-width: 100%;
-    font-size: 14px;
-    float: left;
-}
-
-.tags-right {
-    float: right;
-    padding: 0 30% 0 0;
-}
-
-.information-right {
-    float: right;
-    padding: 2% 2.4em 2.4em 0;
-}
-
 .edit_user{
     display: block;
     width: 100%;
-}
-
-.block-login{
-    border-left: solid 4px #31303b !important;
-    margin: 0.8em 0 1em 0;
-    padding: 0.5em 0 0.8em 2em;
-}
-
-.block-tags{
-    border: solid 4px #31303b !important;
-    margin: 0.8em 0 1em 0;
-    padding: 0.8em 0.8em 0.8em 0.8em;
-}
-
-.block{
-    border-left: solid 4px #31303b !important;
-    margin: 0.8em 0 1em 0;
-    padding: 0.8em 0 0.8em 4em;
 }
 
 input, button{
@@ -187,29 +221,20 @@ input, button{
     margin-left: 13.654321%;
 }
 
-.ascii{
-    font-family: "Source Code Pro", monospace;
-}
-
-pre {
-    margin: 0;
-    padding: 0;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-tr, th, td{
-    padding: 0;
-}
-
-.icon {
-    width: 25px;
-}
-
 .user-form {
     border: solid #2E2F30;
+}
+
+h4{
+    margin: 0 0 1px 0;
+}
+
+/* WTF */
+
+hr{
+    border: solid #31303b;
+    min-width: 50%;
+    float: left;
 }
 
 .tooltip {
@@ -250,63 +275,61 @@ tr, th, td{
     opacity: 1;
 }
 
-h4{
-    margin: 0 0 1px 0;
-}
+/* screens */
 
 @media screen and (min-width:100px) {
     pre { font-size:40%; }
-    .information-right { float:left; font-size:40%; }
+    .information-right { font-size:40%; }
     .tags-right { float:left; padding: 0 50% 0 0;  }
 }
 
 @media screen and (min-width:650px) {
     pre { font-size:45%; }
-    .information-right { float: right; font-size:45%; }
+    .information-right { font-size:45%; }
     .tags-right { float:left; padding: 0 50% 0 0; }
 }
 
 @media screen and (min-width:798px) {
     pre { font-size:55%; }
-    .information-right { float: right; font-size:55%; }
+    .information-right { font-size:55%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }
 
 
 @media screen and (min-width:900px) {
     pre { font-size:60%; }
-    .information-right { float: right; font-size:60%; }
+    .information-right { font-size:60%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }
 
 @media screen and (min-width:1015px) {
     pre { font-size:70%; }
-    .information-right { float: right; font-size:70%; }
+    .information-right { font-size:70%; }
     .tags-right { float:right; padding: 0 40% 0 0; }
 }
 
 
 @media screen and (min-width:1200px) {
     pre { font-size:80%; }
-    .information-right { float: right; font-size:80%; }
+    .information-right { font-size:80%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1280px) {
     pre { font-size:85%; }
-    .information-right { float: right; font-size:85%; }
+    .information-right { font-size:85%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1350px) {
     pre { font-size:90%; }
-    .information-right { float: right; font-size:90%; }
+    .information-right { font-size:90%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1500px) {
     .markdown-left{ width: 45%; }
     pre { font-size:100%; }
-    .information-right { float: right; font-size:100%; }
+    .information-right { font-size:100%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }
