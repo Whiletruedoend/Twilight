@@ -1,6 +1,13 @@
 class ApplicationController < ActionController::Base
+  before_action :send_errors
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
+
+  def send_errors
+    rescue => e
+      Rollbar.error(e)
+      error!
+  end
 
   #around_action :switch_locale
 

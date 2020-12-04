@@ -171,6 +171,7 @@ GEM
       actionpack (>= 5.0)
       railties (>= 5.0)
     rmagick (4.1.2)
+    rollbar (3.1.1)
     rspec-core (3.10.0)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.0)
@@ -267,6 +268,7 @@ DEPENDENCIES
   rails (~> 6.0.3, >= 6.0.3.4)
   redcarpet
   rmagick
+  rollbar
   sass-rails (>= 6)
   selenium-webdriver
   spring

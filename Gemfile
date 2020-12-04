@@ -65,3 +65,4 @@ gem 'rmagick'
 gem 'redcarpet'
 
 gem 'enumerize'
+gem 'rollbar'

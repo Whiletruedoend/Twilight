@@ -32,9 +32,9 @@ class PostsController < ApplicationController
   end
 
   def rss
-    item_posts = ItemTag.select { |item| (item.item_type == "Post") && (current_user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }
-    item_posts.map!{ |item| item.item_id }.reject { |v| v.nil? }
-    @posts = Post.where(id: item_posts).order(created_at: :desc) if current_user.present? || (params.has_key?(:rss_token) && User.find_by_rss_token(params[:rss_token].to_s).present?)
+    #item_posts = ItemTag.select { |item| (item.item_type == "Post") && (current_user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }
+    #item_posts.map!{ |item| item.item_id }.reject { |v| v.nil? }
+    @posts = Post.where(id: 1).order(created_at: :desc) if current_user.present? || (params.has_key?(:rss_token) && User.find_by_rss_token(params[:rss_token].to_s).present?)
   end
 
   private
