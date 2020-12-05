@@ -59,12 +59,13 @@
   * Ставим ruby;
   * Ставим проект: 
   
-    
+    ```ssh
      git clone https://github.com/Whiletruedoend/Twilight
      cd Twilight/
      yarn install --check-files
      bundle install
-     rails db:migrate 
+     rails db:migrate
+    ```
      
   * Настраиваем: `credentials.yml`
   * Запускаем: `rails s`
