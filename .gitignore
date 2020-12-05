@@ -6,6 +6,7 @@
 
 .vscode
 .idea
+/config/credentials.yml
 
 # Ignore bundler config.
 /.bundle

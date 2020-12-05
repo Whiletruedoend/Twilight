@@ -162,8 +162,8 @@ footer{
     font-family: "Bitstream Vera Sans", sans-serif;
     color: #EFEFEF;
     border-bottom: 1px solid white;
-    padding-bottom: 1%;
-    width: 70%;
+    padding: 0% 1% 1% 1%;
+    /* width: 70%; */
 }
 
 .post-preview{

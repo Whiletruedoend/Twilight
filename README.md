@@ -56,15 +56,19 @@
  
  ## Установка
  
-  1) Ставим ruby;
-  2) Ставим проект:
-  ```sh
+  * Ставим ruby;
+  * Ставим проект: 
+  
+    
      git clone https://github.com/Whiletruedoend/Twilight
      cd Twilight/
      yarn install --check-files
-     rails db:migrate
-     rails s
-  ```
+     bundle install
+     rails db:migrate 
+     
+  * Настраиваем: `credentials.yml`
+  * Запускаем: `rails s`
+  
 Теперь сайт будет доступен по адресу: `http://localhost:3080`
 
 ## Контрибьюшен
