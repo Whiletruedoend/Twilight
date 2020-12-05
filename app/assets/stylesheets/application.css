@@ -139,7 +139,7 @@ footer{
     scrollbar-color: #202324 #454a4d;
 }
 
-.field{
+.markdown-left .field{
     padding: 1% 0 1% 0;
 }
 
@@ -278,58 +278,49 @@ hr{
 /* screens */
 
 @media screen and (min-width:100px) {
-    pre { font-size:40%; }
-    .information-right { font-size:40%; }
+    .information-right { font-size:60%; }
     .tags-right { float:left; padding: 0 50% 0 0;  }
 }
 
 @media screen and (min-width:650px) {
-    pre { font-size:45%; }
-    .information-right { font-size:45%; }
+    .information-right { font-size:60%; }
     .tags-right { float:left; padding: 0 50% 0 0; }
 }
 
 @media screen and (min-width:798px) {
-    pre { font-size:55%; }
-    .information-right { font-size:55%; }
+    .information-right { font-size:70%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }
 
 
 @media screen and (min-width:900px) {
-    pre { font-size:60%; }
-    .information-right { font-size:60%; }
+    .information-right { font-size:80%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }
 
 @media screen and (min-width:1015px) {
-    pre { font-size:70%; }
-    .information-right { font-size:70%; }
+    .information-right { font-size:85%; }
     .tags-right { float:right; padding: 0 40% 0 0; }
 }
 
 
 @media screen and (min-width:1200px) {
-    pre { font-size:80%; }
-    .information-right { font-size:80%; }
+    .information-right { font-size:90%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1280px) {
-    pre { font-size:85%; }
-    .information-right { font-size:85%; }
+    .information-right { font-size:90%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1350px) {
-    pre { font-size:90%; }
     .information-right { font-size:90%; }
     .tags-right { float:right; padding: 0 20% 0 0; }
 }
 
 @media screen and (min-width:1500px) {
     .markdown-left{ width: 45%; }
-    pre { font-size:100%; }
     .information-right { font-size:100%; }
     .tags-right { float:right; padding: 0 30% 0 0; }
 }

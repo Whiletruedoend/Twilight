@@ -4,9 +4,10 @@ Rails.application.routes.draw do
 
   resources :posts
   resources :users
-  resources :tags, only: [:new, :create]
+  resources :tags, only: [:create, :destroy]
   #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
   #get '/sign_in', to: 'user_sessions#new', as: :sign_in
+  get '/tags/manage', to: 'tags#manage', as: :manage_tag
 
   get '/settings', to: 'pages#settings', as: :settings
 
