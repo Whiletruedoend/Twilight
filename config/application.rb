@@ -18,6 +18,8 @@ module Twilight
 
     config.credentials = config_for(:credentials)
 
+    require 'ext/string'
+
     def secret_key_base
       if Rails.env.test? || Rails.env.development?
         Digest::MD5.hexdigest self.class.name

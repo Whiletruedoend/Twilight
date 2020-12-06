@@ -13,7 +13,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     if valid_captcha?(params[:user][:captcha])
       super
-      SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials['telegram']['reg_notify'] # todo: more platform support
+      SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
     else
       redirect_to(sign_up_url)
     end
