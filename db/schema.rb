@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_28_104922) do
+ActiveRecord::Schema.define(version: 2020_12_06_130541) do
 
   create_table "item_tags", force: :cascade do |t|
     t.boolean "enabled", default: true
@@ -22,11 +22,13 @@ ActiveRecord::Schema.define(version: 2020_11_28_104922) do
   end
 
   create_table "platform_posts", force: :cascade do |t|
-    t.string "Identifier"
+    t.string "identifier"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "platform_id"
+    t.integer "post_id"
     t.index ["platform_id"], name: "index_platform_posts_on_platform_id"
+    t.index ["post_id"], name: "index_platform_posts_on_post_id"
   end
 
   create_table "platforms", force: :cascade do |t|

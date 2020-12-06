@@ -12,12 +12,27 @@
         <%= f.text_area :content %>
       </div>
 
-      <div class="field">
-        <%= f.label :tags %><br />
-        <% Tag.all.each do |tag| %>
-          <%=check_box("tags", tag.id, {:checked => false})%><%=tag.name%>
-        <% end %>
-      </div>
+      <% if Tag.last.present? %>
+        <div class="field">
+          <%= f.label :tags %><br />
+          <% Tag.all.each do |tag| %>
+            <%=check_box("tags", tag.id, {:checked => false})%><%=tag.name%>
+          <% end %>
+        </div>
+      <% else %>
+        Tags not found!<br />
+      <% end %>
+
+      <% if Platform.last.present? %>
+        <div class="field">
+          <%= f.label :platforms %><br />
+          <% Platform.all.each do |platform| %>
+            <%=check_box("platforms", platform.title, {:checked => false})%><%=platform.title%>
+          <% end %>
+        </div>
+      <% else %>
+        Platforms not found!<br />
+      <% end %>
 
       <%= f.submit %> <% end %>
   </div>

@@ -55,14 +55,11 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'bundler', '~> 2.1.4'
 gem 'devise'
-#gem "therubyracer"
-#gem "less-rails"
 gem 'font-awesome-rails'
-
 gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'rmagick'
-
+gem 'simple_command'
 gem 'redcarpet'
-
 gem 'enumerize'
 gem 'rollbar'
+gem 'telegram-bot'

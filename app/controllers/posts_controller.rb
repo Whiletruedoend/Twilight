@@ -41,6 +41,7 @@ class PostsController < ApplicationController
     @post.save!
     if @post.save
       params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: (tag[1].to_i)) } if params.has_key?(:tags)
+      SendPostToPlatforms.call(@post, params)
       redirect_to @post
     else
       render :new
@@ -58,6 +59,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:authenticity_token, :commit, :tags => {}, :post => [:title, :content])
+    params.permit(:authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content])
   end
 end

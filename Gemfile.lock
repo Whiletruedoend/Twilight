@@ -103,6 +103,7 @@ GEM
       railties (>= 3.2, < 6.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    httpclient (2.8.3)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     jbuilder (2.10.1)
@@ -203,6 +204,7 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
+    simple_command (0.1.0)
     simplecov (0.19.1)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -219,6 +221,10 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sqlite3 (1.4.2)
+    telegram-bot (0.14.4)
+      actionpack (>= 4.0, < 6.1)
+      activesupport (>= 4.0, < 6.1)
+      httpclient (~> 2.7)
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -271,9 +277,11 @@ DEPENDENCIES
   rollbar
   sass-rails (>= 6)
   selenium-webdriver
+  simple_command
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3 (~> 1.4)
+  telegram-bot
   turbolinks (~> 5)
   tzinfo-data
   web-console (>= 3.3.0)
