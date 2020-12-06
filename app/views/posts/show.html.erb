@@ -1,11 +1,17 @@
 <h1><%=@post.title%></h1>
 <div class="post-header">
   <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%><% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a><% end %></h4>
-  <h4>Tags: <%tags = @post.active_tags_names.join(' ')%>
-    <%if tags.present?%> <%=tags%> <%else%> no tags <% end %>
-  </h4>
+  <h4>Tags: <%=get_post_tags(@post)%></h4>
+  <h4>Published platforms:
+    <% platforms = get_published_platforms(@post) %>
+    <% if platforms.present? %>
+      <% platforms.map { |platform| %><a href="<%=platform[:link]%>"><%=platform[:name]%></a> <%}%>
+    <% else %>
+        no platforms
+    <% end %>
+      </h4>
 </div>
-<br><br><br>
+<br><br><br><br>
 
 <div class="post-content">
   <p><%=markdown(@post.content)%></p>

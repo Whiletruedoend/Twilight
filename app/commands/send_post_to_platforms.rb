@@ -21,7 +21,7 @@ class SendPostToPlatforms
             content = post.content
             text = "*#{title}*\n\n#{content}" # todo: fix bad request (message too long)
             msg = Telegram.bot.send_message({chat_id: channel_id, text: text, parse_mode: "markdown"})
-            PlatformPost.create!(identifier: msg["result"]["message_id"], platform: Platform.find_by_title(platform), post: @post)
+            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title(platform), post: @post)
           end
 
         else # todo: moare platforms!
