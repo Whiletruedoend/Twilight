@@ -54,6 +54,9 @@ class PostsController < ApplicationController
       item_posts = ItemTag.select { |item| (item.item_type == "Post") && (user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }
       item_posts.map!{ |item| item.item_id }.reject { |v| v.nil? }
       @posts = Post.where(id: item_posts).order(created_at: :desc)
+    elsif Rails.configuration.credentials[:fail2ban][:enabled] && params.has_key?(:rss_token)
+      ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
+      Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
     end
   end
 
