@@ -13,6 +13,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     if valid_captcha?(params[:user][:captcha])
       super
+      Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
       SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
     else
       redirect_to(sign_up_url)
@@ -36,9 +37,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # DELETE /resource
-  #def destroy
-  #  super
-  #end
+  def destroy
+    post = Post.where(user: current_user)
+    ItemTag.where(item: post).delete_all
+    ItemTag.where(item: current_user).delete_all
+    PlatformPost.where(post_id: post).delete_all
+    post.delete_all
+    super
+  end
 
   # GET /resource/cancel
   # Forces the session data which is usually expired after sign

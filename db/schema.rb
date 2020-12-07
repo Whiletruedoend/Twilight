@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_06_150217) do
+ActiveRecord::Schema.define(version: 2020_12_07_081228) do
 
   create_table "item_tags", force: :cascade do |t|
     t.boolean "enabled", default: true
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2020_12_06_150217) do
 
   create_table "tags", force: :cascade do |t|
     t.string "name"
+    t.boolean "enabled_by_default"
   end
 
   create_table "users", force: :cascade do |t|

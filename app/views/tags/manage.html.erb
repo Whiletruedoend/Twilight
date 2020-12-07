@@ -8,7 +8,7 @@
     </div>
 
     <div class="field">
-      <%= f.check_box :enabled %>
+      <%= f.check_box :enabled_by_default %>
       <%= f.label "Enabled by default for users" %>
     </div><br />
 
@@ -17,15 +17,42 @@
     </div>
   <% end %>
 </div>
-<h2>All tags</h2>
+<h2>Update tags</h2>
 
 <div class="block">
-  <% if Tag.last.present? %>
-    <% Tag.all.each do |tag| %>
-      <%=check_box("tags", tag.id, {:checked => true})%><%=tag.name%>
-    <% end %>
-  <% else %>
-    tags not found!
+  <%= form_with url: "/tags/update", method: :post do |f| %>
+
+    <div class="field">
+      <%= f.label :tags %><br />
+      <% Tag.all.each do |tag| %>
+        <%=check_box("tags", tag.id, {:checked => tag.enabled_by_default})%><%=tag.name%>
+      <% end %>
+    </div><br />
+
+    <div class="actions">
+      <%= f.submit "Update" %>
+    </div>
+  <% end %>
+</div>
+
+<h2>Rename tag</h2>
+
+<div class="block">
+  <%= form_with url: "/tags/rename", method: :post do |f| %>
+
+    <div class="field">
+      <%= f.label :name %><br />
+      <%= f.text_field :name, autofocus: true, autocomplete: "name" %>
+    </div><br />
+
+    <div class="field">
+      <%= f.label :new_name %><br />
+      <%= f.text_field :new_name, autofocus: true, autocomplete: "new_name" %>
+    </div><br />
+
+    <div class="actions">
+      <%= f.submit "Rename" %>
+    </div>
   <% end %>
 </div>
 

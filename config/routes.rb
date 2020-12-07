@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
   #get '/sign_in', to: 'user_sessions#new', as: :sign_in
   get '/tags/manage', to: 'tags#manage', as: :manage_tag
+  post '/tags/update', to: 'tags#update', as: :update_tag
+  post '/tags/rename', to: 'tags#rename', as: :rename_tag
 
   get '/settings', to: 'pages#settings', as: :settings
 
