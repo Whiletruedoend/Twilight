@@ -64,7 +64,7 @@ class PostsController < ApplicationController
   def destroy
     @post = Post.find(params[:id])
     if @post.user == current_user
-      # todo: delete post from platforms
+      DeletePostMessages.call(@post)
       ItemTag.where(item: @post).delete_all
       PlatformPost.where(post: @post).delete_all
       Content.where(post: @post).delete_all

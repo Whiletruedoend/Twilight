@@ -1,6 +1,6 @@
 <h1><%=@post.title%></h1>
 <div class="post-header">
-  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%><% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=@post.id%>">Удалить статью</a><% end %></h4>
+  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%><% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=@post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %></h4>
   <h4>Tags: <%=get_post_tags(@post)%></h4>
   <h4>Published platforms:
     <% platforms = get_published_platforms(@post) %>
