@@ -41,8 +41,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
     post = Post.where(user: current_user)
     ItemTag.where(item: post).delete_all
     ItemTag.where(item: current_user).delete_all
-    PlatformPost.where(post_id: post).delete_all
+    PlatformPost.where(post: post).delete_all
     post.delete_all
+    Content.where(post: @post).delete_all
+    Content.where(user: current_user).delete_all
     super
   end
 

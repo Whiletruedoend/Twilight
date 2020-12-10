@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   captcha_route
   devise_for :user, path: '', controllers: {sessions: 'users/sessions', registrations:'users/registrations'}
 
-  resources :posts
+  resources :posts, except: [:destroy]
   resources :users
   resources :tags, only: [:create, :destroy]
   #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/rss', to: 'posts#rss', format: 'rss'
 
   post '/posts/new', to: 'posts#new'
+  get 'posts/delete/:id', to: 'posts#destroy', as: :post_path
 
   root to: 'pages#main'
   #root 'index'

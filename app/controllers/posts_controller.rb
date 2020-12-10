@@ -61,6 +61,18 @@ class PostsController < ApplicationController
     end
   end
 
+  def destroy
+    @post = Post.find(params[:id])
+    if @post.user == current_user
+      # todo: delete post from platforms
+      ItemTag.where(item: @post).delete_all
+      PlatformPost.where(post: @post).delete_all
+      Content.where(post: @post).delete_all
+      @post.delete
+    end
+    redirect_to posts_path
+  end
+
   private
   def posts_params
     params.permit(:_method, :id, :authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content])
