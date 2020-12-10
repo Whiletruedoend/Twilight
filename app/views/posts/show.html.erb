@@ -5,7 +5,13 @@
   <h4>Published platforms:
     <% platforms = get_published_platforms(@post) %>
     <% if platforms.present? %>
-      <% platforms.map { |platform| %><a href="<%=platform[:link]%>"><%=platform[:name]%></a> <%}%>
+      <% platforms.each do |platform| %>
+        <% if platform[:link].present? %>
+        <a target="_blank" href="<%=platform[:link]%>"><%=platform[:name]%></a>
+        <% else %>
+          <%=platform[:name]%>
+        <% end %>
+      <% end %>
     <% else %>
         no platforms
     <% end %>
@@ -14,7 +20,7 @@
 <br><br><br><br>
 
 <div class="post-content">
-  <p><%=markdown(@post.content)%></p>
+  <%=markdown(@post.get_content)%>
 </div>
 
 <p><%= link_to "<--- All posts", posts_path %></p>

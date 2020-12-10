@@ -5,11 +5,11 @@
 
           <div class="field">
             <%= f.label :title %><br />
-            <%= f.text_field :title %>
+            <%= f.text_field :title, placeholder: "Enter title..." %>
           </div>
 
       <div class="field">
-        <%= f.text_area :content %>
+        <%= f.text_area :content, placeholder: "Enter some text..." %>
       </div>
 
       <% if Tag.last.present? %>

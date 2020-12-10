@@ -23,8 +23,9 @@ class PostsController < ApplicationController
   def update
     @post = Post.find(params[:id])
 
-    if @post.update(posts_params[:post])
+    if @post.update(title: posts_params[:post][:title])
       params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
+      UpdatePostMessages.call(@post, params)
       redirect_to @post
     else
       render 'edit'
@@ -36,7 +37,7 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(posts_params[:post])
+    @post = Post.new(title: posts_params[:post][:title])
     @post.user = current_user
     @post.save!
     if @post.save
@@ -62,6 +63,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content])
+    params.permit(:_method, :id, :authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content])
   end
 end

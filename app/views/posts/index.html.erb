@@ -11,11 +11,11 @@
   Дата создания: <%= post.created_at %> | Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a><% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a><% end %>
   <br>
   <br>
-  <div class="post-preview">  <% if post.content.length > 300 %>
-      <%= markdown(truncate(strip_tags(post.content), length: 300)) %>
+  <div class="post-preview">  <% if post.get_content.length > 300 %>
+      <%= markdown(truncate(strip_tags(post.get_content), length: 300)) %>
       <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
     <% else %>
-      <%= markdown(strip_tags(post.content)) %>
+      <%= markdown(strip_tags(post.get_content)) %>
     <% end %></div>
   <br>
   <br>

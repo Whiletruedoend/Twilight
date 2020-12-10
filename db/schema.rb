@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_07_081228) do
+ActiveRecord::Schema.define(version: 2020_12_08_140341) do
 
   create_table "item_tags", force: :cascade do |t|
     t.boolean "enabled", default: true
@@ -21,12 +21,23 @@ ActiveRecord::Schema.define(version: 2020_12_07_081228) do
     t.index ["tag_id"], name: "index_item_tags_on_tag_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.string "type"
+    t.string "text"
+    t.integer "post_id"
+    t.integer "user_id"
+    t.index ["post_id"], name: "index_messages_on_post_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
   create_table "platform_posts", force: :cascade do |t|
     t.json "identifier"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "platform_id"
     t.integer "post_id"
+    t.integer "content_id"
+    t.index ["content_id"], name: "index_platform_posts_on_content_id"
     t.index ["platform_id"], name: "index_platform_posts_on_platform_id"
     t.index ["post_id"], name: "index_platform_posts_on_post_id"
   end
@@ -37,7 +48,6 @@ ActiveRecord::Schema.define(version: 2020_12_07_081228) do
 
   create_table "posts", force: :cascade do |t|
     t.string "title"
-    t.string "content"
     t.integer "access"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

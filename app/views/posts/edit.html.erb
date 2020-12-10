@@ -9,7 +9,7 @@
       </div>
 
       <div class="field">
-        <%= f.text_area :content %>
+        <%= f.text_area :content, placeholder: "Enter some text...", value: @post.get_content %>
       </div>
 
       <div class="field">
