@@ -20,4 +20,3 @@ class DeletePostMessages
     end
   end
 end
-

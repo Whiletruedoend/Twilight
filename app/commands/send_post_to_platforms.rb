@@ -20,16 +20,18 @@ class SendPostToPlatforms
           channel_ids = Rails.configuration.credentials[:telegram][:channel_ids]
           next if channel_ids.empty?
 
+          markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
+
           title = post.title
           content = params[:post][:content]#.replace_markdown_to_symbols # we need: input: html, output: markdown (in the future?)
-          text = "<b>#{title}</b>\n\n#{content}"
+          text = "**#{title}**\n\n#{content}"
 
           length = text.length
           created_messages = []
 
           if length >= 4096
             same_thing = false
-            clear_text = title.length + 9
+            clear_text = title.length + 6
             while (length > 0 || same_thing) && text.present?
               t = same_thing ? text[0...4096] : text[clear_text...4096]
               created_messages.append(Content.create!(user: @post.user, post: @post, text: t))
@@ -42,12 +44,13 @@ class SendPostToPlatforms
           end
 
           channel_ids.each do |channel_id|
-            #content.to_html
             first_message = true
             created_messages.each do |message|
-              text = first_message ? "<b>#{title}</b>\n\n#{message[:text]}" : message[:text]
+              text = first_message ? "**#{title}**\n\n#{message[:text]}" : message[:text]
               first_message = false
-              msg = Telegram.bot.send_message({ chat_id: channel_id, text: text, parse_mode: "html" })
+              new_text = markdown.render(text)
+              new_text = new_text.replace_html_to_tg_markdown
+              msg = Telegram.bot.send_message({ chat_id: channel_id, text: new_text, parse_mode: "html" })
               PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title(platform), post: @post, content: message)
             end
 

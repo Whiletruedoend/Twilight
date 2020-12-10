@@ -8,7 +8,7 @@
     </h1>
     <br>
   </a>
-  Дата создания: <%= post.created_at %> | Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a><% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a><% end %>
+  Дата создания: <%= post.created_at %> | Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a><% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
   <br>
   <br>
   <div class="post-preview">  <% if post.get_content.length > 300 %>
