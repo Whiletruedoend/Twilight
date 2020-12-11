@@ -14,13 +14,15 @@ class UpdatePostMessages
 
     @only_one_post = true
     @next_post = false
+
+    @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
   end
 
   # KNOWN BUG: If you add new content, title in message don't send
   def make_checks(platform_posts)
     edited_content_id = nil # don't delete him
 
-    platform_posts.each_with_index do |platform_post, index |
+    platform_posts.each do |platform_post|
       if @length >= 4096
         @only_one_post = false
         clear_text = @next_post ? 0 : @title.length + 9
@@ -41,7 +43,9 @@ class UpdatePostMessages
           other_channels = PlatformPost.where(content: platform_post.content, platform: Platform.find_by_title("telegram"), post: @post )
           other_channels.each do |channel|
             begin
-            msg = Telegram.bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: @text, parse_mode: "html" })
+              new_text = @markdown.render(@text)
+              new_text = new_text.replace_html_to_tg_markdown
+              msg = Telegram.bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't send (if bot don't have access to message)
             end
             PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: content)
@@ -56,7 +60,9 @@ class UpdatePostMessages
           other_channels = PlatformPost.where(content: platform_post.content, platform: Platform.find_by_title("telegram"), post: @post )
           other_channels.each do |channel|
             begin
-              Telegram.bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: @text[clear_text...4096], parse_mode: "html" })
+              new_text = @markdown.render(@text[clear_text...4096])
+              new_text = new_text.replace_html_to_tg_markdown
+              Telegram.bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
             end
           end

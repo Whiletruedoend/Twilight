@@ -14,13 +14,15 @@ class SendPostToPlatforms
       return
     end
 
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
+                                       disable_indented_code_blocks: true, autolink: false, tables: false,
+                                       underline: false, highlight: false)
+
     params[:platforms].select{ |k,v| v == "1" }.each do |platform|
       case platform[0]
         when "telegram"
           channel_ids = Rails.configuration.credentials[:telegram][:channel_ids]
           next if channel_ids.empty?
-
-          markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
 
           title = post.title
           content = params[:post][:content]#.replace_markdown_to_symbols # we need: input: html, output: markdown (in the future?)
