@@ -52,8 +52,12 @@ class SendPostToPlatforms
               first_message = false
               new_text = markdown.render(text)
               new_text = new_text.replace_html_to_tg_markdown
-              msg = Telegram.bot.send_message({ chat_id: channel_id, text: new_text, parse_mode: "html" })
-              PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title(platform), post: @post, content: message)
+              begin
+                msg = Telegram.bot.send_message({ chat_id: channel_id, text: new_text, parse_mode: "html" })
+                PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title(platform), post: @post, content: message)
+              rescue
+                Rails.logger.error("Failed create telegram message for chat #{channel_id} at #{Time.now.utc.iso8601}")
+              end
             end
 
           end

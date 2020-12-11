@@ -30,6 +30,7 @@ class UpdatePostMessages
         begin
           Telegram.bot.edit_message_text({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"], text: @text[clear_text...4096] })
         rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
+          Rails.logger.error("Failed edit telegram message #{platform_post[:identifier]["message_id"]} from chat #{platform_post[:identifier]["chat_id"]} at #{Time.now.utc.iso8601}")
         end
         @text[0...4096] = ""
         @length -= 4096
@@ -47,6 +48,7 @@ class UpdatePostMessages
               new_text = new_text.replace_html_to_tg_markdown
               msg = Telegram.bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't send (if bot don't have access to message)
+              Rails.logger.error("Failed send telegram message #{channel[:identifier]["message_id"]} from chat #{channel[:identifier]["chat_id"]} at #{Time.now.utc.iso8601}")
             end
             PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: content)
           end
@@ -64,6 +66,7 @@ class UpdatePostMessages
               new_text = new_text.replace_html_to_tg_markdown
               Telegram.bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
+              Rails.logger.error("Failed edit telegram message #{channel[:identifier]["message_id"]} from chat #{channel[:identifier]["chat_id"]} at #{Time.now.utc.iso8601}")
             end
           end
           clear_text = @only_one_post ? @title.length + 9 : 0 # it's not mistake!
@@ -76,6 +79,7 @@ class UpdatePostMessages
             begin
             Telegram.bot.delete_message({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"] })
             rescue # Message don't delete (bot don't have access to message)
+              Rails.logger.error("Failed delete telegram message #{channel[:identifier]["message_id"]} from chat #{channel[:identifier]["chat_id"]} at #{Time.now.utc.iso8601}")
             end
             channel.content.delete if channel.content.present?
             channel.delete

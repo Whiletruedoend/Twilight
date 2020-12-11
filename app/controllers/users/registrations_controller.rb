@@ -13,8 +13,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     if valid_captcha?(params[:user][:captcha])
       super
-      Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
-      SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
+      if current_user.present?
+        Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
+        SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
+      end
     else
       redirect_to(sign_up_url)
     end

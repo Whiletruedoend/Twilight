@@ -1,24 +1,34 @@
-<h1>All posts</h1><br />
-<% @post.each do |post| %>
+<body style="background: #181a1b;">
+  <div class="posts-container">
 
-  <a href="/posts/<%= post.id %>">
-    <h1><%= post.title %>
-      <br>
-      <hr>
-    </h1>
-    <br>
-  </a>
-  Дата создания: <%= post.created_at %> | Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a><% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
-  <br>
-  <br>
-  <div class="post-preview">  <% if post.get_content.length > 300 %>
-      <%= markdown(truncate(strip_tags(post.get_content), length: 300)) %>
-      <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
-    <% else %>
-      <%= markdown(strip_tags(post.get_content)) %>
-    <% end %></div>
-  <br>
-  <br>
-<% end %>
+  <section>
+    <% @post.each do |post| %>
+    <article>
+      <header>
+        <h1>
+          <a href="/posts/<%= post.id %>"><%= post.title %></a>
+        </h1>
+        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at %></i></p>
+        <p class="metadata">
+          <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
+          <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
+          </i>
+        </p>
+      </header>
+      <div class="posts-content"><% if post.get_content.length > 512 %>
+          <%= markdown(truncate(strip_tags(post.get_content), length: 512)) %>
+          <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
+        <% else %>
+          <%= markdown(strip_tags(post.get_content)) %>
+        <% end %>
+      </div>
+    </article>
+    <% end %>
+    <center>
+      <%= link_to 'На главную', root_path%>
+      <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
+    </center>
+  </section>
 
-<p><%= link_to "<--- Main page", root_path %>
+  </div>
+</body>
