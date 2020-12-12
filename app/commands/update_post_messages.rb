@@ -18,6 +18,18 @@ class UpdatePostMessages
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
   end
 
+  def call
+    if @post.platform_posts.empty? # Only site post
+      @post.contents.update(text: @content)
+      return
+    end
+    update_telegram_posts(post.platform_posts.where(platform: Platform.where(title: "telegram")))
+  end
+
+  def update_telegram_posts(platform_posts)
+    make_checks(platform_posts)
+  end
+
   # KNOWN BUG: If you add new content, title in message don't send
   def make_checks(platform_posts)
     edited_content_id = nil # don't delete him
@@ -88,13 +100,5 @@ class UpdatePostMessages
       end
     end
 
-  end
-
-  def update_telegram_posts(platform_posts)
-    make_checks(platform_posts)
-  end
-
-  def call
-    update_telegram_posts(post.platform_posts.where(platform: Platform.where(title: "telegram")))
   end
 end

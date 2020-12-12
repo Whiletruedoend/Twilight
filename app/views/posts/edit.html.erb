@@ -8,7 +8,7 @@
       <li><a data-toggle="tab" href="#other">Other</a></li>
     </ul>
 
-    <%= form_with(model: Post.new(user: @current_user)) do |f| %>
+    <%= form_with(model: @post, local: true) do |f| %>
       <%= render 'shared/errors', object: @post %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
