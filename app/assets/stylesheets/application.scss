@@ -23,6 +23,12 @@
  *= require font-awesome
  */
 
+code{
+  /* #cc241d */
+  background-color: rgb(34, 36, 38);
+  color: #22c6c6;
+}
+
 body {
   color: white;
   background: black;
@@ -103,10 +109,6 @@ footer{
 
 /* new post */
 
-.posts-main{
-
-}
-
 .markdown-container{
   font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   font-style: normal;
@@ -135,20 +137,6 @@ footer{
   display: block;
   width: 740px;
   height: 600px;
-  scrollbar-color: #202324 #454a4d;
-}
-
-#preview {
-  resize: none;
-  padding: 0.5rem;
-  border-radius: 8px;
-  color: white;
-  background: #31303b;
-  border: 2px solid white;
-  min-width: 100px;
-  width: 700px;
-  height: 800px;
-  overflow: auto;
   scrollbar-color: #202324 #454a4d;
 }
 
@@ -206,16 +194,18 @@ footer{
   font-size: 16px;
   background-color: rgb(18, 20, 20);
   box-sizing: border-box;
-  max-width: 43%;
+  max-width: 60%;
   margin: 0 auto;
   padding: 20px 10px;
 
   section article header h1{
+    overflow: hidden;
+    display: block;
     font-size: 2rem;
   }
 
   section article header h1::after {
-    content: "----------------------------------------------------------";
+    content: "------------------------------------------------------------------------------------------------";
     position: static;
     bottom: 10px;
     left: 0;
@@ -325,84 +315,51 @@ h4{
   opacity: 1;
 }
 
-/* screens */
-
-/*
-*@media screen and (min-width:100px) {
-*  .information-right { font-size:60%; }
-*  .tags-right { float:left; padding: 0 50% 0 0;  }
-*}
-*
-*@media screen and (min-width:650px) {
-*  .information-right { font-size:60%; }
-*  .tags-right { float:left; padding: 0 50% 0 0; }
-*}
-*
-*@media screen and (min-width:798px) {
-*  .information-right { font-size:70%; }
-*  .tags-right { float:right; padding: 0 30% 0 0; }
-*}
-*
-*
-*@media screen and (min-width:900px) {
-*  .information-right { font-size:80%; }
-*  .tags-right { float:right; padding: 0 30% 0 0; }
-*}
-*
-*@media screen and (min-width:1015px) {
-*  .information-right { font-size:85%; }
-*  .tags-right { float:right; padding: 0 40% 0 0; }
-*}
-*
-*
-*@media screen and (min-width:1200px) {
-*  .information-right { font-size:90%; }
-*  .tags-right { float:right; padding: 0 20% 0 0; }
-*}
-*
-*@media screen and (min-width:1280px) {
-*  .information-right { font-size:90%; }
-*  .tags-right { float:right; padding: 0 20% 0 0; }
-*}
-*
-*@media screen and (min-width:1350px) {
-*  .information-right { font-size:90%; }
-*  .tags-right { float:right; padding: 0 20% 0 0; }
-*}
-*
-*@media screen and (min-width:1500px) {
-*  .markdown-left{ width: 45%; }
-*  .information-right { font-size:100%; }
-*  .tags-right { float:right; padding: 0 30% 0 0; }
-*} */
-
-/* HARDCODE TIME */
-
-@media screen and (min-width:300px) {
-  .posts-container section article header h1::after { content: "--------------------"; }
-}
-
-@media screen and (min-width:900px) {
-  .posts-container section article header h1::after { content: "-------------------------------"; }
-}
-
-@media screen and (min-width:1000px) {
-  .posts-container section article header h1::after { content: "-----------------------------------"; }
-}
 
 
-@media screen and (min-width:1200px) {
-  .posts-container section article header h1::after { content: "-----------------------------------------"; }
-}
+/* posts new, edit */
+.tab-content{
+  font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
 
-@media screen and (min-width:1400px) {
-  .posts-container section article header h1::after { content: "------------------------------------------------"; }
-}
+  .title{
+    margin-top: 20px;
+    opacity: 75%;
+  }
+  .form-control{
+    height: 100%;
+    background-color: #222426;
+    border-color: #555555;
+    color: white;
+  }
 
-@media screen and (min-width:1600px) {
-  .posts-container section article header h1::after { content: "---------------------------------------------------------"; }
-}
+  .markdown-editor{
+    padding-top: 20px;
+    display: flex;
+    width: 100%;
+    height: 40em;
+    scrollbar-color: #202324 #454a4d;
 
-@media screen and (min-width:1930px) {
-  .posts-container section article header h1::after { content: "------------------------------------------------------------"; }
+    textarea{
+      margin-right: 10px;
+      background-color: #222426;
+      border-color: #555555;
+      resize: none;
+      height: 97%;
+      max-height: 97%;
+      width: 50%;
+    }
+  }
+
+  .preview{
+    height: 97%;
+    max-height: 97%;
+    border: 1px solid #555555;
+    background-color: #222426;
+    overflow-y: scroll;
+    width: 50%;
+    padding: 10px;
+  }
 }

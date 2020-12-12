@@ -1,30 +1,42 @@
-<div class="markdown-container">
-  <div class="markdown-left">
-    <%= form_with(model: @post, local: true) do |f| %>
+<body style="background: #181a1b;">
+  <div class="container">
+    <h2>Edit post</h2>
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#markdown">Markdown</a></li>
+      <li><a data-toggle="tab" href="#attachments">Attachments</a></li>
+      <li><a data-toggle="tab" href="#other">Other</a></li>
+    </ul>
+
+    <%= form_with(model: Post.new(user: @current_user)) do |f| %>
       <%= render 'shared/errors', object: @post %>
-
-      <div class="field">
-        <%= f.label :title %><br />
-        <%= f.text_field :title %>
+      <div class="tab-content">
+        <div id="markdown" class="tab-pane in active title">
+          <%= f.text_field(:title, { class: 'form-control', placeholder: "Enter title...", value: @post.title }) %>
+          <div class="markdown-editor">
+            <%= f.text_area :content, placeholder: "Enter some text...", value: @post.get_content %>
+            <div id="preview" class="preview"></div>
+          </div>
+          <%= f.submit %> <% end %>
+        </div>
+        <div id="attachments" class="tab-pane">
+          <h3>Not yet</h3>
+        </div>
+        <div id="other" class="tab-pane">
+          <h3>Tags</h3>
+          <% tags = ItemTag.where(item: @post) %>
+          <% if tags.present? %>
+            <% ItemTag.where(item: @post).each do |item| %>
+              <%=check_box("tags", item.tag.id, {:checked => item.enabled})%> <%=item.tag.name%>
+            <% end %>
+          <% else %>
+            <p>Tags not found!</p>
+          <% end %>
+        </div>
       </div>
-
-      <div class="field">
-        <%= f.text_area :content, placeholder: "Enter some text...", value: @post.get_content %>
-      </div>
-
-      <div class="field">
-        <%= f.label :tags %><br />
-        <% ItemTag.where(item: @post).each do |item| %>
-          <%=check_box("tags", item.tag.id, {:checked => item.enabled})%><%=item.tag.name%>
-        <% end %>
-      </div>
-
-      <%= f.submit %> <% end %>
   </div>
+</body>
 
-  <div id="preview"></div>
-</div>
-<p><%= link_to "<--- Main page", root_path %></p>
-
+<%= javascript_include_tag 'application.js' %>
 <%= javascript_include_tag 'showdown.min.js' %>
 <%= javascript_include_tag 'script.js' %>

@@ -8,7 +8,7 @@
         <h1>
           <a href="/posts/<%= post.id %>"><%= post.title %></a>
         </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at %></i></p>
+        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at.strftime("%d.%m.%y %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
           <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>

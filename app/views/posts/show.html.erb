@@ -1,27 +1,22 @@
-<h1><%=@post.title%></h1>
-<div class="post-header">
-  <h4>Date: <%=@post.created_at%> | Author: <%=@post.user.login%><% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=@post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %></h4>
-  <h4>Tags: <%=get_post_tags(@post)%></h4>
-  <h4>Published platforms:
-    <% platforms = get_published_platforms(@post) %>
-    <% if platforms.present? %>
-      <% platforms.each do |platform| %>
-        <% if platform[:link].present? %>
-        <a target="_blank" href="<%=platform[:link]%>"><%=platform[:name]%></a>
-        <% else %>
-          <%=platform[:name]%>
-        <% end %>
-      <% end %>
-    <% else %>
-        no platforms
-    <% end %>
-      </h4>
-</div>
-<br><br><br><br>
-
-<div class="post-content">
-  <%=markdown(@post.get_content)%>
-</div>
-
-<p><%= link_to "<--- All posts", posts_path %></p>
-<p><%= link_to "<--- Main page", root_path %></p>
+<body style="background: #181a1b;">
+  <div class="posts-container">
+    <article>
+      <header>
+        <h1>
+          <a href="/posts/<%= @post.id %>"><%= @post.title %></a>
+        </h1>
+        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= @post.created_at.strftime("%d.%m.%y %H:%M") %></i></p>
+        <p class="metadata">
+          <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=@post.user.login%>"><%= @post.user.login %></a>
+            <% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=@post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
+          </i>
+        </p>
+      </header>
+      <div class="posts-content"><%= markdown(@post.get_content) %></div>
+    </article>
+    <center>
+      <%= link_to 'На главную', root_path%>
+      <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
+    </center>
+  </div>
+</body>
