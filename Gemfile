@@ -62,6 +62,8 @@ gem 'redcarpet'
 gem 'enumerize'
 gem 'rollbar'
 gem 'telegram-bot'
+gem "mini_magick"
+gem 'image_processing'
 
 gem 'bootstrap-sass'
 gem 'jquery-rails'

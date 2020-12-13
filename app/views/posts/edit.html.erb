@@ -17,10 +17,15 @@
             <%= f.text_area :content, placeholder: "Enter some text...", value: @post.get_content %>
             <div id="preview" class="preview"></div>
           </div>
-          <%= f.submit %> <% end %>
         </div>
         <div id="attachments" class="tab-pane">
-          <h3>Not yet</h3>
+          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="20" data-dropzone-max-files="15">
+            <%= f.file_field :attachments, multiple: true, direct_upload: true, data: { target: 'dropzone.input' } %>
+            <div class="dropzone-msg dz-message needsclick">
+              <h3 class="dropzone-msg-title">Drag here to upload or click here to browse</h3>
+              <span class="dropzone-msg-desc text-sm">2 MB file size maximum. Allowed file types png, jpg.</span>
+            </div>
+          </div>
         </div>
         <div id="other" class="tab-pane">
           <h3>Tags</h3>
@@ -34,6 +39,7 @@
           <% end %>
         </div>
       </div>
+      <%= f.submit %> <% end %>
   </div>
 </body>
 

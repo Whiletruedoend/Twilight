@@ -24,6 +24,7 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
 
     if @post.update(title: posts_params[:post][:title])
+      params[:post][:attachments].each { |image| @post.attachments.attach(image) } if params[:post][:attachments].present?
       params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
       UpdatePostMessages.call(@post, params)
       redirect_to @post
@@ -68,6 +69,7 @@ class PostsController < ApplicationController
       ItemTag.where(item: @post).delete_all
       PlatformPost.where(post: @post).delete_all
       Content.where(post: @post).delete_all
+      @post.attachments.delete_all
       @post.delete
     end
     redirect_to posts_path
@@ -75,6 +77,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:_method, :id, :authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content])
+    params.permit(:_method, :id, :authenticity_token, :commit, :platforms => {}, :tags => {}, :post => [:title, :content, :attachments])
   end
 end
