@@ -20,6 +20,8 @@ class UpdatePostMessages
 
   def call
     if @post.platform_posts.empty? # Only site post
+      @params[:post][:attachments].each { |image| @post.attachments.attach(image) } if @params[:post][:attachments].present?
+      @params[:deleted_attachments].each { |attachment| @post.attachments.find(attachment[0]).purge if attachment[1] == "0" } if @params[:deleted_attachments].present?
       @post.contents.update(text: @content)
       return
     end

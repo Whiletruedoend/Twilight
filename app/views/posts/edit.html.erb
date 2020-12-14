@@ -26,6 +26,11 @@
               <span class="dropzone-msg-desc text-sm">2 MB file size maximum. Allowed file types png, jpg.</span>
             </div>
           </div>
+          <h3>Current attachments:</h3>
+          <% @post.attachments.each do |att| %>
+            <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
+            <%=check_box("deleted_attachments", att.id, {:checked => true})%> <%=att.filename%>
+          <% end %>
         </div>
         <div id="other" class="tab-pane">
           <h3>Tags</h3>

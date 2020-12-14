@@ -10,6 +10,7 @@ class SendPostToPlatforms
 
   def call
     if params[:platforms].nil? || params[:platforms].values.exclude?("1")
+      @params[:post][:attachments].each { |image| @post.attachments.attach(image) } if @params[:post][:attachments].present?
       Content.create!(user: @post.user, post: @post, text: params[:post][:content])
       return
     end
