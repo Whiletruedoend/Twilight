@@ -12,8 +12,8 @@
           </i>
         </p>
       </header>
-      <% @post.attachments.each do |att| %>
-        <% size = case @post.attachments.count%>
+      <% @post.get_content_attachments.each do |att| %>
+        <% size = case @post.get_content_attachments.count%>
       <% when 1 %>
           <% 300 %>
         <% when 2 %>

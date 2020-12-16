@@ -10,8 +10,8 @@ class SendPostToPlatforms
 
   def call
     if params[:platforms].nil? || params[:platforms].values.exclude?("1")
-      @params[:post][:attachments].each { |image| @post.attachments.attach(image) } if @params[:post][:attachments].present?
-      Content.create!(user: @post.user, post: @post, text: params[:post][:content])
+      content = Content.create!(user: @post.user, post: @post, text: params[:post][:content], has_attachments: @params[:post][:attachments].present?)
+      @params[:post][:attachments].each { |image| content.attachments.attach(image) } if @params[:post][:attachments].present?
       return
     end
 
@@ -27,6 +27,7 @@ class SendPostToPlatforms
 
           title = post.title
           content = params[:post][:content]#.replace_markdown_to_symbols # we need: input: html, output: markdown (in the future?)
+          #attachments = params[:post][:attachments]
           text = "**#{title}**\n\n#{content}"
 
           length = text.length

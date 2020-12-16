@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_13_150821) do
+ActiveRecord::Schema.define(version: 2020_12_16_082740) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2020_12_13_150821) do
     t.string "text"
     t.integer "post_id"
     t.integer "user_id"
+    t.boolean "has_attachments", default: false
     t.index ["post_id"], name: "index_messages_on_post_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
   end

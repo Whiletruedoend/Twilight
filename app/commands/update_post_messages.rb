@@ -20,9 +20,13 @@ class UpdatePostMessages
 
   def call
     if @post.platform_posts.empty? # Only site post
-      @params[:post][:attachments].each { |image| @post.attachments.attach(image) } if @params[:post][:attachments].present?
-      @params[:deleted_attachments].each { |attachment| @post.attachments.find(attachment[0]).purge if attachment[1] == "0" } if @params[:deleted_attachments].present?
-      @post.contents.update(text: @content)
+      if @params[:post][:attachments].present?
+        content = @post.contents.first # first content contains images
+        @params[:post][:attachments].each { |image| @post.contents.first.attachments.attach(image) }
+        @post.contents.first.update(has_attachments: true) unless content.has_attachments
+      end
+      @params[:deleted_attachments].each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @params[:deleted_attachments].present?
+      @post.contents.update(text: @content, has_attachments: @post.get_content_attachments.present?)
       return
     end
     update_telegram_posts(post.platform_posts.where(platform: Platform.where(title: "telegram")))
