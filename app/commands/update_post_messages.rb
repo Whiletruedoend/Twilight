@@ -9,6 +9,8 @@ class UpdatePostMessages
 
     @title = post.title
     @content = params[:post][:content]
+    @attachments = @params[:post][:attachments]
+    @deleted_attachments = @params[:deleted_attachments]
     @text = "<b>#{@title}</b>\n\n#{@content}"
     @length = @text.length
 
@@ -20,12 +22,12 @@ class UpdatePostMessages
 
   def call
     if @post.platform_posts.empty? # Only site post
-      if @params[:post][:attachments].present?
+      if @attachments.present?
         content = @post.contents.first # first content contains images
-        @params[:post][:attachments].each { |image| @post.contents.first.attachments.attach(image) }
-        @post.contents.first.update(has_attachments: true) unless content.has_attachments
+        @attachments.each { |image| content.attachments.attach(image) }
+        content.update(has_attachments: true) unless content.has_attachments
       end
-      @params[:deleted_attachments].each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @params[:deleted_attachments].present?
+      @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
       @post.contents.update(text: @content, has_attachments: @post.get_content_attachments.present?)
       return
     end
@@ -34,6 +36,14 @@ class UpdatePostMessages
 
   def update_telegram_posts(platform_posts)
     make_checks(platform_posts)
+    make_checks_attachments(platform_posts) if @attachments.present? || @deleted_attachments.present?
+  end
+
+  def make_checks_attachments(platform_posts)
+    true
+    #platform_posts.each do |platform_post|
+    #
+    #end
   end
 
   # KNOWN BUG: If you add new content, title in message don't send

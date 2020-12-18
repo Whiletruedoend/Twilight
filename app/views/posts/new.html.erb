@@ -19,11 +19,11 @@
           </div>
         </div>
         <div id="attachments" class="tab-pane">
-          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="20" data-dropzone-max-files="15">
+          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="10" data-dropzone-max-files="10">
             <%= f.file_field :attachments, multiple: true, direct_upload: true, data: { target: 'dropzone.input' } %>
             <div class="dropzone-msg dz-message needsclick">
               <h3 class="dropzone-msg-title">Drag here to upload or click here to browse</h3>
-              <span class="dropzone-msg-desc text-sm">2 MB file size maximum. Allowed file types png, jpg.</span>
+              <span class="dropzone-msg-desc text-sm">10 MB file size and count maximum. Allowed file types png, jpg.</span>
             </div>
           </div>
         </div>

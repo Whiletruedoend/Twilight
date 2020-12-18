@@ -67,7 +67,7 @@ class PostsController < ApplicationController
       DeletePostMessages.call(@post)
       ItemTag.where(item: @post).delete_all
       PlatformPost.where(post: @post).delete_all
-      @post.get_content_attachments.delete_all
+      @post.get_content_attachments&.delete_all
       Content.where(post: @post).delete_all
       @post.delete
     end

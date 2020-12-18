@@ -40,12 +40,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /resource
   def destroy
-    post = Post.where(user: current_user)
-    ItemTag.where(item: post).delete_all
+    posts = Post.where(user: current_user)
+    ItemTag.where(item: posts).delete_all
     ItemTag.where(item: current_user).delete_all
-    PlatformPost.where(post: post).delete_all
-    post.delete_all
-    Content.where(post: @post).delete_all
+    PlatformPost.where(post: posts).delete_all
+    posts.each { |post| post.get_content_attachments&.delete_all }
+    posts.delete_all
+    Content.where(post: posts).delete_all
     Content.where(user: current_user).delete_all
     super
   end

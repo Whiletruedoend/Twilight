@@ -15,11 +15,11 @@ class Post < ApplicationRecord
   def get_content
     text = ""
     self.contents.each do |msg|
-      text += msg[:text]
+      text += msg[:text] if msg[:text].present?
     end
     text
   end
   def get_content_attachments
-    Content.where(post: self).map{ |c| c.attachments }.first
+    Content.where(post: self).map{ |c| c.attachments }&.first
   end
 end
