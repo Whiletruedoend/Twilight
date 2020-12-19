@@ -65,6 +65,7 @@ gem 'telegram-bot'
 gem "mini_magick"
 gem 'image_processing'
 
+gem 'will_paginate', '~> 3.1.0'
 gem 'bootstrap-sass'
 gem 'jquery-rails'
 gem 'font-awesome-rails'

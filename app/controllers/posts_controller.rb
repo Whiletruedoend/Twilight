@@ -8,7 +8,7 @@ class PostsController < ApplicationController
   end
 
   def index
-    @post = params.has_key?(:user) ? Post.where(user: User.find_by_login(params[:user])).order(created_at: :desc) : Post.all.order(created_at: :desc)
+    @post = params.has_key?(:user) ? Post.where(user: User.find_by_login(params[:user])).order(created_at: :desc).paginate(page: params[:page]) : Post.all.order(created_at: :desc).paginate(page: params[:page])
   end
 
   def show

@@ -8,6 +8,8 @@ class Post < ApplicationRecord
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: "item_tags", :as => :item, foreign_key: "item_id", :dependent => :delete_all
   has_many :active_tags, -> { active("Post") }, class_name: 'ItemTag', foreign_key: "item_id"
 
+  self.per_page = 5
+
   def active_tags_names
     self.active_tags.map { |s| s.tag.name }
   end
