@@ -52,16 +52,33 @@ class UpdatePostMessages
   end
 
   def update_telegram_posts
-    platform_posts = @post.platform_posts.where(platform: Platform.where(title: "telegram"))
     has_attachments = @attachments.present? || @deleted_attachments.present?
-    make_checks(platform_posts)
+    platform_posts = @post.platform_posts.where(platform: Platform.where(title: "telegram"))
+
+    make_checks(@post.platform_posts.joins(:content).where(messages: { has_attachments: false }, platform: Platform.where(title: "telegram")))
     make_checks_attachments(platform_posts) if has_attachments
-    make_fixes if has_attachments
+    make_fixes(platform_posts) if has_attachments
   end
 
-  def make_fixes
+  def make_fixes(platform_posts)
     contents = @post.contents
     contents.each_with_index { |c, index| contents[index+1].delete if contents[index+1].present? && (contents[index+1].text == contents[index].text) }
+    if !@attachments.present? && !@deleted_attachments.present? # Fix (cuz make_checks (attachments is false) )
+      platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+        next_content = Content.find_by_id(platform_post.content.id+1)
+        edit_media_caption(platform_post[:identifier][0], next_content) if next_content&.text&.present?
+      end
+    end
+  end
+
+  def edit_media_caption(first_identifier, content)
+    begin
+      media = { type: "photo", media: first_identifier["file_id"], caption: content.text, parse_mode: "html" } # photo type ???
+      Telegram.bot.edit_message_media({ chat_id: first_identifier["chat_id"], message_id: first_identifier["message_id"], media: media })
+        # По-хорошему если нет аттачментов нужно преобразовать media сообщение в text, но так нельзя поэтому caption удаляется если нет аттачментов
+    rescue
+      Rails.logger.error("Failed edit caption (BUT IT'S ALMOST NORMAL) for telegram message at #{Time.now.utc.iso8601}")
+    end
   end
 
   def make_checks_attachments(platform_posts)
@@ -94,13 +111,7 @@ class UpdatePostMessages
           if new_params.present? # Ещё есть данные
 
             if platform_post.content.text.present? # Есть caption?
-              begin
-                media = { type: "photo", media: new_params[0]["file_id"], caption: platform_post.content.text, parse_mode: "html" } # photo type ???
-                Telegram.bot.edit_message_media({ chat_id: new_params[0]["chat_id"], message_id: new_params[0]["message_id"], media: media })
-                # По-хорошему если нет аттачментов нужно преобразовать media сообщение в text, но так нельзя поэтому caption удаляется если нет аттачментов
-              rescue
-                Rails.logger.error("Failed edit caption (BUT IT'S ALMOST NORMAL) for telegram message at #{Time.now.utc.iso8601}")
-              end
+              edit_media_caption(new_params[0], platform_post.content)
             end
 
             platform_post.update!(identifier: new_params)
