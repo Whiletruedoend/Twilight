@@ -13,13 +13,12 @@ class DeletePostMessages
         when "telegram"
           begin
             if platform_post.content.has_attachments?
-              count = platform_post.content.attachments.count
-              count.times { |i| Telegram.bot.delete_message({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"] + i }) }
+              platform_post.identifier.each { |att| Telegram.bot.delete_message({ chat_id: att["chat_id"], message_id: att["message_id"] }) }
             else
               Telegram.bot.delete_message({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"] })
             end
           rescue # Message don't delete (if bot don't have access to message)
-            Rails.logger.error("Failed delete telegram message #{platform_post[:identifier]["message_id"]} from chat #{platform_post[:identifier]["chat_id"]} at #{Time.now.utc.iso8601}")
+            Rails.logger.error("Failed delete telegram messages at #{Time.now.utc.iso8601}")
           end
         else
       end

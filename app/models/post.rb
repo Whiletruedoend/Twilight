@@ -21,6 +21,7 @@ class Post < ApplicationRecord
     end
     text
   end
+
   def get_content_attachments
     Content.where(post: self).map{ |c| c.attachments }&.first
   end

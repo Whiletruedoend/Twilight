@@ -31,7 +31,9 @@ class SendPostToPlatforms
 
     begin
       msg = Telegram.bot.send_media_group({ chat_id: channel_id, media: media })
-      PlatformPost.create!(identifier: { chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: attachment_content)
+      msg_ids = []
+      media.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: media[i][:media] }) }
+      PlatformPost.create!(identifier: msg_ids, platform: Platform.find_by_title("telegram"), post: @post, content: attachment_content)
     rescue
       Rails.logger.error("Failed create telegram message for chat #{channel_id} at #{Time.now.utc.iso8601}")
     end
