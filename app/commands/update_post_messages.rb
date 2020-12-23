@@ -56,8 +56,30 @@ class UpdatePostMessages
     platform_posts = @post.platform_posts.where(platform: Platform.where(title: "telegram"))
 
     make_checks(@post.platform_posts.joins(:content).where(messages: { has_attachments: false }, platform: Platform.where(title: "telegram")))
+    make_caption_fixes(platform_posts)
     make_checks_attachments(platform_posts) if has_attachments
     make_fixes(platform_posts) if has_attachments
+  end
+
+  def make_caption_fixes(platform_posts)
+    platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+
+      current_content = platform_post.content
+      next_content = Content.find_by_id(platform_post.content.id+1)
+
+      if @content.present? && @length < 1024
+        current_content.update!(text: nil)
+        next_content.update!(text: @content) if next_content.present?
+        #elsif @length >= 1024
+        #current_content.update!(text: nil)
+      end
+
+      if current_content.text&.present? # Есть caption?
+        edit_media_caption(platform_post[:identifier][0], current_content)
+      else
+        edit_media_caption(platform_post[:identifier][0], next_content) if next_content.text&.present?
+      end
+    end
   end
 
   def make_fixes(platform_posts)
@@ -110,8 +132,13 @@ class UpdatePostMessages
           new_params = platform_post[:identifier].reject.with_index { |e, i| deleted_indexes.include? i }
           if new_params.present? # Ещё есть данные
 
-            if platform_post.content.text.present? # Есть caption?
-              edit_media_caption(new_params[0], platform_post.content)
+            current_content = platform_post.content
+            next_content = Content.find_by_id(platform_post.content.id+1)
+
+            if current_content.text&.present? # Есть caption?
+              edit_media_caption(new_params[0], current_content)
+            else
+              edit_media_caption(new_params[0], next_content) if next_content.text&.present?
             end
 
             platform_post.update!(identifier: new_params)
