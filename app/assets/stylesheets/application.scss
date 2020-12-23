@@ -137,6 +137,10 @@ pre.ascii {
   font-weight: normal;
   font-size: 16px;
 
+  .chars{
+    float: right;
+  }
+
   .title{
     margin-top: 20px;
     opacity: 75%;

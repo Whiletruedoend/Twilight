@@ -34,23 +34,6 @@ class UpdatePostMessages
     update_telegram_posts
   end
 
-  def upload_to_telegram(attachment_content, old_count)
-    attachment_channel = Rails.configuration.credentials[:telegram][:attachment_channel_id]
-    c = attachment_content.attachments.count - old_count
-    attachment_content.attachments.order(:creation_date, :asc).last(c).map do |att|
-      begin
-        file = File.open(ActiveStorage::Blob.service.send(:path_for, att.blob.key))
-        msg = Telegram.bot.send_photo({ chat_id: attachment_channel, photo: file })
-      rescue
-        Rails.logger.error("Failed upload telegram message at #{Time.now.utc.iso8601}")
-      end
-      {
-          type: "photo", # todo: add more types
-          media: msg["result"]["photo"][0]["file_id"]
-      }
-    end
-  end
-
   def update_telegram_posts
     has_attachments = @attachments.present? || @deleted_attachments.present?
     platform_posts = @post.platform_posts.where(platform: Platform.where(title: "telegram"))
@@ -104,19 +87,6 @@ class UpdatePostMessages
   end
 
   def make_checks_attachments(platform_posts)
-    #if @attachments.present?
-    #  content = @post.contents.first # first content contains images
-    #  old_count = content.attachments.count
-    #  @attachments.each { |image| content.attachments.attach(image) }
-    #  content.update(has_attachments: true) unless content.has_attachments
-
-    #  may_caption = !(content.text.length >= 1024) # max caption length
-    #  media = upload_to_telegram(content, old_count)
-
-    #  platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
-    #    msg = Telegram.bot.edit_message_media({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"], media: media })
-    #  end
-    #end
     if @deleted_attachments.present?
       values = @deleted_attachments.to_unsafe_h.values
       del_att = values.each_index.select { |index| values[index] == "0"} # indexes

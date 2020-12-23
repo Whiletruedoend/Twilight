@@ -16,5 +16,6 @@ target.innerHTML = html;
 var post = document.getElementById('post_content');
 
 post.onkeyup = post.onkeypress = function(){
+    document.getElementById("chars").innerHTML = this.value.length+" chars"; // Count chars
     document.getElementById('preview').innerHTML = converter.makeHtml(this.value);
 }
