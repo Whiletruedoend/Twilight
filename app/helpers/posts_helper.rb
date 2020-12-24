@@ -17,4 +17,8 @@ module PostsHelper
         nil
     end
   end
+
+  def get_image_link(att)
+    "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}#{url_for(att)}"
+  end
 end

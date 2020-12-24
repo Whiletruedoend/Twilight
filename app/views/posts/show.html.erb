@@ -1,5 +1,10 @@
 <body style="background: #181a1b;">
   <div class="posts-container">
+    <center>
+      <%= link_to 'На главную', root_path%>
+      <%= link_to '| Все посты', posts_url%>
+      <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
+    </center>
     <article>
       <header>
         <h1>
@@ -29,10 +34,5 @@
       <% end %>
       <div class="posts-content"><%= markdown(@post.get_content) %></div>
     </article>
-    <center>
-      <%= link_to 'На главную', root_path%>
-      <%= link_to '| Все посты', posts_url%>
-      <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
-    </center>
   </div>
 </body>
