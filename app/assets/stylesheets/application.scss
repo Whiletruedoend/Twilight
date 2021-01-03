@@ -132,7 +132,7 @@ pre.ascii {
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{ color: #22c6c6; background-color: #3939398c; }
 
 .tab-content{
-  font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -200,8 +200,7 @@ pre.ascii {
 
 .posts-content{
   line-height: normal;
-  font-size: 18px;
-  font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   font-style: normal;
   font-weight: normal;
   padding-top: 10px;
@@ -211,15 +210,24 @@ pre.ascii {
   line-height: 1.5rem;
   font-size: 16px;
   background-color: rgb(18, 20, 20);
+  color: rgb(240, 240, 240);
   box-sizing: border-box;
   max-width: 60%;
   margin: 0 auto;
   padding: 20px 10px;
 
-  section article header h1{
+  h1{
     overflow: hidden;
     display: block;
-    font-size: 2rem;
+    font-size: 2.5rem;
+  }
+
+  p{
+    margin: 0 0 16px;
+  }
+
+  header p{
+    margin: 0 0 8px;
   }
 
   section article header h1::after {
