@@ -64,6 +64,7 @@ gem 'rollbar'
 gem 'telegram-bot'
 gem "mini_magick"
 gem 'image_processing'
+gem 'open-uri'
 
 gem 'will_paginate', '~> 3.1.0'
 gem 'bootstrap-sass'

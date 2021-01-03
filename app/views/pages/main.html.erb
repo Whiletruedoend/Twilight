@@ -63,18 +63,7 @@
             <td><i class="fa fa-rss"></i></td>
             <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS (Please log in!)"%></a></td>
           </tr>
-          <tr>
-            <td><i class="fa fa-github"></i></td>
-            <td><a target="_blank" href="https://github.com/whiletruedoend">Github</a></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-video-camera"></i></td>
-            <td><a target="_blank" href="https://www.kinopoisk.ru/user/47902462/movies/list/type/50183/">Kinopoisk</a></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-list"></i></td>
-            <td><a target="_blank" href="https://myanimelist.net/profile/Whiletruedoend">My Anime List</a></td>
-          </tr>
+          <%= table_link_columns %>
           </tbody>
         </table>
       </div>
@@ -85,18 +74,7 @@
             <th class="icon"></th>
             <th></th>
           </tr>
-          <tr>
-            <td><i class="fa fa-telegram -o fa-fw"></i></td>
-            <td><a target="_blank" href="https://t.me/whiletruedoend">Telegram</a></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-commenting -o fa-fw"></i></td>
-            <td><a target="_blank" href="https://matrix.to/#/@whiletruedoend:matrix.org">Matrix</a> <--- prefer</td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-commenting-o -o fa-fw"></i></td>
-            <td><a target="_blank" href="xmpp:whiletruedoend@neko.im">Jabber</a></td>
-          </tr>
+          <%= table_contacts_columns %>
           </tbody>
         </table>
       </div>

@@ -20,6 +20,10 @@ module Twilight
 
     require 'ext/string'
 
+    if config.credentials[:matrix][:enabled]
+      require 'ext/matrix'
+    end
+
     def secret_key_base
       if Rails.env.test? || Rails.env.development?
         Digest::MD5.hexdigest self.class.name
