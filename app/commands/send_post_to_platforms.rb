@@ -46,9 +46,10 @@ class SendPostToPlatforms
       Content.create!(user: @post.user, post: @post, text: content_text, has_attachments: false) if content_text.present?
     end
 
+    # No content - no post :\
     Content.where(post: @post).each do |content|
       title = @post.title
-      content_text = @markdown.render(content.text) if content.text.present?
+      content_text = @markdown.render(@post.get_content) if @post.get_content.present?
       text = title.present? ? "<b>#{title}</b><br><br>#{content_text}" : "#{content_text}"
 
       if content.has_attachments?
@@ -166,7 +167,7 @@ class SendPostToPlatforms
             end
           else
             msg = Telegram.bot.send_message({ chat_id: channel_id, text: text, parse_mode: "html" })
-            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title(platform), post: @post, content: message)
+            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: message)
           end
         rescue
           Rails.logger.error("Failed create telegram message for chat #{channel_id} at #{Time.now.utc.iso8601}")

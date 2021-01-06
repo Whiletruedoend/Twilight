@@ -17,6 +17,9 @@ class UpdatePostMessages
     @only_one_post = true
     @next_post = false
 
+    # For matrix
+    @attachments_count = @post.get_content_attachments.count
+
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
   end
 
@@ -32,6 +35,7 @@ class UpdatePostMessages
       return
     end
     update_telegram_posts
+    update_matrix_posts
   end
 
   def update_telegram_posts
@@ -191,5 +195,105 @@ class UpdatePostMessages
       end
     end
 
+  end
+
+  def update_matrix_posts
+    platform_posts = @post.platform_posts.where(platform: Platform.where(title: "matrix"))
+    need_delete_attachments = false
+
+    matrix_token = Rails.configuration.credentials[:matrix][:access_token]
+
+    if @deleted_attachments.present?
+      values = @deleted_attachments.to_unsafe_h.values
+      del_att = values.each_index.select { |index| values[index] == "0"} # indexes
+      need_delete_attachments = true if del_att.any?
+
+      platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+        deleted_indexes = []
+        del_att.each do |i|
+          method = "rooms/#{platform_post[:identifier][i]["room_id"]}/redact/#{platform_post[:identifier][i]["event_id"]}"
+          data = { reason: "Delete post ##{platform_post.post_id}" }
+          Matrix.post(matrix_token, method, data)
+          deleted_indexes.append(i)
+        end
+        if deleted_indexes.any?
+          new_params = platform_post[:identifier].reject.with_index { |e, i| deleted_indexes.include? i }
+          new_params.present? ? platform_post.update!(identifier: new_params) : platform_post.delete
+        end
+      end
+
+    end
+
+    # Если есть изменения и не обновился в предыдущих платформах, то обновляем тут
+    if @content.length != @post.get_content.length
+      # отсутствие контента - это content?
+      content = @post.contents.where(has_attachments: false).first # first тому что matrix только 1 контент
+
+      if content.present?
+        content.update(text: @content)
+      elsif content.nil? && @content.length != 0
+        Content.create!(user: @post.user, post: @post, text: @content)
+      end
+    end
+
+    if @title.present? && @content.present?
+      text = "<b>#{@title}</b><br><br>#{@content}"
+    elsif @title.present? && @content.empty?
+      text = @post.title
+    else
+      text = @content
+    end
+    text = @markdown.render(text)
+
+    platform_posts.joins(:content).where(messages: { has_attachments: false }).each do |platform_post|
+      method = "rooms/#{platform_post[:identifier]["room_id"]}/send/m.room.message"
+      data = {
+          "msgtype":"m.text",
+          "format": "org.matrix.custom.html",
+          "body": text,
+          "formatted_body": text,
+          "m.new_content": {
+              "msgtype": "m.text",
+              "format": "org.matrix.custom.html",
+              "body": text,
+              "formatted_body": text,
+          },
+          "m.relates_to": {
+              "event_id": platform_post[:identifier]["event_id"],
+              "rel_type": "m.replace"
+          }
+      }
+      Matrix.post(matrix_token, method, data)
+    end
+
+    # Fix if has telegram post && attachments has caption && update from nil to text, send msg
+    fix_content = !platform_posts.joins(:content).where(messages: { has_attachments: false }).any?
+
+    if fix_content # Постим недостающее сообщение с текстом
+      channel_ids = Rails.configuration.credentials[:matrix][:room_ids]
+      channel_ids.each do |room|
+        method = "rooms/#{room}/send/m.room.message"
+        data = {
+            "msgtype":"m.text",
+            "format": "org.matrix.custom.html",
+            "body": text,
+            "formatted_body": text
+        }
+        msg = Matrix.post(matrix_token, method, data)
+        identifier = { event_id: JSON.parse(msg)["event_id"], room_id: room }
+        PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: @post.contents.where(has_attachments: false).first)
+      end
+      #elsif fix_content && @title.empty? && @content.empty? # Delete if text not present
+      #platform_posts.joins(:content).where(messages: { has_attachments: false }).each do |platform_post|
+      #method = "rooms/#{platform_post[:identifier]["room_id"]}/redact/#{platform_post[:identifier]["event_id"]}"
+      # data = { reason: "Delete post ##{platform_post.post_id}" }
+      # Matrix.post(matrix_token, method, data)
+      # platform_post.delete
+      #end
+    end
+
+    if need_delete_attachments && @attachments_count == @post.get_content_attachments.count
+      @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
+    end
   end
 end

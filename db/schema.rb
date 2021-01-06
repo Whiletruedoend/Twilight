@@ -42,9 +42,9 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
 
   create_table "item_tags", force: :cascade do |t|
     t.boolean "enabled", default: true
-    t.integer "tag_id"
+    t.bigint "tag_id"
     t.string "item_type"
-    t.integer "item_id"
+    t.bigint "item_id"
     t.index ["item_type", "item_id"], name: "index_item_tags_on_item_type_and_item_id"
     t.index ["tag_id"], name: "index_item_tags_on_tag_id"
   end
@@ -52,8 +52,8 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
   create_table "messages", force: :cascade do |t|
     t.string "type"
     t.string "text"
-    t.integer "post_id"
-    t.integer "user_id"
+    t.bigint "post_id"
+    t.bigint "user_id"
     t.boolean "has_attachments", default: false
     t.index ["post_id"], name: "index_messages_on_post_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "platform_id"
     t.integer "post_id"
-    t.integer "content_id"
+    t.bigint "content_id"
     t.index ["content_id"], name: "index_platform_posts_on_content_id"
     t.index ["platform_id"], name: "index_platform_posts_on_platform_id"
     t.index ["post_id"], name: "index_platform_posts_on_post_id"
