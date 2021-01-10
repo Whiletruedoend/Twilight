@@ -10,6 +10,7 @@
 
     <%= form_with(model: @post, local: true) do |f| %>
       <%= render 'shared/errors', object: @post %>
+      <% platforms = @post.platforms %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "Enter title...", value: @post.title }) %>
@@ -21,14 +22,41 @@
         </div>
         <div id="attachments" class="tab-pane">
           <h3>Current attachments:</h3>
-          <div class="attachments">
-          <% @post.get_content_attachments.each do |att| %>
-            <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
-            <%=check_box("deleted_attachments", att.id, {:checked => true})%> <%=att.filename%>
+          <% if platforms.empty? || platforms.values.exclude?(true)%>
+            <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="10" data-dropzone-max-files="10">
+              <%= f.file_field :attachments, multiple: true, direct_upload: true, data: { target: 'dropzone.input' } %>
+              <div class="dropzone-msg dz-message needsclick">
+                <h3 class="dropzone-msg-title">Drag here to upload or click here to browse</h3>
+                <span class="dropzone-msg-desc text-sm">10 MB file size and count maximum. Allowed file types png, jpg.</span>
+              </div>
+            </div>
           <% end %>
-          </div>
+          <% attachments = @post.get_content_attachments %>
+          <% if attachments.any? %>
+            <div class="attachments">
+            <% attachments.each do |att| %>
+              <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
+              <%=check_box("deleted_attachments", att.id, {:checked => true})%> <%=att.filename%>
+            <% end %>
+            </div>
+          <% else %>
+            <p>Post has no attachments!</p>
+          <% end %>
         </div>
         <div id="other" class="tab-pane">
+          <h3>Platforms</h3>
+          <% if platforms.any? && platforms.values.include?(true)%>
+            <div class="colorful-checkboxes">
+              <% platforms.each do |k, v| %>
+                <% if v # don't display disabled platforms %>
+                  <%=check_box("platforms", k, { :class=>"colorful-checkbox", :checked => v })%>
+                  <%=label_tag "platforms_#{k}", k.capitalize%>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <p>Platforms not found!</p>
+          <% end %>
           <h3>Tags</h3>
           <% tags = ItemTag.where(item: @post) %>
           <% if tags.present? %>

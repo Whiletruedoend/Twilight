@@ -8,11 +8,11 @@
     <article>
       <header>
         <h1>
-          <a href="/posts/<%= @post.id %>"><%= @post.title %></a>
+          <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %></a>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= @post.created_at.strftime("%d.%m.%y %H:%M") %></i></p>
         <p class="metadata">
-          <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=@post.user.login%>"><%= @post.user.login %></a>
+          <i class="fa fa-user-circle"> Автор: <a href="/posts?user=<%=@post.user.login%>"><%= @post.user.login %></a>
             <% if current_user == @post.user %> | <a href="<%=@post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=@post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
           </i>
         </p>
@@ -33,6 +33,17 @@
         <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [size, size])) %></a>
       <% end %>
       <div class="posts-content"><%= markdown(@post.get_content) %></div>
+      <hr style="border-top: dashed 2px;" />
+      <% item_tags = @post.active_tags %>
+      <% if item_tags.any? %>
+        <ul class="tags" itemprop="keywords">
+          <% item_tags.each do |item_tag| %>
+            <li><a href="<%="/posts?tags=#{item_tag.tag.id}"%>">#<%= item_tag.tag.name %></a></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <center>Тэги отсутствуют</center>
+      <% end %>
     </article>
   </div>
 </body>

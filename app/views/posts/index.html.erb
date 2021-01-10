@@ -5,14 +5,15 @@
     <center>
       <%= link_to 'На главную', root_path%>
       <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
+      <%= link_to '| Сбросить фильтры', posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
     </center>
     <% @post.each do |post| %>
     <article>
       <header>
         <h1>
-          <a href="/posts/<%= post.id %>"><%= post.title %></a>
+          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %></a>
         </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at.strftime("%d.%m.%y %H:%M") %></i></p>
+        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
           <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>

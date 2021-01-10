@@ -31,11 +31,16 @@ class UpdatePostMessages
         content.update(has_attachments: true) unless content.has_attachments
       end
       @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
+      # fix if platform was deleted, but content still exist
+      @post.contents.last(@post.contents.count-1).each {|c| c.delete} if @post.contents.count > 1
       @post.contents.update(text: @content, has_attachments: @post.get_content_attachments.present?)
       return
     end
-    update_telegram_posts
-    update_matrix_posts
+
+    posted_platforms = @post.platforms
+
+    update_telegram_posts if posted_platforms["telegram"]
+    update_matrix_posts if posted_platforms["matrix"]
   end
 
   def update_telegram_posts

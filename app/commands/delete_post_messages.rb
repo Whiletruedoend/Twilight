@@ -1,18 +1,29 @@
 class DeletePostMessages
   prepend SimpleCommand
 
-  attr_accessor :post
+  attr_accessor :post, :platform_title
 
-  def initialize(post)
+  def initialize(post, platform_title=nil)
     @post = post
+    @platform_title = platform_title
   end
 
   def call
     telegram_posts = post.platform_posts.joins(:platform).where(platforms: { title: "telegram"})
     matrix_posts = post.platform_posts.joins(:platform).where(platforms: { title: "matrix"})
 
-    delete_telegram_posts(telegram_posts) if telegram_posts.any?
-    delete_matrix_posts(matrix_posts) if matrix_posts.any?
+    if platform_title.nil?
+      delete_telegram_posts(telegram_posts) if telegram_posts.any?
+      delete_matrix_posts(matrix_posts) if matrix_posts.any?
+    else
+      case platform_title
+        when "telegram"
+          delete_telegram_posts(telegram_posts) if telegram_posts.any?
+        when "matrix"
+          delete_matrix_posts(matrix_posts) if matrix_posts.any?
+      end
+      PlatformPost.where(platform: Platform.find_by_title(platform_title), post: post).delete_all
+    end
   end
 
   def delete_telegram_posts(telegram_posts)

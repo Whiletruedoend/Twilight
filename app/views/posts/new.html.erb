@@ -30,17 +30,20 @@
         </div>
         <div id="other" class="tab-pane">
           <h3>Platforms</h3>
-          <% if Platform.last.present? %>
-            <% Platform.all.each do |platform| %>
-              <%=check_box("platforms", platform.title, {:checked => false})%> <%=platform.title%>
-            <% end %>
+          <% if Platform.any? %>
+            <div class="colorful-checkboxes">
+              <% Platform.all.each do |platform| %>
+                <%=check_box("platforms", platform.title, { :class=>"colorful-checkbox", :checked => false })%>
+                <%= label_tag "platforms_#{platform.title}", platform.title.capitalize %>
+              <% end %>
+            </div>
           <% else %>
             <p>Platforms not found!</p>
           <% end %>
           <h3>Tags</h3>
-          <% if Tag.last.present? %>
+          <% if Tag.any? %>
             <% Tag.all.each do |tag| %>
-              <%=check_box("tags", tag.id, {:checked => tag.enabled_by_default})%> <%=tag.name%>
+              <%=check_box("tags", tag.id, { :checked => tag.enabled_by_default })%> <%=tag.name%>
             <% end %>
           <% else %>
             <p>Tags not found!</p>

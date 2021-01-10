@@ -14,6 +14,14 @@ class Post < ApplicationRecord
     self.active_tags.map { |s| s.tag.name }
   end
 
+  def platforms
+    platforms = {}
+    Platform.all.each do |platform|
+      platforms.merge!(platform.title => PlatformPost.where(platform_id: platform.id, post: self).any?)
+    end
+    platforms
+  end
+
   def get_content
     text = ""
     self.contents.each do |msg|

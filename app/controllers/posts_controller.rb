@@ -8,7 +8,16 @@ class PostsController < ApplicationController
   end
 
   def index
-    @post = params.has_key?(:user) ? Post.where(user: User.find_by_login(params[:user])).order(created_at: :desc).paginate(page: params[:page]) : Post.all.order(created_at: :desc).paginate(page: params[:page])
+    user_post = if params.has_key?(:user)
+                  Post.where(user: User.find_by_login(params[:user]))
+                else
+                  Post.all
+                end
+    if user_post.present? && params.has_key?(:tags)
+      ids = user_post.joins(:active_tags).where(active_tags: {tag_id: params[:tags]}).ids.uniq
+      user_post = user_post.where(id: ids)
+    end
+    @post = user_post.order(created_at: :desc).paginate(page: params[:page])
   end
 
   def show
@@ -22,10 +31,29 @@ class PostsController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-
     if @post.update(title: posts_params[:post][:title])
       params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
-      UpdatePostMessages.call(@post, params)
+
+      result = {}
+      post_platforms = @post.platforms
+      platforms_p = params["platforms"]&.to_unsafe_h
+      if platforms_p.present?
+        platforms_p = platforms_p.each { |k, v| platforms_p[k] = !v.to_i.zero? }
+        platforms_p.each {|k, v| result[k] = v if post_platforms[k] != v }
+      end
+      if result.any?
+        result.each do |k,v|
+          if v # TODO: make it? Need2fix duplicate content when creating!
+            #params["platforms"] = { k=>(v ? 1 : 0).to_s }
+            #SendPostToPlatforms.call(@post, params)
+          else
+            DeletePostMessages.call(@post, k.to_s)
+          end
+        end
+      end
+
+      UpdatePostMessages.call(@post, params) # TODO: optimize it?
+
       redirect_to @post
     else
       render 'edit'
