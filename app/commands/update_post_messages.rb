@@ -30,7 +30,7 @@ class UpdatePostMessages
         @attachments.each { |image| content.attachments.attach(image) }
         content.update(has_attachments: true) unless content.has_attachments
       end
-      @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
+      @deleted_attachments.each { |attachment| @post.get_content_attachments.find_by_blob_id(ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == "0" } if @deleted_attachments.present?
       # fix if platform was deleted, but content still exist
       @post.contents.last(@post.contents.count-1).each {|c| c.delete} if @post.contents.count > 1
       @post.contents.update(text: @content, has_attachments: @post.get_content_attachments.present?)
@@ -97,13 +97,15 @@ class UpdatePostMessages
 
   def make_checks_attachments(platform_posts)
     if @deleted_attachments.present?
-      values = @deleted_attachments.to_unsafe_h.values
-      del_att = values.each_index.select { |index| values[index] == "0"} # indexes
+      attachments = @deleted_attachments.to_unsafe_h
+      del_att = attachments.select { |val| attachments[val] == "0"}
 
       platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
         deleted_indexes = []
 
-        del_att.each do |i|
+        del_att.each do |k,v|
+          attachment = platform_post[:identifier].select{ |att| att["blob_signed_id"] == k }
+          i = platform_post[:identifier].index { |x| attachment.include?(x) }
           Telegram.bot.delete_message({ chat_id: platform_post[:identifier][i]["chat_id"], message_id: platform_post[:identifier][i]["message_id"] })
           deleted_indexes.append(i)
         end
@@ -126,7 +128,7 @@ class UpdatePostMessages
           end
         end
       end
-      @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
+      @deleted_attachments.each { |attachment| @post.get_content_attachments.find_by_blob_id(ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == "0" } if @deleted_attachments.present?
     end
   end
 
@@ -209,13 +211,15 @@ class UpdatePostMessages
     matrix_token = Rails.configuration.credentials[:matrix][:access_token]
 
     if @deleted_attachments.present?
-      values = @deleted_attachments.to_unsafe_h.values
-      del_att = values.each_index.select { |index| values[index] == "0"} # indexes
+      attachments = @deleted_attachments.to_unsafe_h
+      del_att = attachments.select { |val| attachments[val] == "0"}
       need_delete_attachments = true if del_att.any?
 
       platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
         deleted_indexes = []
-        del_att.each do |i|
+        del_att.each do |k, v|
+          attachment = platform_post[:identifier].select{ |att| att["blob_signed_id"] == k }
+          i = platform_post[:identifier].index { |x| attachment.include?(x) }
           method = "rooms/#{platform_post[:identifier][i]["room_id"]}/redact/#{platform_post[:identifier][i]["event_id"]}"
           data = { reason: "Delete post ##{platform_post.post_id}" }
           Matrix.post(matrix_token, method, data)
@@ -298,7 +302,7 @@ class UpdatePostMessages
     end
 
     if need_delete_attachments && @attachments_count == @post.get_content_attachments.count
-      @deleted_attachments.each { |attachment| @post.get_content_attachments.find(attachment[0]).purge if attachment[1] == "0" } if @deleted_attachments.present?
+      @deleted_attachments.each { |attachment| @post.get_content_attachments.find_by_blob_id(ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == "0" } if @deleted_attachments.present?
     end
   end
 end

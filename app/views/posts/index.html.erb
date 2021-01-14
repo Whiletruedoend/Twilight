@@ -11,7 +11,11 @@
     <article>
       <header>
         <h1>
-          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %></a>
+          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %>
+            <% if post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+              <i class="fa fa-file right-small"></i>
+            <% end %>
+          </a>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
@@ -20,21 +24,7 @@
           </i>
         </p>
       </header>
-      <% post.get_content_attachments&.each do |att| %>
-        <% size = case post.get_content_attachments.count%>
-                  <% when 1 %>
-                  <% 300 %>
-                  <% when 2 %>
-                    <% 250 %>
-                  <% when 3 %>
-                    <% 200 %>
-                  <% when 4,5 %>
-                    <% 150 %>
-                  <% else %>
-                    <% 100 %>
-                  <% end %>
-        <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [size, size])) %></a>
-      <% end %>
+      <%= display_attachments(post) if post.get_content_attachments.any? %>
       <div class="posts-content"><% if post.get_content.length > 512 %>
           <%= markdown(truncate(strip_tags(post.get_content), length: 512)) %>
           <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>

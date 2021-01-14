@@ -33,10 +33,22 @@
           <% end %>
           <% attachments = @post.get_content_attachments %>
           <% if attachments.any? %>
-            <div class="attachments">
+            <div class="content-attachments">
             <% attachments.each do |att| %>
-              <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
-              <%=check_box("deleted_attachments", att.id, {:checked => true})%> <%=att.filename%>
+                <div class="attachment"> <!-- TODO? -->
+                <%  case %>
+                <%  when att.image? %>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
+                <%  when att.video? %>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(resize_to_limit: [150,150]).processed) %></a>
+                <%  when att.audio? %>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= audio_tag(url_for(att), autoplay: false, controls: true) %></a>
+                <%  else %>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for("/assets/file.png") %></a>
+                <% end %>
+
+                <%=check_box("deleted_attachments", att.blob.signed_id, {:checked => true})%> <%=att.filename%><br>
+                </div>
             <% end %>
             </div>
           <% else %>

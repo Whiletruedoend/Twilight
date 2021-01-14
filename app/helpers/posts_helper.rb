@@ -81,4 +81,33 @@ module PostsHelper
 
     content.html_safe
   end
+
+  def display_attachments(post)
+    content = ""
+    size = case post.get_content_attachments.count
+             when 1
+               300
+             when 2
+               250
+             when 3
+               200
+             when 4,5
+               150
+             else
+               100
+             end
+    post.get_content_attachments&.each do |att|
+      case
+        when att.image?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
+        when att.video?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
+        when att.audio?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+        else
+          #content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag("/assets/file.png", height: 75, width: 75)}</a>"
+      end
+    end
+    content.html_safe
+  end
 end

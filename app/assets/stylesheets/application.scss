@@ -233,11 +233,25 @@ pre.ascii {
     margin: 0 0 8px;
   }
 
-  section article header h1::after {
-    content: "------------------------------------------------------------------------------------------------";
-    position: static;
-    bottom: 10px;
-    left: 0;
+  article header h1 a {
+    .left-small {
+      font-size: 65%;
+    }
+  }
+
+  section article header{
+
+    .right-small{
+      float: right;
+      font-size: 65%;
+    }
+
+    h1::after{
+      content: "------------------------------------------------------------------------------------------------";
+      position: static;
+      bottom: 10px;
+      left: 0;
+    }
   }
 
   .tags{
@@ -256,7 +270,7 @@ pre.ascii {
   }
 }
 
-.attachments{
+.content-attachments{
   padding-bottom: 20px;
 }
 

@@ -42,6 +42,7 @@ group :development do
   gem 'listen', '~> 3.3'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  gem 'colorize'
 end
 
 group :test do
@@ -56,7 +57,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "nokogiri", ">= 1.11.0.rc4"
-gem 'bundler', '~> 2.1.4'
+gem 'bundler', '~> 2.2.4'
 gem 'devise'
 gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'rmagick'

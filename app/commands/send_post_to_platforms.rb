@@ -11,6 +11,10 @@ class SendPostToPlatforms
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
                                             disable_indented_code_blocks: true, autolink: false, tables: false,
                                             underline: false, highlight: false)
+
+    @images = ["image/gif", "image/jpeg", "image/pjpeg", "image/png", "image/webp", "image/svg+xml"]
+    @videos = ["video/mp4", "video/mpeg", "video/webm", "video/ogg"]
+    @audios = ["audio/mp4", "audio/aac", "audio/mpeg", "audio/ogg", "audio/vorbis", "audio/webm", "audio/vnd.wave", "audio/basic"]
   end
 
   def call
@@ -62,8 +66,9 @@ class SendPostToPlatforms
           data = File.read(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key))
           msg = Matrix.upload(matrix_token, filename, content_type, data)
           content_uri = JSON.parse(msg)["content_uri"]
-          width = attachment.blob[:metadata][:width]
-          height = attachment.blob[:metadata][:height]
+          width = attachment.blob[:metadata][:width].to_i
+          height = attachment.blob[:metadata][:height].to_i
+          blob_signed_id = attachment.blob.signed_id
           size = attachment.blob.byte_size
           if msg.present?
             atts.append({ content_uri: content_uri,
@@ -71,7 +76,8 @@ class SendPostToPlatforms
                           size: size,
                           content_type: content_type,
                           width: width,
-                          height: height })
+                          height: height,
+                          blob_signed_id: blob_signed_id})
           end
         end
 
@@ -80,19 +86,30 @@ class SendPostToPlatforms
           uploaded_atts = []
           atts.each do |uploaded_attachment|
             method = "rooms/#{room}/send/m.room.message"
+            info = {
+                "size": uploaded_attachment[:size],
+                "mimetype": uploaded_attachment[:content_type],
+                "w": uploaded_attachment[:width],
+                "h": uploaded_attachment[:height]
+            }
+            type = case
+                     when @images.include?(uploaded_attachment[:content_type])
+                       "m.image"
+                     when @videos.include?(uploaded_attachment[:content_type])
+                       "m.video"
+                     when @audios.include?(uploaded_attachment[:content_type])
+                       "m.audio"
+                     else
+                       "m.file"
+                   end
             data = {
-                    "msgtype":"m.image",
+                    "msgtype": type,
                     "url": uploaded_attachment[:content_uri],
                     "body": uploaded_attachment[:filename],
-                    "info": {
-                        "size": uploaded_attachment[:size],
-                        "mimetype": uploaded_attachment[:content_type],
-                        "w": uploaded_attachment[:width],
-                        "h": uploaded_attachment[:height]
-                    }
+                    "info": info
             }
             msg = Matrix.post(matrix_token, method, data)
-            uploaded_atts.append({ event_id: JSON.parse(msg)["event_id"], room_id: room })
+            uploaded_atts.append({ event_id: JSON.parse(msg)["event_id"], room_id: room, type: type, blob_signed_id: uploaded_attachment[:blob_signed_id] })
           end
           PlatformPost.create!(identifier: uploaded_atts, platform: Platform.find_by_title("matrix"), post: @post, content: content)
         end
@@ -178,12 +195,23 @@ class SendPostToPlatforms
 
   def send_telegram_attachments(channel_id, attachment_content, text=nil)
     media = upload_to_telegram(attachment_content)
-    media.first.merge!(caption: text, parse_mode: "html") if media.present? && text.present?
-
+    msg_ids = []
+    # Видео и картиночки могут стакаться, остальное - нет
     begin
-      msg = Telegram.bot.send_media_group({ chat_id: channel_id, media: media })
-      msg_ids = []
-      media.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: media[i][:media] }) }
+      types = media.map { |x| x[:type] }
+      if ((types.include?("photo") || types.include?("video")) && (types.include?("audio") || types.include?("document"))) || (types.include?("audio") && types.include?("document"))
+      # дробим контент и шлём по сообщениям
+        m = media.group_by{|x| x[:type] }
+        m["#{m.keys.last}"].last.merge!(caption: text, parse_mode: "html") if m.present? && text.present? # Last post caption
+        m.each do |k, v|
+          msg = Telegram.bot.send_media_group({ chat_id: channel_id, media: v })
+          v.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: v[i][:media], type: v[i][:type], blob_signed_id: v[i][:blob_signed_id] }) }
+        end
+      else
+        media.first.merge!(caption: text, parse_mode: "html") if media.present? && text.present? # First post caption
+        msg = Telegram.bot.send_media_group({ chat_id: channel_id, media: media })
+        media.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: media[i][:media], type: media[i][:type], blob_signed_id: media[i][:blob_signed_id] }) }
+      end
       PlatformPost.create!(identifier: msg_ids, platform: Platform.find_by_title("telegram"), post: @post, content: attachment_content)
     rescue
       Rails.logger.error("Failed create telegram message for chat #{channel_id} at #{Time.now.utc.iso8601}")
@@ -194,15 +222,25 @@ class SendPostToPlatforms
     attachment_channel = Rails.configuration.credentials[:telegram][:attachment_channel_id]
     attachment_content.attachments.order(:creation_date, :asc).map do |att|
       begin
+        blob_signed_id = att.blob.signed_id
         file = File.open(ActiveStorage::Blob.service.send(:path_for, att.blob.key))
-        msg = Telegram.bot.send_photo({ chat_id: attachment_channel, photo: file })
+        case
+          when @images.include?(att.content_type)
+            msg = Telegram.bot.send_photo({ chat_id: attachment_channel, photo: file })
+            { type: "photo", media: msg["result"]["photo"][0]["file_id"], blob_signed_id: blob_signed_id }
+          when @videos.include?(att.content_type)
+            msg = Telegram.bot.send_video({ chat_id: attachment_channel, video: file })
+            { type: "video", media: msg["result"]["video"]["file_id"], blob_signed_id: blob_signed_id }
+          when @audios.include?(att.content_type)
+            msg = Telegram.bot.send_audio({ chat_id: attachment_channel, audio: file })
+            { type: "audio", media: msg["result"]["audio"]["file_id"], blob_signed_id: blob_signed_id }
+          else
+            msg = Telegram.bot.send_document({ chat_id: attachment_channel, document: file })
+            { type: "document", media: msg["result"]["document"]["file_id"], blob_signed_id: blob_signed_id }
+        end
       rescue
         Rails.logger.error("Failed upload telegram message at #{Time.now.utc.iso8601}")
       end
-      {
-          type: "photo", # todo: add more types
-          media: msg["result"]["photo"][0]["file_id"]
-      }
     end
   end
 end
