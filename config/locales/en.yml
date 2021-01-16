@@ -1,9 +1,118 @@
 en:
-  errors:
-    messages:
-      not_saved: "Problems:"
+  main:
+    guest: guest
+    logged_as: Logged as
+    register: Register
+    log_in: Log in
+    log_out: Log out
+    links: Links
+    contacts: Contacts
+    new_post: New post
+    all_posts: All posts
+    manage_tags: Manage tags
+    please_log_in: (please, sign in)
+  auth:
+    sign_up_header: Sign up
+    sign_in_header: Sign in
+    login: Login
+    password: Password
+    password_confirmation: Password confirmation
+    captcha: Captcha
+    sign_up_button: Sign up
+    sign_in_button: Sign in
+    remember_me: Remember me?
+  posts:
+    main_page: Main page
+    add_post: Add post
+    all_posts: All posts
+    reset_filters: Reset filters
+    publish_date: Publish date
+    author: Author
+    edit_post: Edit
+    delete_post: Delete post
+    delete_post_confirm: Are you sure?
+    read_more: Read more
+    new_header: New post
+    edit_header: Edit post
+    markdown: Markdown
+    attachments: Attachments
+    current_attachments: Current attachments
+    no_attachments: Post has no attachments!
+    other: Other
+    title_placeholder: Enter title...
+    text_placeholder: Enter some text...
+    attachments_msg_title: Drag here to upload or click here to browse
+    attachments_msg_description: 10 MB file size and count maximum.
+    platforms: Platforms
+    platforms_not_found: Platforms not found!
+    tags: Tags
+    tags_not_found: Tags not found!
+    back: Back
+    back_confirm: Are you sure? Current progress will be lost!
+  tags:
+    tags_header: New tags
+    name: Name
+    new_name: New name
+    enabled_by_default: Enabled by default for users?
+    create: Create
+    rename: Rename
+    delete: Delete
+    update: Update
+    update_tags: Update tags
+    rename_tags: Rename tags
+    delete_tags: Delete tags
+    not_found: Tags not found!
+  edit:
+    token_not_generated: Token not generated!
+    password_confirmation: Password confirmation
+    current_password: Current password
+    password_may_empty: (leave blank if you don't want to change it)
+    password_confirm: (enter your current password to confirm changes)
+    sym_minimum: characters minimum
+    cancel_account: Cancel account
+    cancel_account_button: Delete account
+    cancel_account_desc: Wanna cancel this account?
+    cancel_account_confirmation: Are you sure? All posts will be deleted (not from platforms) and can't be recovered!
+    update_tags: Update tags
+    sign_up: Sign up
+    sign_in: Sign in
+    update: Update
+    password: Password
+    login: Login
+    tags: Tags
+    copy: Copy
+  devise:
+    registrations:
+      user:
+        destroyed: Your account has been deleted!
+        updated: Your account has been updated!
+        signed_up: You have successfully registered!
+    sessions:
+      user:
+        signed_in: You have successfully logged in!
+        signed_up: You have successfully registered!
+        signed_out: You have successfully signed out!
     failure:
+      user:
+        unauthenticated: Authorization required
+        invalid: Wrong login or password
+        not_found_in_database: User not found!
+      already_authenticated: You're already logged in
       messages:
         wrong_size: "is the wrong size (should be %{file_size})"
         size_too_small: "is too small (should be at least %{file_size})"
         size_too_big: "is too big (should be at most %{file_size})"
+  errors:
+    messages:
+      not_saved: "Problems:"
+  activerecord:
+    errors:
+      messages:
+        record_invalid: Record not valid!
+      models:
+        user:
+          attributes:
+            current_password:
+              blank: Current password not specified!
+            password:
+              too_short: (Password too short!)

@@ -1,32 +1,32 @@
-<h2>Log in</h2>
+<h2><%=I18n.t("auth.sign_in_header")%></h2>
 
 <div class="block">
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
   <div class="field">
-    <%= f.label :login %><br />
+    <%= f.label I18n.t("auth.login") %><br />
     <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
   </div>
 
   <div class="field">
-    <%= f.label :password %><br />
+    <%= f.label I18n.t("auth.password") %><br />
     <%= f.password_field :password, autocomplete: "current-password" %>
   </div>
 
   <% if devise_mapping.rememberable? %>
     <div class="field">
       <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
+      <%= f.label I18n.t("auth.remember_me") %>
     </div>
   <% end %>
 
-    <p><%= f.label :captcha %><br />
+    <p><%= f.label I18n.t("auth.captcha") %><br />
       <%= captcha_tag %><br>
       <%= f.text_field :captcha %>
     </p>
 
   <div class="actions">
-    <%= f.submit "Log in" %>
+    <%= f.submit I18n.t("auth.sign_in_button") %>
   </div>
 <% end %>
 </div>
-<%= render "devise/shared/links" %>
+<p><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %> | <%= link_to "#{I18n.t("edit.sign_up")}", sign_up_path %> </p>

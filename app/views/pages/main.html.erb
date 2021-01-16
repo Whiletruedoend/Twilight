@@ -48,11 +48,11 @@
     </div>
     <div class="information-right">
       <div class="block-login">
-      Logged as: <% if current_user.present? %><a href="edit"><%=current_user.login%></a><% else %>guest | <% end %> <%if current_user.present? %>| <%= link_to "Log out", "sign_out"%> <% else %> <%= link_to "Login", "sign_in"%> | <%= link_to "Register", "sign_up"%> <% end %>
-        <% if current_user.present? && current_user.is_admin %><br><a target="_blank" href="posts/new">New post</a> | <a href="posts">All posts</a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)<% end %>
-        <% if current_user.present? && current_user.is_admin %><br><a target="_blank" href="tags/manage">Manage tags</a> (<%=Tag.count%>)<% end %>
+        <%= I18n.t("main.logged_as") %>: <% if current_user.present? %><a href="edit"><%=current_user.login%></a><% else %><%= I18n.t("main.guest") %> | <% end %> <%if current_user.present? %>| <%= link_to I18n.t("main.log_out"), "sign_out"%> <% else %> <%= link_to I18n.t("main.log_in"), "sign_in"%> | <%= link_to I18n.t("main.register"), "sign_up"%> <% end %>
+        <% if current_user.present? && current_user.is_admin %><br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)<% end %>
+        <% if current_user.present? && current_user.is_admin %><br><a target="_blank" href="tags/manage"><%=I18n.t("main.manage_tags")%></a> (<%=Tag.count%>)<% end %>
       </div>
-      <div class="block"> Some links:
+      <div class="block"> <%= I18n.t("main.links") %>:
         <table>
           <tbody>
           <tr>
@@ -61,13 +61,13 @@
           </tr>
           <tr>
             <td><i class="fa fa-rss"></i></td>
-            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS (Please log in!)"%></a></td>
+            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS #{I18n.t("main.please_log_in")}"%></a></td>
           </tr>
           <%= table_link_columns %>
           </tbody>
         </table>
       </div>
-      <div class="block"> Contacts:
+      <div class="block"> <%= I18n.t("main.contacts") %>:
         <table>
           <tbody>
           <tr>

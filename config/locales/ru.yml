@@ -1,35 +1,86 @@
 ru:
-  errors:
-    messages:
-      not_saved: "Проблемы:"
-  activerecord:
-    attributes:
-      user:
-        login: Логин
-      post:
-        title: Название
-        content: Текст
-    errors:
-      messages:
-        record_invalid: Запись не валидна!
-      models:
-        user:
-          attributes:
-            current_password:
-              blank: Не указан текущий пароль!
-            password:
-              too_short: (Пароль слишком короткий!)
-    models:
-      user:
-        one: Пользователь
-        many: Пользователей
-        few: Пользователей
-        other: Пользователи
-      post:
-        one: Пост
-        many: Посты
-        few: Посты
-        other: Поста
+  main:
+    guest: гость
+    logged_as: Вошли как
+    register: Зарегистрироваться
+    log_in: Войти
+    log_out: Выйти
+    links: Ссылки
+    contacts: Контакты
+    new_post: Новый пост
+    all_posts: Все посты
+    manage_tags: Управление тэгами
+    please_log_in: (пожалуйста, войдите!)
+  auth:
+    sign_up_header: Регистрация
+    sign_in_header: Авторизация
+    login: Логин
+    password: Пароль
+    password_confirmation: Подтверждение пароля
+    captcha: Каптча
+    sign_up_button: Зарегистрироваться
+    sign_in_button: Войти
+    remember_me: Запомнить меня?
+  posts:
+    main_page: На главную
+    add_post: Добавить статью
+    all_posts: Все посты
+    reset_filters: Сбросить фильтры
+    publish_date: Дата публикации
+    author: Автор
+    edit_post: Редактировать
+    delete_post: Удалить статью
+    delete_post_confirm: Вы серьёзно?
+    read_more: Читать далее
+    new_header: Новый пост
+    edit_header: Редактировать пост
+    markdown: Текст
+    attachments: Вложения
+    current_attachments: Текущие вложения
+    no_attachments: У поста нет вложений!
+    other: Другое
+    title_placeholder: Введите заголовок...
+    text_placeholder: Введите текст...
+    attachments_msg_title: Перетащите сюда некоторые файлы
+    attachments_msg_description: "Максимальный размер (Мб) и количество файлов: 10"
+    platforms: Платформы
+    platforms_not_found: Платформы не найдены!
+    tags: Тэги
+    tags_not_found: Тэги не найдены!
+    back: Вернуться назад
+    back_confirm: Вы серьёзно? Текущий прогресс будет потерян!
+  tags:
+    tags_header: Новые тэги
+    name: Название
+    new_name: Новое название
+    enabled_by_default: Включено по-умолчанию для пользователей?
+    create: Создать
+    rename: Переименовать
+    delete: Удалить
+    update: Обновить
+    update_tags: Обновить тэги
+    rename_tags: Переименовать тэги
+    delete_tags: Удалить тэги
+    not_found: Тэги не найдены!
+  edit:
+    token_not_generated: Токен не сгенерирован!
+    password_confirmation: Подтверждение пароля
+    current_password: Текущий пароль
+    password_may_empty: (оставьте поле пустым, если не хотите его менять)
+    password_confirm: (введите текущий пароль для применения изменений)
+    sym_minimum: символов минимум
+    cancel_account: Закрыть аккаунт
+    cancel_account_button: Удалить аккаунт
+    cancel_account_desc: Хотите удалить аккаунт?
+    cancel_account_confirmation: Вы действительно хотите закрыть аккаунт? Все посты будут удалены (не из платформ) и не смогут быть восстановлены!
+    update_tags: Обновить тэги
+    sign_up: Зарегистрироваться
+    sign_in: Авторизоваться
+    update: Обновить
+    password: Пароль
+    login: Логин
+    tags: Тэги
+    copy: Скопировать
   devise:
     registrations:
       user:
@@ -51,3 +102,17 @@ ru:
         wrong_size: "is the wrong size (should be %{file_size})"
         size_too_small: "is too small (should be at least %{file_size})"
         size_too_big: "is too big (should be at most %{file_size})"
+  errors:
+    messages:
+      not_saved: "Проблемы:"
+  activerecord:
+    errors:
+      messages:
+        record_invalid: Запись не валидна!
+      models:
+        user:
+          attributes:
+            current_password:
+              blank: Не указан текущий пароль!
+            password:
+              too_short: (Пароль слишком короткий!)

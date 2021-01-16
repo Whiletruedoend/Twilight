@@ -3,9 +3,9 @@
 
   <section>
     <center>
-      <%= link_to 'На главную', root_path%>
-      <%= link_to '| Добавить статью', posts_new_path if current_user.is_admin%>
-      <%= link_to '| Сбросить фильтры', posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
+      <%= link_to I18n.t("posts.main_page"), root_path%>
+      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.is_admin%>
+      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
     </center>
     <% @post.each do |post| %>
     <article>
@@ -17,17 +17,17 @@
             <% end %>
           </a>
         </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> Дата публикации: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
+        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
-          <i class="fa fa-user-circle"> Автор: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
-          <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit">Редактировать</a> | <a href="/posts/delete/<%=post.id%>" data-confirm="Are you sure?">Удалить статью</a><% end %>
+          <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
+          <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a> | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a><% end %>
           </i>
         </p>
       </header>
       <%= display_attachments(post) if post.get_content_attachments.any? %>
       <div class="posts-content"><% if post.get_content.length > 512 %>
           <%= markdown(truncate(strip_tags(post.get_content), length: 512)) %>
-          <%= link_to '...Read more', "posts/#{post.id}", class: "read-more-#{post.id}" %>
+          <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.id}", class: "read-more-#{post.id}" %>
         <% else %>
           <%= markdown(strip_tags(post.get_content)) %>
         <% end %>

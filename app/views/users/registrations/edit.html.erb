@@ -1,8 +1,8 @@
 <h2>/home/<%= current_user.login %>/</h2>
 
 <div class="block">
-  rss_token: <br><input type="text" size="27" value="<%= current_user.rss_token || "Token not generated!" %>" id="token_field" readonly>
-  <button onclick="copy()">Copy</button>
+  rss_token: <br><input type="text" size="27" value="<%= current_user.rss_token || "#{I18n.t("edit.token_not_generated")}" %>" id="token_field" readonly>
+  <button onclick="copy()"><%= I18n.t("edit.copy") %></button>
 </div>
 
 <div class="tags-right">
@@ -11,19 +11,19 @@
     <%= render "devise/shared/error_messages", resource: resource %>
 
       <div class="field">
-        <%= f.label :current_password %><br />
+        <%= f.label I18n.t("edit.current_password") %><br />
         <%= f.password_field :current_password, autocomplete: "current-password" %>
       </div>
 
     <div class="field">
-      <%= f.label :tags %><br />
+      <%= f.label I18n.t("edit.tags") %><br />
       <% ItemTag.where(item:current_user).each do |item_tag| %>
         <%=check_box("tags", item_tag.tag.id, {:checked => item_tag.enabled})%><%=item_tag.tag.name%>
       <% end %>
     </div>
 
     <br><div class="actions">
-  <%= f.submit "Update tags" %>
+  <%= f.submit "#{I18n.t("edit.update_tags")}" %>
 </div>
   <% end %>
   </div>
@@ -34,42 +34,42 @@
 
   <div class="block">
     <br><div class="field">
-      <%= f.label :login %><br />
+      <%= f.label I18n.t("edit.login") %><br />
       <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
     </div>
 
     <div class="field">
-    <%= f.label :current_password %> <i>(enter your current password to confirm changes)</i><br />
+    <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i><br />
     <%= f.password_field :current_password, autocomplete: "current-password" %>
     </div>
 
     <br><div class="field">
-      <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+      <%= f.label I18n.t("edit.password") %> <i><%= I18n.t("edit.password_may_empty") %></i><br />
       <%= f.password_field :password, autocomplete: "new-password" %>
       <% if @minimum_password_length %>
         <br />
-        <em><%= @minimum_password_length %> characters minimum</em>
+        <em><%= @minimum_password_length %> <%=I18n.t("edit.sym_minimum")%></em>
       <% end %>
     </div>
 
     <div class="field">
-      <%= f.label :password_confirmation %><br />
+      <%= f.label I18n.t("edit.password_confirmation") %><br />
       <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
     </div>
 
     <br><div class="actions">
-      <%= f.submit "Update" %>
+      <%= f.submit I18n.t("edit.update") %>
     </div>
   <% end %>
   </div>
 
 <div class="block">
-  <h3>Cancel my account</h3>
+  <h3><%=I18n.t("edit.cancel_account")%></h3>
 
-  <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure? All posts will be deleted (not from platforms) and can't be recovered!" }, method: :delete %></p>
+  <p><%=I18n.t("edit.cancel_account_desc")%> <%= button_to I18n.t("edit.cancel_account_button"), registration_path(resource_name), data: { confirm: I18n.t("edit.cancel_account_confirmation") }, method: :delete %></p>
   <br>
 </div>
-<p><%= link_to "<--- Main page", root_path %></p>
+<p><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %></p>
 
 <script>
     function copy() {

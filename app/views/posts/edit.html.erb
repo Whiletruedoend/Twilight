@@ -1,11 +1,11 @@
 <body style="background: #181a1b;">
   <div class="container">
-    <h2>Edit post</h2>
+    <h2><%= I18n.t("posts.edit_header") %></h2>
 
     <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#markdown">Markdown</a></li>
-      <li><a data-toggle="tab" href="#attachments">Attachments</a></li>
-      <li><a data-toggle="tab" href="#other">Other</a></li>
+      <li class="active"><a data-toggle="tab" href="#markdown"><%= I18n.t("posts.markdown") %></a></li>
+      <li><a data-toggle="tab" href="#attachments"><%= I18n.t("posts.attachments") %></a></li>
+      <li><a data-toggle="tab" href="#other"><%= I18n.t("posts.other") %></a></li>
     </ul>
 
     <%= form_with(model: @post, local: true) do |f| %>
@@ -13,21 +13,21 @@
       <% platforms = @post.platforms %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
-          <%= f.text_field(:title, { class: 'form-control', placeholder: "Enter title...", value: @post.title }) %>
+          <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @post.title }) %>
           <div class="markdown-editor">
-            <%= f.text_area :content, placeholder: "Enter some text...", value: @post.get_content %>
+            <%= f.text_area :content, placeholder: "#{I18n.t("posts.text_placeholder")}", value: @post.get_content %>
             <div id="preview" class="preview"></div>
           </div>
           <p id="chars" class="chars"><%=@post.get_content.length%> chars</p>
         </div>
         <div id="attachments" class="tab-pane">
-          <h3>Current attachments:</h3>
+          <h3><%= I18n.t("posts.current_attachments") %>:</h3>
           <% if platforms.empty? || platforms.values.exclude?(true)%>
             <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="10" data-dropzone-max-files="10">
               <%= f.file_field :attachments, multiple: true, direct_upload: true, data: { target: 'dropzone.input' } %>
               <div class="dropzone-msg dz-message needsclick">
-                <h3 class="dropzone-msg-title">Drag here to upload or click here to browse</h3>
-                <span class="dropzone-msg-desc text-sm">10 MB file size and count maximum. Allowed file types png, jpg.</span>
+                <h3 class="dropzone-msg-title"><%= I18n.t("posts.attachments_msg_title") %></h3>
+                <span class="dropzone-msg-desc text-sm"><%= I18n.t("posts.attachments_msg_description") %></span>
               </div>
             </div>
           <% end %>
@@ -52,11 +52,11 @@
             <% end %>
             </div>
           <% else %>
-            <p>Post has no attachments!</p>
+            <p><%= I18n.t("posts.no_attachments") %></p>
           <% end %>
         </div>
         <div id="other" class="tab-pane">
-          <h3>Platforms</h3>
+          <h3><%= I18n.t("posts.platforms") %></h3>
           <% if platforms.any? && platforms.values.include?(true)%>
             <div class="colorful-checkboxes">
               <% platforms.each do |k, v| %>
@@ -67,20 +67,23 @@
               <% end %>
             </div>
           <% else %>
-            <p>Platforms not found!</p>
+            <p><%= I18n.t("posts.platforms_not_found") %></p>
           <% end %>
-          <h3>Tags</h3>
-          <% tags = ItemTag.where(item: @post) %>
-          <% if tags.present? %>
-            <% ItemTag.where(item: @post).each do |item| %>
-              <%=check_box("tags", item.tag.id, {:checked => item.enabled})%> <%=item.tag.name%>
+          <div class="tags">
+            <h3><%= I18n.t("posts.tags") %></h3>
+            <% tags = ItemTag.where(item: @post) %>
+            <% if tags.present? %>
+              <% ItemTag.where(item: @post).each do |item| %>
+                <%=check_box("tags", item.tag.id, {:checked => item.enabled})%> <%=item.tag.name%>
+              <% end %>
+            <% else %>
+              <p><%= I18n.t("posts.tags_not_found") %></p>
             <% end %>
-          <% else %>
-            <p>Tags not found!</p>
-          <% end %>
+          </div>
         </div>
       </div>
-      <%= f.submit %> <% end %>
+      <%= link_to "<--- #{I18n.t("posts.back")}", post_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+      <center><%= f.submit %> </center><% end %>
   </div>
 </body>
 

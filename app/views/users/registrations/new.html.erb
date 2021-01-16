@@ -1,14 +1,14 @@
-<h2>Sign up</h2>
+<h2><%=I18n.t("auth.sign_up_header")%></h2>
 <div class="block">
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
     <div class="field">
-      <%= f.label :login %><br />
+      <%= f.label I18n.t("auth.login") %><br />
       <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
     </div>
 
     <div class="field">
-      <%= f.label :password %>
+      <%= f.label I18n.t("auth.password") %>
       <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %> characters minimum)</em>
       <% end %><br />
@@ -16,16 +16,16 @@
     </div>
 
     <div class="field">
-      <%= f.label :password_confirmation %><br />
+      <%= f.label I18n.t("auth.password_confirmation") %><br />
       <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
     </div>
 
-    <p><%= f.label :captcha %><br />
+    <p><%= f.label I18n.t("auth.captcha") %><br />
       <%= captcha_tag %><br>
       <%= f.text_field :captcha %>
     </p>
 
-    <p><%= f.submit "Sign up" %></p>
+    <p><%= f.submit I18n.t("auth.sign_up_button") %></p>
   <% end %>
 </div>
-<%= render "devise/shared/links" %>
+<p><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %> | <%= link_to "#{I18n.t("edit.sign_in")}", sign_in_path %> </p>

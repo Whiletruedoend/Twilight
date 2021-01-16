@@ -13,7 +13,7 @@ module Twilight
 
     config.time_zone = 'UTC'
 
-    config.i18n.available_locales = [:en]
+    config.i18n.available_locales = [:en, :ru]
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
 
     config.credentials = config_for(:credentials)
