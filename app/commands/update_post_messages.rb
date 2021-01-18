@@ -47,14 +47,14 @@ class UpdatePostMessages
     has_attachments = @attachments.present? || @deleted_attachments.present?
     platform_posts = @post.platform_posts.where(platform: Platform.where(title: "telegram"))
 
-    make_checks(@post.platform_posts.joins(:content).where(messages: { has_attachments: false }, platform: Platform.where(title: "telegram")))
+    make_checks(@post.platform_posts.joins(:content).where(contents: { has_attachments: false }, platform: Platform.where(title: "telegram")))
     make_caption_fixes(platform_posts)
     make_checks_attachments(platform_posts) if has_attachments
     make_fixes(platform_posts) if has_attachments
   end
 
   def make_caption_fixes(platform_posts)
-    platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+    platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
 
       current_content = platform_post.content
       next_content = Content.find_by_id(platform_post.content.id+1)
@@ -78,7 +78,7 @@ class UpdatePostMessages
     contents = @post.contents
     contents.each_with_index { |c, index| contents[index+1].delete if contents[index+1].present? && (contents[index+1].text == contents[index].text) }
     if !@attachments.present? && !@deleted_attachments.present? # Fix (cuz make_checks (attachments is false) )
-      platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+      platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
         next_content = Content.find_by_id(platform_post.content.id+1)
         edit_media_caption(platform_post[:identifier][0], next_content) if next_content&.text&.present?
       end
@@ -100,7 +100,7 @@ class UpdatePostMessages
       attachments = @deleted_attachments.to_unsafe_h
       del_att = attachments.select { |val| attachments[val] == "0"}
 
-      platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+      platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
         deleted_indexes = []
 
         del_att.each do |k,v|
@@ -215,7 +215,7 @@ class UpdatePostMessages
       del_att = attachments.select { |val| attachments[val] == "0"}
       need_delete_attachments = true if del_att.any?
 
-      platform_posts.joins(:content).where(messages: { has_attachments: true }).each do |platform_post|
+      platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
         deleted_indexes = []
         del_att.each do |k, v|
           attachment = platform_post[:identifier].select{ |att| att["blob_signed_id"] == k }
@@ -254,7 +254,7 @@ class UpdatePostMessages
     end
     text = @markdown.render(text)
 
-    platform_posts.joins(:content).where(messages: { has_attachments: false }).each do |platform_post|
+    platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
       method = "rooms/#{platform_post[:identifier]["room_id"]}/send/m.room.message"
       data = {
           "msgtype":"m.text",
@@ -276,7 +276,7 @@ class UpdatePostMessages
     end
 
     # Fix if has telegram post && attachments has caption && update from nil to text, send msg
-    fix_content = !platform_posts.joins(:content).where(messages: { has_attachments: false }).any?
+    fix_content = !platform_posts.joins(:content).where(contents: { has_attachments: false }).any?
 
     if fix_content # Постим недостающее сообщение с текстом
       channel_ids = Rails.configuration.credentials[:matrix][:room_ids]
@@ -293,7 +293,7 @@ class UpdatePostMessages
         PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: @post.contents.where(has_attachments: false).first)
       end
       #elsif fix_content && @title.empty? && @content.empty? # Delete if text not present
-      #platform_posts.joins(:content).where(messages: { has_attachments: false }).each do |platform_post|
+      #platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
       #method = "rooms/#{platform_post[:identifier]["room_id"]}/redact/#{platform_post[:identifier]["event_id"]}"
       # data = { reason: "Delete post ##{platform_post.post_id}" }
       # Matrix.post(matrix_token, method, data)

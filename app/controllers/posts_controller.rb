@@ -95,6 +95,9 @@ class PostsController < ApplicationController
       DeletePostMessages.call(@post)
       ItemTag.where(item: @post).delete_all
       PlatformPost.where(post: @post).delete_all
+      comment_ids = Comment.where(post: @post).ids
+      ActiveStorage::Attachment.where(record_type: "Comment", record: comment_ids).delete_all
+      Comment.where(post: @post).delete_all
       @post.get_content_attachments&.delete_all
       Content.where(post: @post).delete_all
       @post.delete

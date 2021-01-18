@@ -8,6 +8,9 @@
     <article>
       <header>
         <h1>
+          <% if Rails.configuration.credentials[:telegram][:comments] %>
+            <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
+          <% end %>
           <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %>
             <% if @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <i class="fa fa-file left-small"></i>
@@ -36,4 +39,7 @@
       <% end %>
     </article>
   </div>
+  <% if Rails.configuration.credentials[:telegram][:comments] %>
+    <%= render "comments" %>
+  <% end %>
 </body>

@@ -22,7 +22,11 @@ class DeletePostMessages
         when "matrix"
           delete_matrix_posts(matrix_posts) if matrix_posts.any?
       end
-      PlatformPost.where(platform: Platform.find_by_title(platform_title), post: post).delete_all
+      platform = Platform.find_by_title(platform_title)
+      PlatformPost.where(platform: platform, post: post).delete_all
+      comment_ids = Comment.where(post: post).ids
+      ActiveStorage::Attachment.where(record_type: "Comment", record: comment_ids).delete_all
+      Comment.where(post: post).delete_all
     end
   end
 

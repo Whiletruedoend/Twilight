@@ -81,6 +81,9 @@ ru:
     login: Логин
     tags: Тэги
     copy: Скопировать
+  comments:
+    comment_header: Комментарии
+    comments_not_found: Комментарии отсутствуют.
   devise:
     registrations:
       user:

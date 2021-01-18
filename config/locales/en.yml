@@ -81,6 +81,9 @@ en:
     login: Login
     tags: Tags
     copy: Copy
+  comments:
+    comment_header: Comments
+    comments_not_found: Comments not found.
   devise:
     registrations:
       user:

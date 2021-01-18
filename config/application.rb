@@ -7,16 +7,15 @@ Bundler.require(*Rails.groups)
 
 module Twilight
   class Application < Rails::Application
-    config.i18n.default_locale = :en
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
-
-    config.time_zone = 'UTC'
 
     config.i18n.available_locales = [:en, :ru]
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
 
     config.credentials = config_for(:credentials)
+    config.time_zone = config.credentials[:time_zone]
+    config.i18n.default_locale = config.credentials[:locale]
 
     require 'ext/string'
 

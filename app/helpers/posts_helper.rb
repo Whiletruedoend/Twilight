@@ -110,4 +110,21 @@ module PostsHelper
     end
     content.html_safe
   end
+
+  def display_comment_attachments(comment)
+    content = ""
+    comment.attachments.each do |att|
+      case
+        when att.image?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [100, 100]))}</a>"
+        when att.video?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [100, 100]).processed)}</a>"
+        when att.audio?
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+        else
+          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag("/assets/file.png", height: 100, width: 100)}</a>"
+      end
+    end
+    content.html_safe
+  end
 end

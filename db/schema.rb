@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_03_172151) do
+ActiveRecord::Schema.define(version: 2021_01_17_091127) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -40,6 +40,30 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "comments", force: :cascade do |t|
+    t.string "text"
+    t.json "identifier"
+    t.integer "post_id"
+    t.integer "user_id"
+    t.integer "platform_user_id"
+    t.boolean "has_attachments", default: false
+    t.boolean "is_edited", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["platform_user_id"], name: "index_comments_on_platform_user_id"
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "contents", force: :cascade do |t|
+    t.string "text"
+    t.integer "post_id"
+    t.integer "user_id"
+    t.boolean "has_attachments", default: false
+    t.index ["post_id"], name: "index_contents_on_post_id"
+    t.index ["user_id"], name: "index_contents_on_user_id"
+  end
+
   create_table "item_tags", force: :cascade do |t|
     t.boolean "enabled", default: true
     t.bigint "tag_id"
@@ -47,16 +71,6 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
     t.bigint "item_id"
     t.index ["item_type", "item_id"], name: "index_item_tags_on_item_type_and_item_id"
     t.index ["tag_id"], name: "index_item_tags_on_tag_id"
-  end
-
-  create_table "messages", force: :cascade do |t|
-    t.string "type"
-    t.string "text"
-    t.bigint "post_id"
-    t.bigint "user_id"
-    t.boolean "has_attachments", default: false
-    t.index ["post_id"], name: "index_messages_on_post_id"
-    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "platform_posts", force: :cascade do |t|
@@ -69,6 +83,12 @@ ActiveRecord::Schema.define(version: 2021_01_03_172151) do
     t.index ["content_id"], name: "index_platform_posts_on_content_id"
     t.index ["platform_id"], name: "index_platform_posts_on_platform_id"
     t.index ["post_id"], name: "index_platform_posts_on_post_id"
+  end
+
+  create_table "platform_users", force: :cascade do |t|
+    t.json "identifier"
+    t.integer "platform_id"
+    t.index ["platform_id"], name: "index_platform_users_on_platform_id"
   end
 
   create_table "platforms", force: :cascade do |t|
