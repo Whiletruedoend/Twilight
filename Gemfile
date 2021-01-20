@@ -76,3 +76,4 @@ gem 'jquery-rails'
 gem 'font-awesome-rails'
 gem 'font-awesome-sass', '~> 5.15.1'
 gem 'therubyracer', :platforms => :ruby
+gem 'pg'
