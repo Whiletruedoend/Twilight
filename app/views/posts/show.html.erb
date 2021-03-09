@@ -12,7 +12,7 @@
             <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
           <% end %>
           <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %>
-            <% if @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <i class="fa fa-file left-small"></i>
             <% end %>
           </a>
@@ -24,7 +24,7 @@
           </i>
         </p>
       </header>
-      <%= display_attachments(@post) if @post.get_content_attachments.any? %>
+      <%= display_attachments(@post) if @post.get_content_attachments.present? && @post.get_content_attachments.any? %>
       <div class="posts-content"><%= markdown(@post.get_content) %></div>
       <hr style="border-top: dashed 2px;" />
       <% item_tags = @post.active_tags %>

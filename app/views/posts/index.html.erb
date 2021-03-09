@@ -15,7 +15,7 @@
             <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
           <% end %>
           <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %>
-            <% if post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <i class="fa fa-file right-small"></i>
             <% end %>
           </a>
@@ -27,7 +27,7 @@
           </i>
         </p>
       </header>
-      <%= display_attachments(post) if post.get_content_attachments.any? %>
+      <%= display_attachments(post) if post.get_content_attachments.present? && post.get_content_attachments.any? %>
       <div class="posts-content"><% if post.get_content.length > 512 %>
           <%= markdown(truncate(strip_tags(post.get_content), length: 512)) %>
           <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.id}", class: "read-more-#{post.id}" %>

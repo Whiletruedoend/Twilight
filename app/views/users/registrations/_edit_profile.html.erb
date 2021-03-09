@@ -1,0 +1,71 @@
+<div class="form-inline">
+  <h3>RSS</h3>
+  <div class="form-group">
+    <label><%="#{I18n.t("edit.token")}:"%></label>
+    <input type="text" size="28" class="form-control" id="token_field" readonly value="<%= current_user.rss_token || "#{I18n.t("edit.token_not_generated")}" %>">
+  </div>
+  <button onclick="copy()" type="submit" class="btn btn-primary"><%= I18n.t("edit.copy") %></button>
+</div>
+
+ <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+   <%= render "devise/shared/error_messages", resource: resource %>
+   <h3><%="#{I18n.t("edit.main_information")}"%></h3>
+   <div class="form-row">
+     <div class="field form-group col-md-6">
+       <%= f.label I18n.t("edit.login") %>
+       <%= f.text_field :login, class: "form-control", autofocus: true, autocomplete: "login" %>
+     </div>
+
+     <div class="field form-group col-md-6">
+       <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i>
+       <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password" %>
+     </div>
+
+     <div class="field form-group col-md-6">
+       <%= f.label I18n.t("edit.password") %>
+       <i>
+         <%= I18n.t("edit.password_may_empty") %>
+         <% if @minimum_password_length %>
+           (<%= @minimum_password_length %> <%=I18n.t("edit.sym_minimum")%>)
+         <% end %>
+       </i>
+       <%= f.password_field :password, class: "form-control", autocomplete: "new-password" %>
+     </div>
+
+     <div class="field form-group col-md-6">
+       <%= f.label I18n.t("edit.password_confirmation") %>
+       <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password" %>
+     </div>
+
+     <br>
+     <div class="actions btn btn-primary">
+       <%= f.submit I18n.t("edit.update") %>
+     </div>
+   </div>
+ <% end %>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <h3><%= I18n.t("edit.personal_tags") %></h3>
+
+  <div class="field form-group">
+    <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password", value: resource.current_password %>
+  </div>
+
+  <div class="field">
+      <%= f.label I18n.t("edit.tags") %><br />
+    <div class="colorful-tags">
+      <% ItemTag.where(item:current_user).each do |item_tag| %>
+        <div class="form-check form-check-inline">
+          <%=check_box("tags", item_tag.tag.id, { :class=>"form-check-input colorful-checkbox", :checked => item_tag.enabled, :style => "margin: auto 2px auto 2px;" })%>
+          <%=label_tag "tags_#{item_tag.tag.id}", "##{item_tag.tag.name}"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <br/>
+  <div class="actions">
+    <%= f.submit "#{I18n.t("edit.update_tags")}" %>
+  </div>
+<% end %>
+<br/>

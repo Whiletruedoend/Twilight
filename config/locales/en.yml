@@ -63,6 +63,11 @@ en:
     delete_tags: Delete tags
     not_found: Tags not found!
   edit:
+    profile_tab: Profile
+    channels_tab: Channels
+    manage_tab: Manage
+    stats_tab: Statistics
+    token: Token
     token_not_generated: Token not generated!
     password_confirmation: Password confirmation
     current_password: Current password
@@ -81,6 +86,8 @@ en:
     login: Login
     tags: Tags
     copy: Copy
+    main_information: Main Information
+    personal_tags: Personal Tags
   comments:
     comment_header: Comments
     comments_not_found: Comments not found.

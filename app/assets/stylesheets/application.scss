@@ -299,6 +299,35 @@ pre.ascii {
   padding: 0.8em 0.8em 0.8em 0.8em;
 }
 
+/* profile */
+
+      .btn-primary{
+        input, button{
+          border: 0;
+          background: inherit;
+        }
+      }
+.links {
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+
+  div {
+    float: right;
+    width: 10em;
+    max-width: 100%;
+    text-align: center;
+  }
+  div:nth-of-type(odd) {
+    float: left;
+    clear: right;
+  }
+}
+
+.custom-control-label{
+  margin-right: 5px;
+}
+
 /* useful */
 
 .header {
@@ -423,6 +452,77 @@ pre.ascii {
   .colorful-checkbox:disabled+label::before {
     border-color: #1b1b1c;
     background-color: #2E2F30;
+  }
+}
+
+/* tags */
+
+.colorful-tags{
+  display: inline;
+
+  .form-check-inline{
+    display: inline;
+  }
+
+  label{
+    font-weight: 400;
+  }
+  input[type="checkbox"]:checked + label{
+    background: #1d2021;
+    border: 2px solid #bdae93;
+    border-radius: 4px;
+    color: #6af68a;
+    font-weight: 400;
+  }
+  input[type="checkbox"] + label{
+    background: #1f2123;
+    border: 2px solid #454646;
+    border-radius: 4px;
+    color: rgb(223, 70, 85);
+    font-weight: 400;
+    margin-left: 7px;
+  }
+
+  .colorful-checkbox {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+
+  .colorful-checkbox+label {
+    text-align: center;
+    user-select: none;
+    padding-right: 0.2em;
+    min-width: 6%;
+    min-height: 5%;
+    width: auto;
+  }
+
+  .colorful-checkbox+label::before {
+    opacity:0;
+  }
+  .colorful-checkbox:checked+label::before {
+    opacity:0;
+  }
+  /* стили при наведении курсора на checkbox */
+  .colorful-checkbox:not(:disabled):not(:checked)+label:hover::before {
+    opacity:0;
+  }
+  /* стили для активного состояния чекбокса (при нажатии на него) */
+  .colorful-checkbox:not(:disabled):active+label::before {
+    opacity:0;
+  }
+  /* стили для чекбокса, находящегося в фокусе */
+  .colorful-checkbox:focus+label::before {
+    opacity:0;
+  }
+  /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+  .colorful-checkbox:focus:not(:checked)+label::before {
+    opacity:0;
+  }
+  /* стили для чекбокса, находящегося в состоянии disabled */
+  .colorful-checkbox:disabled+label::before {
+    opacity:0;
   }
 }
 

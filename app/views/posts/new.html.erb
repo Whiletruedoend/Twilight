@@ -43,9 +43,14 @@
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>
             <% if Tag.any? %>
-              <% Tag.all.each do |tag| %>
-                <%=check_box("tags", tag.id, { :checked => tag.enabled_by_default })%> <%=tag.name%>
-              <% end %>
+              <div class="colorful-tags">
+                <% Tag.all.each do |tag| %>
+                  <div class="form-check form-check-inline">
+                    <%=check_box("tags", tag.id, { :class=>"form-check-input colorful-checkbox", :checked => tag.enabled_by_default, :style => "margin: auto 2px auto 2px;" })%>
+                    <%=label_tag "tags_#{tag.id}", "##{tag.name}"%>
+                  </div>
+                <% end %>
+              </div>
             <% else %>
               <p><%= I18n.t("posts.tags_not_found") %></p>
             <% end %>

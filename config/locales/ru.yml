@@ -63,6 +63,11 @@ ru:
     delete_tags: Удалить тэги
     not_found: Тэги не найдены!
   edit:
+    profile_tab: Профиль
+    channels_tab: Каналы
+    manage_tab: Управление
+    stats_tab: Статистика
+    token: Токен
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль
@@ -81,6 +86,8 @@ ru:
     login: Логин
     tags: Тэги
     copy: Скопировать
+    main_information: Основная Информация
+    personal_tags: Персональные Тэги
   comments:
     comment_header: Комментарии
     comments_not_found: Комментарии отсутствуют.

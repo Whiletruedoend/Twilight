@@ -32,7 +32,7 @@
             </div>
           <% end %>
           <% attachments = @post.get_content_attachments %>
-          <% if attachments.any? %>
+          <% if attachments.present? && attachments.any? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>
                 <div class="attachment"> <!-- TODO? -->
@@ -73,9 +73,12 @@
             <h3><%= I18n.t("posts.tags") %></h3>
             <% tags = ItemTag.where(item: @post) %>
             <% if tags.present? %>
-              <% ItemTag.where(item: @post).each do |item| %>
-                <%=check_box("tags", item.tag.id, {:checked => item.enabled})%> <%=item.tag.name%>
-              <% end %>
+              <div class="colorful-tags">
+                <% ItemTag.where(item: @post).each do |item_tag| %>
+                  <%=check_box("tags", item_tag.tag.id, { :class=>"form-check-input colorful-checkbox", :checked => item_tag.enabled, :style => "margin: auto 2px auto 2px;" })%>
+                  <%=label_tag "tags_#{item_tag.tag.id}", "##{item_tag.tag.name}"%>
+                <% end %>
+              </div>
             <% else %>
               <p><%= I18n.t("posts.tags_not_found") %></p>
             <% end %>

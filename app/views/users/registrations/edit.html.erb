@@ -1,75 +1,39 @@
-<h2>/home/<%= current_user.login %>/</h2>
+<body style="background: #181a1b;">
+  <div class="container">
+    <h2>/home/<%= current_user.login %>/</h2>
 
-<div class="block">
-  rss_token: <br><input type="text" size="27" value="<%= current_user.rss_token || "#{I18n.t("edit.token_not_generated")}" %>" id="token_field" readonly>
-  <button onclick="copy()"><%= I18n.t("edit.copy") %></button>
-</div>
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#profile"><%=I18n.t("edit.profile_tab")%></a></li>
+      <li><a data-toggle="tab" href="#channels"><%=I18n.t("edit.channels_tab")%></a></li>
+      <li><a data-toggle="tab" href="#manage"><%=I18n.t("edit.manage_tab")%></a></li>
+      <li><a data-toggle="tab" href="#stats"><%=I18n.t("edit.stats_tab")%></a></li>
+    </ul>
 
-<div class="tags-right">
-  <div class="block-tags">
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
-
-      <div class="field">
-        <%= f.label I18n.t("edit.current_password") %><br />
-        <%= f.password_field :current_password, autocomplete: "current-password" %>
+    <div class="tab-content">
+      <div id="profile" class="tab-pane in active title">
+        <%= render "users/registrations/edit_profile" %>
       </div>
-
-    <div class="field">
-      <%= f.label I18n.t("edit.tags") %><br />
-      <% ItemTag.where(item:current_user).each do |item_tag| %>
-        <%=check_box("tags", item_tag.tag.id, {:checked => item_tag.enabled})%><%=item_tag.tag.name%>
-      <% end %>
+      <div id="channels" class="tab-pane">
+        <br/>
+        Not yet #2
+      </div>
+      <div id="manage" class="tab-pane">
+        <br/>
+        Not yet #3
+      </div>
+      <div id="stats" class="tab-pane">
+        <br/>
+        Not yet #4
+      </div>
     </div>
 
-    <br><div class="actions">
-  <%= f.submit "#{I18n.t("edit.update_tags")}" %>
-</div>
-  <% end %>
+    <div class="links">
+      <div><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %></div>
+      <div style="float: right;"><%= render "users/registrations/delete_profile" %></div>
+    </div>
+
   </div>
-</div>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="block">
-    <br><div class="field">
-      <%= f.label I18n.t("edit.login") %><br />
-      <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
-    </div>
-
-    <div class="field">
-    <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-    </div>
-
-    <br><div class="field">
-      <%= f.label I18n.t("edit.password") %> <i><%= I18n.t("edit.password_may_empty") %></i><br />
-      <%= f.password_field :password, autocomplete: "new-password" %>
-      <% if @minimum_password_length %>
-        <br />
-        <em><%= @minimum_password_length %> <%=I18n.t("edit.sym_minimum")%></em>
-      <% end %>
-    </div>
-
-    <div class="field">
-      <%= f.label I18n.t("edit.password_confirmation") %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-    </div>
-
-    <br><div class="actions">
-      <%= f.submit I18n.t("edit.update") %>
-    </div>
-  <% end %>
-  </div>
-
-<div class="block">
-  <h3><%=I18n.t("edit.cancel_account")%></h3>
-
-  <p><%=I18n.t("edit.cancel_account_desc")%> <%= button_to I18n.t("edit.cancel_account_button"), registration_path(resource_name), data: { confirm: I18n.t("edit.cancel_account_confirmation") }, method: :delete %></p>
-  <br>
-</div>
-<p><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %></p>
+</body>
 
 <script>
     function copy() {
@@ -81,3 +45,5 @@
         document.execCommand("copy");
     }
 </script>
+
+<%= javascript_include_tag 'application.js' %>
