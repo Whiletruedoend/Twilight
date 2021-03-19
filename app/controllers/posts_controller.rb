@@ -34,20 +34,14 @@ class PostsController < ApplicationController
     if @post.update(title: posts_params[:post][:title])
       params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
 
-      result = {}
-      post_platforms = @post.platforms
-      platforms_p = params["platforms"]&.to_unsafe_h
-      if platforms_p.present?
-        platforms_p = platforms_p.each { |k, v| platforms_p[k] = !v.to_i.zero? }
-        platforms_p.each {|k, v| result[k] = v if post_platforms[k] != v }
-      end
-      if result.any?
-        result.each do |k,v|
-          if v # TODO: make it? Need2fix duplicate content when creating!
+      channels_p = params["channels"]&.to_unsafe_h
+      if channels_p.present?
+        channels_p.each do |k,v|
+          if !v.to_i.zero? # TODO: make it? Need2fix duplicate content when creating!
             #params["platforms"] = { k=>(v ? 1 : 0).to_s }
             #SendPostToPlatforms.call(@post, params)
           else
-            DeletePostMessages.call(@post, k.to_s)
+            DeletePostMessages.call(@post, k)
           end
         end
       end
@@ -107,6 +101,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:_method, :id, :authenticity_token, :commit, :platforms => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :attachments])
+    params.permit(:_method, :id, :authenticity_token, :commit, :channels => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :attachments])
   end
 end

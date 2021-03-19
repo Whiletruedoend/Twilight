@@ -25,6 +25,7 @@ class TagsController < ApplicationController
     @tag.save!
     if @tag.save
       User.all.each { |usr| ItemTag.create!(item: usr, tag_id: @tag.id, enabled: tags_params[:tag][:enabled_by_default]) }
+      Post.all.each { |post| ItemTag.create!(item: post, tag_id: @tag.id, enabled: false) }
       redirect_to manage_tag_path
     else
       render :manage_tag_path

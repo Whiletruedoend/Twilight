@@ -27,6 +27,7 @@ en:
     all_posts: All posts
     reset_filters: Reset filters
     publish_date: Publish date
+    profile: Profile
     author: Author
     edit_post: Edit
     delete_post: Delete post
@@ -43,8 +44,8 @@ en:
     text_placeholder: Enter some text...
     attachments_msg_title: Drag here to upload or click here to browse
     attachments_msg_description: 10 MB file size and count maximum.
-    platforms: Platforms
-    platforms_not_found: Platforms not found!
+    channels: Channels
+    channels_not_found: Channels not found!
     tags: Tags
     tags_not_found: Tags not found!
     back: Back
@@ -88,6 +89,32 @@ en:
     copy: Copy
     main_information: Main Information
     personal_tags: Personal Tags
+  channels:
+    channels: Channels
+    new_channel: New channel
+    main: Main
+    platform: Platform
+    select_platform: Please, select platform
+    bot_token: Bot token
+    access_token: Access token
+    channel_identifier: Channel identifier
+    channel_identifier_for_att: Channel identifier for attachments
+    author_identifier: Author identifier (not bot)
+    api_server_address: API server address
+    enable_comments: Enable comments?
+    add: Add
+    edit: Edit
+    delete: Delete
+    delete_channel_confirm: Are you sure?
+    add_new_channel: Add new channel
+    channels_not_found: Channels not found!
+    need_more_channels: Need more channels?
+    comments: Comments
+    c_enabled: Enabled
+    c_disabled: Disabled
+    status: Status
+    enabled: Enabled
+    disabled: Disabled
   comments:
     comment_header: Comments
     comments_not_found: Comments not found.

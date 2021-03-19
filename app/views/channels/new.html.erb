@@ -1,0 +1,97 @@
+<body style="background: #181a1b;">
+  <div class="channels-container">
+
+    <h2><%= I18n.t("channels.new_channel") %></h2>
+    <div class="form-row">
+      <%= form_with(model: @channel) do |f| %>
+
+        <% if flash.any? %>
+          <div class="alert alert-danger" id="error_explanation">
+            <h2><%= I18n.t("errors.messages.not_saved") %></h2>
+            <% flash.each do |type, message| %>
+              <% message.each do |msg| %>
+                <% msg.each do |m| %>
+                  <ul>
+                    <li><%= m %></li>
+                  </ul>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <h3><%= I18n.t("channels.main") %></h3>
+        <div class="form-group">
+          <%= f.label I18n.t("channels.platform") %>
+          <%= f.select(:platform, Platform.all.collect {|u| [u.title, u.title]}, prompt: I18n.t("channels.select_platform"), required: true, class: "form-select form-select-sm", id: "channel_platform") %>
+        </div>
+
+        <hr style="border-top: dashed 2px;" />
+
+        <div id="telegram" class="platform-field col-sm-offset-3 col-md-offset-2" style="display:none">
+          <div class="row">
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.bot_token") %>
+              <%= f.text_field :token, { class: "form-control", autofocus: true, required: true, placeholder: "1234567890:ABCDEFGHIGKLMNOPQ-RSTUVWXYZ12345678" } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.channel_identifier") %>
+              <%= f.text_field :room, { class: "form-control", required: true, placeholder: "-0123456789000" } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.channel_identifier_for_att") %>
+              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000" } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.author_identifier") %>
+              <%= f.text_field :author, { class: "form-control", placeholder: "1234567890" } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9 field">
+              <%= f.check_box :enable_comments %>
+              <%= f.label I18n.t("channels.enable_comments") %>
+            </div>
+              <center><%= f.submit I18n.t("channels.add"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>
+          </div>
+        </div>
+
+        <div id="matrix" class="platform-field col-sm-offset-3 col-md-offset-2" style="display:none">
+          <div class="row">
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.access_token") %>
+              <%= f.text_field :token, { class: "form-control", placeholder: "...ABCDEFGHIJKLMNOPQRSTUVWXYZ...." } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.channel_identifier") %>
+              <%= f.text_field :room, { class: "form-control", autofocus: true, placeholder: "!abcDEfGHIJKlmNoPQR:matrix.org" } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.api_server_address") %>
+              <%= f.text_field :server, { class: "form-control", placeholder: "https://matrix.org/_matrix/", value: "https://matrix.org/_matrix/" } %>
+            </div>
+            <center><%= f.submit I18n.t("channels.add"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>
+          </div>
+        </div>
+
+        </div>
+      <% end %>
+    </div>
+  <center><%= link_to I18n.t("posts.back"), edit_user_path %> | <%= link_to I18n.t("posts.main_page"), root_path %></center>
+  </div>
+</body>
+
+<%= javascript_include_tag 'application.js' %>
+
+<script>
+    var alert = document.getElementsByClassName('need2hide');
+    for (var i = 0; i < alert.length; i ++) {
+        alert[i].style.display = 'none';
+    }
+
+    $('select#channel_platform').bind('change', function() {
+        $('.platform-field').hide();
+        $('.platform-field input').attr('disabled', true);
+        var selection = $(this).val();
+        $('#' + selection).show();
+        $('#' + selection + ' input').attr('disabled', false);
+    }).change();
+</script>

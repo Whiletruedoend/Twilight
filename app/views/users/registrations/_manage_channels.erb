@@ -1,0 +1,19 @@
+<% if current_user.channels.empty? %>
+  <div class="comments-container"><center><%=I18n.t("channels.channels_not_found")%> <%= link_to I18n.t("channels.add_new_channel"), new_channel_path %></center></div>
+<% else %>
+  <div class="comments-container">
+    <div class="comment-header"><%=I18n.t("channels.channels")%>:</div>
+    <% current_user.channels.each do |channel| %>
+      <div class="comment">
+        <div class="comment-avatar"><% if channel&.avatar&.present?%><%= image_tag url_for(channel.avatar) %><% end %></div>
+        <% name = channel.options&.dig("title") %>
+        <div class="comment-metadata"><%= name %> <i class="comment-small"> | <%= channel.options&.dig("username").present? ? link_to(channel.platform.title.capitalize, "https://t.me/#{channel.options&.dig("username")}" ) : channel.platform.title.capitalize %> | <a href="/channels/delete/<%=channel.id%>" data-confirm="<%= I18n.t("channels.delete_channel_confirm") %>"><%= I18n.t("channels.delete") %></a></i><i class="comment-small right">ID: <%= channel.room %></i></div>
+        <%=I18n.t("channels.status")%>: <%= channel.enabled ? I18n.t("channels.enabled") : I18n.t("channels.disabled") %><br>
+        <%=I18n.t("channels.comments")%>: <%= channel.options["comments_enabled"] ? I18n.t("channels.c_enabled") : I18n.t("channels.c_disabled") %><br>
+        Posts count: <%= channel.platform_posts.count %>
+      </div>
+      <br> <!-- May delete (reply?) -->
+    <% end %>
+    <center><%=I18n.t("channels.need_more_channels")%> <%= link_to I18n.t("channels.add_new_channel"), new_channel_path %></center>
+  </div>
+<% end %>

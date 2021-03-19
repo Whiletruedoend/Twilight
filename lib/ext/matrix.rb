@@ -1,17 +1,25 @@
 class Matrix
 
-  def self.post(token, method, data)
-    matrix_url = Rails.configuration.credentials[:matrix][:server]
+  def self.get(server, token, method, data)
+    uri = URI("#{server}client/r0/#{method}?access_token=#{token}")
+    begin
+      JSON.parse(Net::HTTP.get(uri))
+    rescue SocketError
+      { errcode: "NOT_FOUND", "error": "Server not found!" }
+    rescue JSON::ParserError
+      { errcode: "JSON_PARSE_ERROR", "error": "Json response unrecognized!" }
+    end
+  end
 
-    uri = URI("#{matrix_url}client/r0/#{method}?access_token=#{token}")
+  def self.post(server, token, method, data)
+    uri = URI("#{server}client/r0/#{method}?access_token=#{token}")
     res = Net::HTTP.post(uri, data.to_json)
     res.body
   end
 
   # https://matrix.org/docs/spec/client_server/r0.6.1#mxc-uri
-  def self.upload(token, filename, content_type, data)
-    matrix_url = Rails.configuration.credentials[:matrix][:server]
-    full_url = "#{matrix_url}media/r0/upload?access_token=#{token}&filename=#{filename}"
+  def self.upload(server, token, filename, content_type, data)
+    full_url = "#{server}media/r0/upload?access_token=#{token}&filename=#{filename}"
 
     begin # cyrillic symbols fix
       uri = URI(full_url)
@@ -26,4 +34,15 @@ class Matrix
     res.body if res.msg == "OK"
   end
 
+  def self.download(server, token, file_server, file_id, data)
+    full_url = "#{server}media/r0/download/#{file_server}/#{file_id}?access_token=#{token}"
+
+    begin # cyrillic symbols fix
+      file = URI.parse(full_url).open
+    rescue URI::InvalidURIError
+      file = URI.parse(URI.escape(full_url))
+    end
+
+    file
+  end
 end

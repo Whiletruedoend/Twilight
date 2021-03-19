@@ -3,8 +3,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.7.0'
 
+gem "activerecord", ">= 6.1.2.1"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 6.1.2'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
@@ -57,7 +58,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "nokogiri", ">= 1.11.0.rc4"
-gem 'bundler', '~> 2.2.4'
 gem 'devise'
 gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'rmagick'
@@ -69,6 +69,9 @@ gem 'telegram-bot'
 gem "mini_magick"
 gem 'image_processing'
 gem 'open-uri'
+gem 'pg'
+
+gem 'sidekiq'
 
 gem 'will_paginate', '~> 3.1.0'
 gem 'bootstrap-sass'
@@ -76,4 +79,3 @@ gem 'jquery-rails'
 gem 'font-awesome-rails'
 gem 'font-awesome-sass', '~> 5.15.1'
 gem 'therubyracer', :platforms => :ruby
-gem 'pg'

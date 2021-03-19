@@ -11,6 +11,7 @@
     <%= form_with(model: @post, local: true) do |f| %>
       <%= render 'shared/errors', object: @post %>
       <% platforms = @post.platforms %>
+      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @post }) %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @post.title }) %>
@@ -56,18 +57,18 @@
           <% end %>
         </div>
         <div id="other" class="tab-pane">
-          <h3><%= I18n.t("posts.platforms") %></h3>
-          <% if platforms.any? && platforms.values.include?(true)%>
+          <h3><%= I18n.t("posts.channels") %></h3>
+          <% if channels.any? %>
             <div class="colorful-checkboxes">
-              <% platforms.each do |k, v| %>
-                <% if v # don't display disabled platforms %>
-                  <%=check_box("platforms", k, { :class=>"colorful-checkbox", :checked => v })%>
-                  <%=label_tag "platforms_#{k}", k.capitalize%>
-                <% end %>
+              <% channels.each_with_index do |channel, index| %>
+                <% next if channels[index+1].present? && (channels[index+1].id == channel.id) # avoid matrix duplicates %>
+                <% title = channel.options&.dig("title") %>
+                <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => true })%>
+                <%= label_tag "channels_#{channel.id}", title&.capitalize %>
               <% end %>
             </div>
           <% else %>
-            <p><%= I18n.t("posts.platforms_not_found") %></p>
+            <p><%= I18n.t("posts.channels_not_found") %></p>
           <% end %>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>

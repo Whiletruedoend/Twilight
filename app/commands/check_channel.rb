@@ -1,0 +1,138 @@
+class CheckChannel
+  prepend SimpleCommand
+  include TelegramShared
+
+  attr_accessor :channel, :params
+
+  def initialize(channel, params)
+    @channel = channel
+    @params = params
+  end
+
+  def call
+    params[:channel][:platform] == "telegram" ? check_telegram : check_matrix
+  end
+
+  def check_telegram
+    bot = Telegram::Bot::Client.new(params[:channel][:token])
+    errs = []
+    options = {}
+
+    begin
+      me = bot.get_me
+    rescue Telegram::Bot::NotFound
+      errs << "Invalid bot token!"
+      return errors.add(:base, errs)
+    end
+
+    errs << "Bot can't read group messages!" if me.dig("result", "can_read_all_group_messages") != true
+
+    options.merge!(id: me["result"]["id"])
+
+    begin
+      chat = bot.get_chat(chat_id: params[:channel][:room])
+    rescue Telegram::Bot::Error
+      errs << "Channel not available! (Not found or bot access problems?)"
+    end
+
+    begin
+      chat_attachments = bot.get_chat(chat_id: params[:channel][:room_attachments])
+    rescue Telegram::Bot::Error
+      errs << "Attachments channel not available! (Not found or bot access problems?)"
+    end
+
+    errs << "Channel ID == Attachment Channel ID" if params[:channel][:room] == params[:channel][:room_attachments]
+
+    return errors.add(:base, errs) if errs.any?
+
+    room_attachments = params[:channel][:room_attachments]
+    author = params[:channel][:author]
+
+    options.merge!(room_attachments: room_attachments) if room_attachments.present?
+    options.merge!(author: author) if author.present?
+
+    comments_enabled = (params[:channel][:enable_comments] == "1")
+    options.merge!(comments_enabled: comments_enabled)
+
+    if comments_enabled
+      comment_chat_id = chat.dig("result", "linked_chat_id")
+
+      begin
+        comment_chat = bot.get_chat(chat_id: comment_chat_id)
+      rescue Telegram::Bot::Error
+        errs << "Comments chat not available! (Not found or bot access problems?)"
+        return errors.add(:base, errs) if errs.any?
+      end
+
+      unless comment_chat.dig("result","permissions","can_send_messages") || comment_chat.dig("result","permissions","can_send_media_messages")  || comment_chat.dig("result","permissions","can_send_other_messages")
+        errs << "Bot don't have permissions to send messages!"
+        return errors.add(:base, errs) if errs.any?
+      end
+
+      options.merge!(room_comments: comment_chat_id)
+    end
+
+    options.merge!(:title=>chat["result"]["title"], :username=>chat["result"]["username"])
+
+    avatar = get_chat_avatar(bot, params[:channel][:room])
+    if avatar.present?
+      file = URI.parse(avatar[:link]).open
+      @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: file.content_type)
+      options.merge!(:avatar_size=>avatar[:file_size])
+    end
+
+    @channel.options = options
+    bot
+  end
+
+  def check_matrix
+    server = params[:channel][:server] # default: https://matrix.org/_matrix/
+    token = params[:channel][:token]
+    errs = []
+
+    options = { comments_enabled: false }
+
+    # Server & access token validation
+    begin
+      method = "account/whoami"
+      info = Matrix.get(server, token, method, {})
+
+      options.merge!(user_id: info["user_id"]) if info["user_id"].present?
+
+      errs << "#{info["errcode"]}: #{info["error"]}" if info["errcode"].present?
+    rescue Exception
+      errs << "Getting about me info failed! (wrong server or access token?)"
+    end
+
+    return errors.add(:base, errs) if errs.any?
+
+    options.merge!(server: server)
+
+    # Check room state
+    room = params[:channel][:room]
+    method = "rooms/#{room}/state"
+    info = Matrix.get(server, token, method, {})
+
+    errs << "#{info["errcode"]}: #{info["error"]}" unless info.is_a?(Array)
+
+    return errors.add(:base, errs) if errs.any?
+
+    # Get chat name & avatar
+    title = Matrix.get(server, token, "rooms/#{room}/state/m.room.name", {})
+    options.merge!(:title=>title["name"]) if title["name"].present?
+
+    avatar_mx = Matrix.get(server, token, "rooms/#{room}/state/m.room.avatar", {})
+    if avatar_mx["url"].present?
+      avatar_server = avatar_mx["url"].split("/")[2]
+      avatar_id = avatar_mx["url"].split("/")[3]
+
+      avatar = Matrix.download(server, token, avatar_server, avatar_id,{})
+
+      file = avatar.open
+      @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: avatar.content_type)
+      options.merge!(:avatar_size=>avatar.size)
+    end
+
+    @channel.options = options
+  end
+end

@@ -1,6 +1,7 @@
 <body style="background: #181a1b;">
   <div class="posts-container">
     <center>
+      <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.all_posts")}", posts_url%>
       <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.is_admin%>
@@ -8,9 +9,7 @@
     <article>
       <header>
         <h1>
-          <% if Rails.configuration.credentials[:telegram][:comments] %>
-            <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
-          <% end %>
+          <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
           <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %>
             <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <i class="fa fa-file left-small"></i>
@@ -39,7 +38,5 @@
       <% end %>
     </article>
   </div>
-  <% if Rails.configuration.credentials[:telegram][:comments] %>
-    <%= render "comments" %>
-  <% end %>
+  <%= render "comments" %>
 </body>

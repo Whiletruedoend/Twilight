@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_17_091127) do
+ActiveRecord::Schema.define(version: 2021_03_12_094856) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -38,6 +38,19 @@ ActiveRecord::Schema.define(version: 2021_01_17_091127) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "channels", force: :cascade do |t|
+    t.integer "platform_id"
+    t.integer "user_id"
+    t.boolean "enabled"
+    t.string "token"
+    t.string "room"
+    t.json "options"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["platform_id"], name: "index_channels_on_platform_id"
+    t.index ["user_id"], name: "index_channels_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -74,12 +87,14 @@ ActiveRecord::Schema.define(version: 2021_01_17_091127) do
   end
 
   create_table "platform_posts", force: :cascade do |t|
-    t.json "identifier"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "platform_id"
     t.integer "post_id"
+    t.json "identifier"
     t.bigint "content_id"
+    t.bigint "channel_id"
+    t.index ["channel_id"], name: "index_platform_posts_on_channel_id"
     t.index ["content_id"], name: "index_platform_posts_on_content_id"
     t.index ["platform_id"], name: "index_platform_posts_on_platform_id"
     t.index ["post_id"], name: "index_platform_posts_on_post_id"

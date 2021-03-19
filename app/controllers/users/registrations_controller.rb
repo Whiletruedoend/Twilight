@@ -15,7 +15,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       super
       if current_user.present?
         Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
-        SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
+        #SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
       end
     else
       redirect_to(sign_up_url)
@@ -43,6 +43,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     posts = Post.where(user: current_user)
     ItemTag.where(item: posts).delete_all
     ItemTag.where(item: current_user).delete_all
+    Channel.where(user: current_user).delete_all
     PlatformPost.where(post: posts).delete_all
     posts.each { |post| post.get_content_attachments&.delete_all }
     posts.delete_all

@@ -8,7 +8,7 @@
 </div>
 
  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-   <%= render "devise/shared/error_messages", resource: resource %>
+   <%= render "users/shared/error_messages", resource: resource %>
    <h3><%="#{I18n.t("edit.main_information")}"%></h3>
    <div class="form-row">
      <div class="field form-group col-md-6">
@@ -36,11 +36,8 @@
        <%= f.label I18n.t("edit.password_confirmation") %>
        <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password" %>
      </div>
-
      <br>
-     <div class="actions btn btn-primary">
-       <%= f.submit I18n.t("edit.update") %>
-     </div>
+     <%= f.submit I18n.t("edit.update"), class: "actions btn btn-primary" %>
    </div>
  <% end %>
 
@@ -48,6 +45,7 @@
   <h3><%= I18n.t("edit.personal_tags") %></h3>
 
   <div class="field form-group">
+    <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i>
     <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password", value: resource.current_password %>
   </div>
 
@@ -64,8 +62,6 @@
   </div>
 
   <br/>
-  <div class="actions">
-    <%= f.submit "#{I18n.t("edit.update_tags")}" %>
-  </div>
+    <%= f.submit I18n.t("edit.update_tags"), class: "actions btn btn-primary" %>
 <% end %>
 <br/>

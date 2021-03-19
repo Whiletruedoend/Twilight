@@ -3,6 +3,7 @@
 
   <section>
     <center>
+      <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.is_admin%>
       <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
@@ -11,9 +12,7 @@
     <article>
       <header>
         <h1>
-          <% if Rails.configuration.credentials[:telegram][:comments] %>
-            <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
-          <% end %>
+          <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
           <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %>
             <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <i class="fa fa-file right-small"></i>

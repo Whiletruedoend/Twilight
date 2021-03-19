@@ -1,6 +1,9 @@
 @import "dropzone/dist/min/dropzone.min.css";
 @import "dropzone/dist/min/basic.min.css";
 
+$color-lightgray: #555555;
+$color-darkgray: #222426;
+
 .dropzone .dz-preview.dz-image-preview{
   background: none;
   .dz-image{
@@ -9,14 +12,14 @@
 }
 
 .dropzone .dz-preview.dz-file-preview .dz-image{
-  background: #555555;
+  background: $color-lightgray;
 }
 
 .dropzone {
-  background: #222426;
+  background: $color-darkgray;
   margin-top: 20px;
   margin-bottom: 20px;
-  border: 2px dashed #555555;
+  border: 2px dashed $color-lightgray;
 
   @apply border-2 rounded-lg border-gray-400 border-dashed;
 

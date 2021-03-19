@@ -55,6 +55,9 @@ class UpdatePostMessages
 
   def make_caption_fixes(platform_posts)
     platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+      bots_from_config = Telegram.bots_config.select{ |k,v| v == platform_post.channel.token }
+      bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
+      bot = bots_hash.first[1]
 
       current_content = platform_post.content
       next_content = Content.find_by_id(platform_post.content.id+1)
@@ -67,9 +70,9 @@ class UpdatePostMessages
       end
 
       if current_content.text&.present? # Есть caption?
-        edit_media_caption(platform_post[:identifier][0], current_content)
+        edit_media_caption(bot, platform_post[:identifier][0], current_content)
       else
-        edit_media_caption(platform_post[:identifier][0], next_content) if next_content.text&.present?
+        edit_media_caption(bot, platform_post[:identifier][0], next_content) if next_content.text&.present?
       end
     end
   end
@@ -79,16 +82,20 @@ class UpdatePostMessages
     contents.each_with_index { |c, index| contents[index+1].delete if contents[index+1].present? && (contents[index+1].text == contents[index].text) }
     if !@attachments.present? && !@deleted_attachments.present? # Fix (cuz make_checks (attachments is false) )
       platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+        bots_from_config = Telegram.bots_config.select{ |k,v| v == platform_post.channel.token }
+        bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
+        bot = bots_hash.first[1]
+
         next_content = Content.find_by_id(platform_post.content.id+1)
-        edit_media_caption(platform_post[:identifier][0], next_content) if next_content&.text&.present?
+        edit_media_caption(bot, platform_post[:identifier][0], next_content) if next_content&.text&.present?
       end
     end
   end
 
-  def edit_media_caption(first_identifier, content)
+  def edit_media_caption(bot, first_identifier, content)
     begin
       media = { type: "photo", media: first_identifier["file_id"], caption: content.text, parse_mode: "html" } # photo type ???
-      Telegram.bot.edit_message_media({ chat_id: first_identifier["chat_id"], message_id: first_identifier["message_id"], media: media })
+      bot.edit_message_media({ chat_id: first_identifier["chat_id"], message_id: first_identifier["message_id"], media: media })
         # По-хорошему если нет аттачментов нужно преобразовать media сообщение в text, но так нельзя поэтому caption удаляется если нет аттачментов
     rescue
       Rails.logger.error("Failed edit caption (BUT IT'S ALMOST NORMAL) for telegram message at #{Time.now.utc.iso8601}")
@@ -101,12 +108,16 @@ class UpdatePostMessages
       del_att = attachments.select { |val| attachments[val] == "0"}
 
       platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+        bots_from_config = Telegram.bots_config.select{ |k,v| v == platform_post.channel.token }
+        bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
+        bot = bots_hash.first[1]
+
         deleted_indexes = []
 
         del_att.each do |k,v|
           attachment = platform_post[:identifier].select{ |att| att["blob_signed_id"] == k }
           i = platform_post[:identifier].index { |x| attachment.include?(x) }
-          Telegram.bot.delete_message({ chat_id: platform_post[:identifier][i]["chat_id"], message_id: platform_post[:identifier][i]["message_id"] })
+          bot.delete_message({ chat_id: platform_post[:identifier][i]["chat_id"], message_id: platform_post[:identifier][i]["message_id"] })
           deleted_indexes.append(i)
         end
         if deleted_indexes.any?
@@ -117,9 +128,9 @@ class UpdatePostMessages
             next_content = Content.find_by_id(platform_post.content.id+1)
 
             if current_content.text&.present? # Есть caption?
-              edit_media_caption(new_params[0], current_content)
+              edit_media_caption(bot, new_params[0], current_content)
             else
-              edit_media_caption(new_params[0], next_content) if next_content.text&.present?
+              edit_media_caption(bot, new_params[0], next_content) if next_content.text&.present?
             end
 
             platform_post.update!(identifier: new_params)
@@ -137,12 +148,16 @@ class UpdatePostMessages
     edited_content_id = nil # don't delete him
 
     platform_posts.each do |platform_post|
+      bots_from_config = Telegram.bots_config.select{ |k,v| v == platform_post.channel.token }
+      bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
+      bot = bots_hash.first[1]
+
       if @length >= 4096
         @only_one_post = false
         clear_text = @next_post ? 0 : @title.length + 9
         platform_post.content.update(text: @text[clear_text...4096])
         begin
-          Telegram.bot.edit_message_text({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"], text: @text[clear_text...4096] })
+          bot.edit_message_text({ chat_id: platform_post[:identifier]["chat_id"], message_id: platform_post[:identifier]["message_id"], text: @text[clear_text...4096] })
         rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
           Rails.logger.error("Failed edit telegram message at #{Time.now.utc.iso8601}")
         end
@@ -160,11 +175,11 @@ class UpdatePostMessages
             begin
               new_text = @markdown.render(@text)
               new_text = new_text.replace_html_to_tg_markdown
-              msg = Telegram.bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html" })
+              msg = bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't send (if bot don't have access to message)
               Rails.logger.error("Failed send telegram message at #{Time.now.utc.iso8601}")
             end
-            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: content)
+            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: content, channel_id: channel.channel.id )
           end
           next
         end
@@ -178,7 +193,7 @@ class UpdatePostMessages
             begin
               new_text = @markdown.render(@text[clear_text...4096])
               new_text = new_text.replace_html_to_tg_markdown
-              Telegram.bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html" })
+              bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html" })
             rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
               Rails.logger.error("Failed edit telegram message at #{Time.now.utc.iso8601}")
             end
@@ -191,7 +206,7 @@ class UpdatePostMessages
           other_channels.each do |channel|
             next if edited_content_id.present? && (edited_content_id == channel.content&.id)
             begin
-            Telegram.bot.delete_message({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"] })
+              bot.delete_message({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"] })
             rescue # Message don't delete (bot don't have access to message)
               Rails.logger.error("Failed delete telegram message at #{Time.now.utc.iso8601}")
             end
@@ -208,21 +223,22 @@ class UpdatePostMessages
     platform_posts = @post.platform_posts.where(platform: Platform.where(title: "matrix"))
     need_delete_attachments = false
 
-    matrix_token = Rails.configuration.credentials[:matrix][:access_token]
-
     if @deleted_attachments.present?
       attachments = @deleted_attachments.to_unsafe_h
       del_att = attachments.select { |val| attachments[val] == "0"}
       need_delete_attachments = true if del_att.any?
 
       platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+        matrix_token = platform_post.channel.token
+        server = platform_post.channel.options["server"]
+
         deleted_indexes = []
         del_att.each do |k, v|
           attachment = platform_post[:identifier].select{ |att| att["blob_signed_id"] == k }
           i = platform_post[:identifier].index { |x| attachment.include?(x) }
           method = "rooms/#{platform_post[:identifier][i]["room_id"]}/redact/#{platform_post[:identifier][i]["event_id"]}"
           data = { reason: "Delete post ##{platform_post.post_id}" }
-          Matrix.post(matrix_token, method, data)
+          Matrix.post(server, matrix_token, method, data)
           deleted_indexes.append(i)
         end
         if deleted_indexes.any?
@@ -255,6 +271,8 @@ class UpdatePostMessages
     text = @markdown.render(text)
 
     platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
+      matrix_token = platform_post.channel.token
+      server = platform_post.channel.options["server"]
       method = "rooms/#{platform_post[:identifier]["room_id"]}/send/m.room.message"
       data = {
           "msgtype":"m.text",
@@ -272,25 +290,27 @@ class UpdatePostMessages
               "rel_type": "m.replace"
           }
       }
-      Matrix.post(matrix_token, method, data)
+      Matrix.post(server, matrix_token, method, data)
     end
 
     # Fix if has telegram post && attachments has caption && update from nil to text, send msg
     fix_content = !platform_posts.joins(:content).where(contents: { has_attachments: false }).any?
 
     if fix_content # Постим недостающее сообщение с текстом
-      channel_ids = Rails.configuration.credentials[:matrix][:room_ids]
-      channel_ids.each do |room|
-        method = "rooms/#{room}/send/m.room.message"
+      channel_ids = @post.user.channels.where(platform: Platform.find_by_title("matrix")).map do |channel|
+        { id: channel.id, room: channel.room , token: channel.token, server: channel.options["server"]  }
+      end
+      channel_ids.each do |channel|
+        method = "rooms/#{channel[:room]}/send/m.room.message"
         data = {
             "msgtype":"m.text",
             "format": "org.matrix.custom.html",
             "body": text,
             "formatted_body": text
         }
-        msg = Matrix.post(matrix_token, method, data)
-        identifier = { event_id: JSON.parse(msg)["event_id"], room_id: room }
-        PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: @post.contents.where(has_attachments: false).first)
+        msg = Matrix.post(channel[:server], channel[:token], method, data)
+        identifier = { event_id: JSON.parse(msg)["event_id"], room_id: channel[:room] }
+        PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: @post.contents.where(has_attachments: false).first, channel_id: channel[:id])
       end
       #elsif fix_content && @title.empty? && @content.empty? # Delete if text not present
       #platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|

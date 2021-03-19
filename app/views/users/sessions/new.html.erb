@@ -1,32 +1,51 @@
-<h2><%=I18n.t("auth.sign_in_header")%></h2>
+<div class="row">
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <%= render "users/shared/error_messages", resource: resource %>
 
-<div class="block">
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label I18n.t("auth.login") %><br />
-    <%= f.text_field :login, autofocus: true, autocomplete: "login" %>
-  </div>
-
-  <div class="field">
-    <%= f.label I18n.t("auth.password") %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label I18n.t("auth.remember_me") %>
+    <div class="col-xs-12 col-sm-4 col-md-4 col-sm-offset-3 col-md-offset-4">
+      <h2><%=I18n.t("auth.sign_in_header")%></h2>
+      <hr>
+      <div class="form-group">
+        <%= f.text_field :login, { class: "form-control input-lg", autofocus: true, autocomplete: "login", placeholder: "Login" } %>
+      </div>
+      <div class="row">
+        <% if @minimum_password_length %>
+          <div class="col-xs-8 col-sm-4 col-md-9">
+            (<%= @minimum_password_length %> characters minimum)
+          </div>
+        <% end %>
+        <div class="col-xs-12 col-sm-4 col-md-12">
+          <div class="form-group">
+            <%= f.password_field :password, { class: "form-control input-lg", autocomplete: "current-password", placeholder: "Password"} %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-6">
+          <div class="form-group">
+            <%= f.text_field :captcha, { class: "form-control input-lg", placeholder: "Captcha" } %>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-6">
+          <div class="form-group">
+            <center><%= captcha_tag %></center>
+          </div>
+        </div>
+      </div>
+      <% if devise_mapping.rememberable? %>
+        <div class="field">
+          <%= f.check_box :remember_me %>
+          <%= f.label I18n.t("auth.remember_me") %>
+        </div>
+      <% end %>
+      <hr>
+      <center> <%= f.submit I18n.t("auth.sign_in_button"), class: "btn btn-primary btn-lg" %> </center>
     </div>
   <% end %>
-
-    <p><%= f.label I18n.t("auth.captcha") %><br />
-      <%= captcha_tag %><br>
-      <%= f.text_field :captcha %>
-    </p>
-
-  <div class="actions">
-    <%= f.submit I18n.t("auth.sign_in_button") %>
-  </div>
-<% end %>
 </div>
-<p><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %> | <%= link_to "#{I18n.t("edit.sign_up")}", sign_up_path %> </p>
+
+<center><br/>
+  <p>
+    <%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %> | <%= link_to "#{I18n.t("edit.sign_up")}", sign_up_path %>
+  </p>
+</center>

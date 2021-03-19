@@ -24,15 +24,59 @@
  *= require font-awesome
  */
 
+$bg: #181a1b;
+
+$color-link-light: #22c6c6;
+$color-link: #10A0A0;
+$color-link-dark: #0c6a6a;
+
+$color-avatar-bg: #3E5A68;
+$color-avatar-border: #FBFBFB;
+
+$color-green-light: #a1bfa1;
+$color-green: #5cb85c;
+$color-green-bright: #6af68a;
+
+$color-red: #df4655;
+$color-red-dark: #631119;
+
+$color-wrapper: #515151;
+
+$color-lightgray: #555555;
+$color-nav-almostgray: #3939398c;
+$color-gray: #2E2F30;
+$color-darkgray: #222426;
+$color-verydarkgrey: #1b1b1c;
+
+$color-almostblack: #121414;
+
+$color-scrollbar-light: #454a4d;
+$color-scrollbar-dark: #202324;
+
+$color-darkpurple: #31303b;
+
+$color-checkbox-bg: #1f2123;
+$color-checkbox-border: #454646;
+$color-checkbox-checked-bg: #1d2021;
+$color-checkbox-checked-border: #bdae93;
+
+$color-code-bg: #222426;
+
+$font: #f0f0f0;
+$font-link: #b3b3b3;
+
+$color-white: #ffffff;
+$color-black: #000000;
+
 code{
   /* #cc241d */
-  background-color: rgb(34, 36, 38);
-  color: #22c6c6;
+  background-color: $color-code-bg;
+  color: $color-link-light;
 }
 
 body {
-  color: white;
-  background: black;
+  color: $color-white;
+  background-color: $color-black;
   font-family: Hack, serif;
   /* line-height: 1.3rem; */
   letter-spacing: -0.010em;
@@ -47,7 +91,7 @@ tr, th, td{
 }
 
 footer{
-  border-top: solid 2px #31303b !important;
+  border-top: solid 2px $color-darkpurple !important;
   bottom: 0;
   padding: 1em;
   position: static;
@@ -56,21 +100,21 @@ footer{
 }
 
 a{
-  color: #10A0A0;
+  color: $color-link;
   outline: none;
   text-decoration: none;
   border-bottom-color: transparent;
 }
 
 a:hover {
-  color: #0c6a6a;
+  color: $color-link-dark;
 }
 
 input, button{
-  border: solid #2E2F30;
+  border: solid $color-gray;
   border-radius: 8px;
-  color: white;
-  background: #31303b;
+  color: $color-white;
+  background: $color-darkpurple;
 }
 
 hr{
@@ -100,13 +144,13 @@ hr{
 }
 
 .block{
-  border-left: solid 4px #31303b !important;
+  border-left: solid 4px $color-darkpurple !important;
   margin: 0.8em 0 1em 0;
   padding: 0.8em 0 0.8em 4em;
 }
 
 .block-login{
-  border-left: solid 4px #31303b !important;
+  border-left: solid 4px $color-darkpurple !important;
   margin: 0.8em 0 1em 0;
   padding: 0.5em 0 0.8em 2em;
 }
@@ -116,7 +160,7 @@ pre.ascii {
   line-height: 1.6em;
   border: none;
   font-family: "Source Code Pro", monospace;
-  color: white;
+  color: $color-white;
   background-color: inherit;
   margin: 0;
   padding: 0;
@@ -132,7 +176,7 @@ pre.ascii {
 
 /* posts new, edit */
 
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{ color: #22c6c6; background-color: #3939398c; }
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{ color: $color-link-light; background-color: $color-nav-almostgray; }
 
 .tab-content{
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
@@ -154,9 +198,9 @@ pre.ascii {
   }
   .form-control{
     height: 100%;
-    background-color: #222426;
-    border-color: #555555;
-    color: white;
+    background-color: $color-darkgray;
+    border-color: $color-lightgray;
+    color: $color-white;
   }
 
   .markdown-editor{
@@ -164,12 +208,12 @@ pre.ascii {
     display: flex;
     width: 100%;
     height: 40em;
-    scrollbar-color: #202324 #454a4d;
+    scrollbar-color: $color-scrollbar-dark $color-scrollbar-light;
 
     textarea{
       margin-right: 10px;
-      background-color: #222426;
-      border-color: #555555;
+      background-color: $color-darkgray;
+      border-color: $color-lightgray;
       resize: none;
       height: 97%;
       max-height: 97%;
@@ -180,8 +224,8 @@ pre.ascii {
   .preview{
     height: 97%;
     max-height: 97%;
-    border: 1px solid #555555;
-    background-color: #222426;
+    border: 1px solid $color-lightgray;
+    background-color: $color-darkgray;
     overflow-y: scroll;
     width: 50%;
     padding: 10px;
@@ -190,9 +234,9 @@ pre.ascii {
 
 .field input{
   border: 1px solid white;
-  color: white;
+  color: $color-white;
   border-radius: 8px;
-  background: #31303b;
+  background: $color-darkpurple;
 }
 
 /* post */
@@ -216,8 +260,8 @@ pre.ascii {
 .posts-container{
   line-height: 1.5rem;
   font-size: 16px;
-  background-color: rgb(18, 20, 20);
-  color: rgb(240, 240, 240);
+  background-color: $color-almostblack;
+  color: $font;
   box-sizing: border-box;
   max-width: 60%;
   margin: 0 auto;
@@ -276,15 +320,41 @@ pre.ascii {
     display: inline-block;
     padding: .25em .4em;
     border-radius: .25rem;
-    background-color: #2E2F30;
-    a{ color: rgb(240, 240, 240); }
-    a:hover{ color: rgb(179, 179, 179); }
+    background-color: $color-gray;
+    a{ color: $font; }
+    a:hover{ color: $font-link; }
   }
 }
 
 .content-attachments{
   padding-bottom: 20px;
 }
+
+/* channels */
+
+.channels-container{
+  line-height: 1.5rem;
+  font-size: 16px;
+  background-color: $color-almostblack;
+  color: $font;
+  box-sizing: border-box;
+  max-width: 60%;
+  margin: 0 auto;
+  padding: 20px 10px;
+
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-style: normal;
+  font-weight: normal;
+
+  select{
+    color: $color-almostblack;
+  }
+
+  .btn{
+    margin-top: 2%;
+  }
+}
+
 
 /* tags */
 
@@ -294,19 +364,13 @@ pre.ascii {
 }
 
 .block-tags{
-  border: solid 4px #31303b !important;
+  border: solid 4px $color-darkpurple !important;
   margin: 0.8em 0 1em 0;
   padding: 0.8em 0.8em 0.8em 0.8em;
 }
 
 /* profile */
 
-      .btn-primary{
-        input, button{
-          border: 0;
-          background: inherit;
-        }
-      }
 .links {
   display: inline-block;
   width: 100%;
@@ -343,6 +407,14 @@ pre.ascii {
   margin-left: 13.654321%;
 }
 
+.alert{
+  padding: 0px 10px 5px 10px;
+}
+
+.alert-danger{
+  margin: 2% 20% auto 20%;
+}
+
 /* WTF */
 
 .tooltip {
@@ -353,8 +425,8 @@ pre.ascii {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 140px;
-  background-color: #555;
-  color: #fff;
+  background-color: $color-lightgray;
+  color: $color-white;
   text-align: center;
   border-radius: 6px;
   padding: 5px;
@@ -375,7 +447,7 @@ pre.ascii {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: $color-lightgray transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
@@ -390,11 +462,11 @@ pre.ascii {
     font-weight: 400;
   }
   input[type="checkbox"]:checked + label{
-    color: #6af68a;
+    color: $color-green-bright;
     font-weight: 400;
   }
   input[type="checkbox"] + label{
-    color: rgb(223, 70, 85);
+    color: $color-red;
     font-weight: 400;
   }
 
@@ -416,8 +488,8 @@ pre.ascii {
     display: inline-block;
     width: 1em;
     height: 1em;
-    background-color: #631119;
-    border: 1px solid #631119;
+    background-color: $color-red-dark;
+    border: 1px solid $color-red-dark;
     border-radius: 0.25em;
     margin-right: 0.2em;
     background-repeat: no-repeat;
@@ -426,32 +498,32 @@ pre.ascii {
   }
 
   .colorful-checkbox:checked+label::before {
-    border-color: #5cb85c;
-    background-color: #5cb85c;
+    border-color: $color-green;
+    background-color: $color-green;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
   }
 
   /* стили при наведении курсора на checkbox */
   .colorful-checkbox:not(:disabled):not(:checked)+label:hover::before {
-    border-color: #631119;
+    border-color: $color-red-dark;
   }
   /* стили для активного состояния чекбокса (при нажатии на него) */
   .colorful-checkbox:not(:disabled):active+label::before {
-    background-color: #a1bfa1;
-    border-color: #a1bfa1;
+    background-color: $color-green-light;
+    border-color: $color-green-light;
   }
   /* стили для чекбокса, находящегося в фокусе */
   .colorful-checkbox:focus+label::before {
-    box-shadow: 0 0 0 0.1rem #1b1b1c;
+    box-shadow: 0 0 0 0.1rem $color-verydarkgrey;
   }
   /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
   .colorful-checkbox:focus:not(:checked)+label::before {
-    border-color: #631119;
+    border-color: $color-red-dark;
   }
   /* стили для чекбокса, находящегося в состоянии disabled */
   .colorful-checkbox:disabled+label::before {
-    border-color: #1b1b1c;
-    background-color: #2E2F30;
+    border-color: $color-verydarkgrey;
+    background-color: $color-gray;
   }
 }
 
@@ -468,17 +540,17 @@ pre.ascii {
     font-weight: 400;
   }
   input[type="checkbox"]:checked + label{
-    background: #1d2021;
-    border: 2px solid #bdae93;
+    background: $color-checkbox-checked-bg;
+    border: 2px solid $color-checkbox-checked-border;
     border-radius: 4px;
-    color: #6af68a;
+    color: $color-green-bright;
     font-weight: 400;
   }
   input[type="checkbox"] + label{
-    background: #1f2123;
-    border: 2px solid #454646;
+    background: $color-checkbox-bg;
+    border: 2px solid $color-checkbox-border;
     border-radius: 4px;
-    color: rgb(223, 70, 85);
+    color: $color-red;
     font-weight: 400;
     margin-left: 7px;
   }
@@ -528,13 +600,17 @@ pre.ascii {
 
 /* comments */
 
+.comments-width{
+  max-width: 60%;
+}
+
 .comments-container{
   font-size: 16px;
-  background-color: rgb(18, 20, 20);
-  color: rgb(240, 240, 240);
+  background-color: $color-almostblack;
+  color: $font;
   box-sizing: border-box;
-  max-width: 60%;
-  margin: 0 auto;
+  /* max-width: 60%; */
+  margin: 2% auto;
   padding: 20px 10px;
 
   line-height: normal;
@@ -554,7 +630,7 @@ pre.ascii {
     .wrapper {
       width: 300px;
       height: 300px;
-      border: 5px solid #515151;
+      border: 5px solid $color-wrapper;
     }
 
     .comment-avatar{
@@ -569,8 +645,8 @@ pre.ascii {
       width: 75px;
       height: 75px;
 
-      background: #3E5A68;
-      border: 1px solid #FBFBFB;
+      background: $color-avatar-bg;
+      border: 1px solid $color-avatar-border;
       box-sizing: border-box;
       border-radius: 90px;
 

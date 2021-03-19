@@ -1,8 +1,9 @@
 # https://github.com/telegram-bot-rb/telegram-bot#controller
 class TelegramController < Telegram::Bot::UpdatesController
+  include TelegramShared
 
-  def initialize(bot = nil, update = nil)
-    @channel_ids = Rails.configuration.credentials[:telegram][:channel_ids]
+  def initialize(bot=nil, update=nil)
+    @channel_ids = Channel.where(enabled: true).map { |ch| ch.room }
     @telegram_platform = Platform.find_by_title("telegram")
     super
   end
@@ -206,7 +207,7 @@ class TelegramController < Telegram::Bot::UpdatesController
       tg_fname = message["chat"]["title"]
       tg_lname = nil
       tg_username = message["chat"]["username"] # @uname
-      avatar = get_chat_avatar(tg_user)
+      avatar = get_chat_avatar(self.bot, tg_user)
     else
       tg_fname = message["from"]["first_name"]
       tg_lname = message["from"]["last_name"]
@@ -245,31 +246,15 @@ class TelegramController < Telegram::Bot::UpdatesController
 
   def get_avatar(tg_user)
     begin
-      photos_msg = Telegram.bot.get_user_profile_photos(user_id: tg_user)
+      photos_msg = self.bot.get_user_profile_photos(user_id: tg_user)
     rescue
       photos_msg = nil
     end
     if photos_msg.present? && photos_msg["result"]["total_count"] >= 1
       photo = photos_msg["result"]["photos"].first[0]
       file_id = photo["file_id"]
-      file_path = Telegram.bot.get_file(file_id: file_id)["result"]["file_path"]
-      { link: "https://api.telegram.org/file/bot#{Telegram.bot.token}/#{file_path}", file_size: photo["file_size"] }
-    else
-      nil
-    end
-  end
-
-  def get_chat_avatar(chat_id)
-    begin
-      photo_msg = Telegram.bot.get_chat(chat_id: chat_id)
-    rescue
-      photo_msg = nil
-    end
-    if photo_msg.present? && photo_msg["result"]["photo"].present?
-      photo = photo_msg["result"]["photo"]
-      file_id = photo["big_file_id"]
-      file_path = Telegram.bot.get_file(file_id: file_id)["result"]["file_path"]
-      { link: "https://api.telegram.org/file/bot#{Telegram.bot.token}/#{file_path}", file_size: "1" } # lol
+      file_path = self.bot.get_file(file_id: file_id)["result"]["file_path"]
+      { link: "https://api.telegram.org/file/bot#{self.bot.token}/#{file_path}", file_size: photo["file_size"] }
     else
       nil
     end
@@ -289,8 +274,8 @@ class TelegramController < Telegram::Bot::UpdatesController
 
     return nil if file_id.nil?
     puts("TG: ATTACHMENT FOUND!".red) if Rails.env.development?
-    msg = Telegram.bot.get_file(file_id: file_id)
+    msg = self.bot.get_file(file_id: file_id)
 
-    { :link => "https://api.telegram.org/file/bot#{Telegram.bot.token}/#{msg["result"]["file_path"]}", :caption => message["caption"], :file_id => file_id, :file_size => msg["result"]["file_size"], :file_name => msg["result"]["file_path"].split('/').last, :media_group_id => message["media_group_id"] }
+    { :link => "https://api.telegram.org/file/bot#{self.bot.token}/#{msg["result"]["file_path"]}", :caption => message["caption"], :file_id => file_id, :file_size => msg["result"]["file_size"], :file_name => msg["result"]["file_path"].split('/').last, :media_group_id => message["media_group_id"] }
   end
 end

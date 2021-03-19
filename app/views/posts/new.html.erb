@@ -29,16 +29,17 @@
           </div>
         </div>
         <div id="other" class="tab-pane">
-          <h3><%= I18n.t("posts.platforms") %></h3>
-          <% if Platform.any? %>
+          <h3><%= I18n.t("posts.channels") %></h3>
+          <% if @current_user.channels.where(enabled: true).any? %>
             <div class="colorful-checkboxes">
-              <% Platform.all.each do |platform| %>
-                <%=check_box("platforms", platform.title, { :class=>"colorful-checkbox", :checked => false })%>
-                <%= label_tag "platforms_#{platform.title}", platform.title.capitalize %>
+              <% @current_user.channels.where(enabled: true).each do |channel| %>
+                <% title = channel.options&.dig("title") %>
+                <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
+                <%= label_tag "channels_#{channel.id}", title&.capitalize %>
               <% end %>
             </div>
           <% else %>
-            <p><%= I18n.t("posts.platforms_not_found") %></p>
+            <p><%= I18n.t("posts.channels_not_found") %></p>
           <% end %>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>
@@ -58,7 +59,8 @@
         </div>
       </div>
       <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
-      <center><%= f.submit %> </center> <% end %>
+      <center><%= f.submit %> </center>
+    <% end %>
   </div>
 
 </body>

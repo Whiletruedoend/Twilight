@@ -3,7 +3,10 @@ Rails.application.routes.draw do
   devise_for :user, path: '', controllers: {sessions: 'users/sessions', registrations:'users/registrations'}
 
   resources :posts, except: [:destroy]
-  resources :users
+
+  resources :users, except: [:edit]
+  post '/edit', to: 'users#edit', as: :edit_user
+
   resources :tags, only: [:create, :destroy]
   #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
   #get '/sign_in', to: 'user_sessions#new', as: :sign_in
@@ -19,6 +22,9 @@ Rails.application.routes.draw do
 
   post '/posts/new', to: 'posts#new'
   get 'posts/delete/:id', to: 'posts#destroy', as: :post_path
+
+  resources :channels, except: [:index, :show, :destroy]
+  get 'channels/delete/:id', to: 'channels#destroy', as: :channel_path
 
   root to: 'pages#main'
 

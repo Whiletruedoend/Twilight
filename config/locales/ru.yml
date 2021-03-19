@@ -27,6 +27,7 @@ ru:
     all_posts: Все посты
     reset_filters: Сбросить фильтры
     publish_date: Дата публикации
+    profile: Профиль
     author: Автор
     edit_post: Редактировать
     delete_post: Удалить статью
@@ -43,8 +44,8 @@ ru:
     text_placeholder: Введите текст...
     attachments_msg_title: Перетащите сюда некоторые файлы
     attachments_msg_description: "Максимальный размер (Мб) и количество файлов: 10"
-    platforms: Платформы
-    platforms_not_found: Платформы не найдены!
+    channels: Каналы
+    channels_not_found: Каналы не найдены!
     tags: Тэги
     tags_not_found: Тэги не найдены!
     back: Вернуться назад
@@ -88,6 +89,32 @@ ru:
     copy: Скопировать
     main_information: Основная Информация
     personal_tags: Персональные Тэги
+  channels:
+    channels: Каналы
+    new_channel: Новый канал
+    main: Основное
+    platform: Платформа
+    select_platform: Пожалуйста, выберите платформу
+    bot_token: Токен бота
+    access_token: Токен доступа
+    channel_identifier: Идентификатор канала
+    channel_identifier_for_att: Идентификатор канала для аттачментов
+    author_identifier: Идентификатор автора (не бота)
+    api_server_address: Адрес сервера API
+    enable_comments: Включить комментарии?
+    add: Добавить
+    edit: Изменить
+    delete: Удалить
+    delete_channel_confirm: Вы серьёзно?
+    add_new_channel: Добавить новый канал
+    channels_not_found: Каналы не найдены!
+    need_more_channels: Нужно больше каналов?
+    comments: Комментарии
+    c_enabled: Включены
+    c_disabled: Отключены
+    status: Статус
+    enabled: Включен
+    disabled: Выключен
   comments:
     comment_header: Комментарии
     comments_not_found: Комментарии отсутствуют.
