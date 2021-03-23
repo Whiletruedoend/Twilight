@@ -17,6 +17,7 @@ production:
 #development:
 #  adapter: postgresql
 #  host: localhost
+#  port: 5432
 #  username: twilight
 #  password: pass
 #  database: twilight
@@ -27,6 +28,7 @@ production:
 #production:
 #  adapter: postgresql
 #  host: localhost
+#  port: 5432
 #  username: twilight
 #  password: pass
 #  database: twilight

@@ -5,7 +5,7 @@
     <center>
       <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
-      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.is_admin%>
+      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.present? && current_user.is_admin%>
       <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
     </center>
     <% @post.each do |post| %>
@@ -13,12 +13,14 @@
       <header>
         <h1>
           <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
-          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %>
+          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
+            <%= render "privacy-icons", object: post %>
             <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-              <i class="fa fa-file right-small"></i>
+            <a><i class="fa fa-file right-small"></i></a>
             <% end %>
           </a>
         </h1>
+        <div class="beba"></div>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>

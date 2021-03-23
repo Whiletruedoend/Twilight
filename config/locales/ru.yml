@@ -50,6 +50,10 @@ ru:
     tags_not_found: Тэги не найдены!
     back: Вернуться назад
     back_confirm: Вы серьёзно? Текущий прогресс будет потерян!
+    privacy: Видимость
+    privacy_public: Для всех
+    privacy_registered: Только участники
+    privacy_onlyme: Только я
   tags:
     tags_header: Новые тэги
     name: Название

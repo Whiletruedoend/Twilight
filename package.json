@@ -7,6 +7,9 @@
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "5.2.1",
     "dropzone": "^5.7.2",
+    "elliptic": "6.5.4",
+    "is-svg": "4.2.2",
+    "ssri": "8.0.1",
     "stimulus": "^2.0.0",
     "turbolinks": "^5.2.0"
   },

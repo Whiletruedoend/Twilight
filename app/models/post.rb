@@ -33,4 +33,18 @@ class Post < ApplicationRecord
   def get_content_attachments
     Content.where(post: self).map{ |c| c.attachments }&.first
   end
+
+  def check_privacy(current_user)
+    return false if self.nil?
+    case self.privacy
+      when 0
+        true
+      when 1
+        return current_user.present?
+      when 2
+        return self.user == current_user
+      else
+        false
+    end
+  end
 end

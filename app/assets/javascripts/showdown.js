@@ -44,7 +44,7 @@ function getDefaultOpts (simple) {
       type: 'integer'
     },
     parseImgDimensions: {
-      defaultValue: false,
+      defaultValue: true,
       describe: 'Turn on/off image dimension parsing',
       type: 'boolean'
     },

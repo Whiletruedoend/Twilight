@@ -50,6 +50,10 @@ en:
     tags_not_found: Tags not found!
     back: Back
     back_confirm: Are you sure? Current progress will be lost!
+    privacy: Privacy
+    privacy_public: Public
+    privacy_registered: Only registered users
+    privacy_onlyme: Only me
   tags:
     tags_header: New tags
     name: Name

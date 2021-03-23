@@ -70,6 +70,10 @@
           <% else %>
             <p><%= I18n.t("posts.channels_not_found") %></p>
           <% end %>
+          <div class="form-group">
+            <h3><%= I18n.t("posts.privacy") %></h3>
+            <%= f.select(:privacy, [[I18n.t("posts.privacy_public"), 0], [I18n.t("posts.privacy_registered"), 1], [I18n.t("posts.privacy_onlyme"), 2]], required: true) %>
+          </div>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>
             <% tags = ItemTag.where(item: @post) %>

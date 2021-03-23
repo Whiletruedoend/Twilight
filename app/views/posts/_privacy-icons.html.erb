@@ -1,0 +1,14 @@
+<% case object.privacy %>
+  <% when 1 %>
+    <% if object.platform_posts.any? %>
+      <div class="fa fa-lock blue-icon"></div>
+    <% else %>
+      <div class="fa fa-lock green-icon"></div>
+    <% end %>
+  <% when 2 %>
+    <% if object.platform_posts.any? %>
+      <div class="fa fa-lock red-icon"></div>
+    <% else %>
+      <div class="fa fa-lock twilight-icon"></div>
+    <% end %>
+<% end %>

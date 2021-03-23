@@ -269,6 +269,7 @@ class UpdatePostMessages
       text = @content
     end
     text = @markdown.render(text)
+    text = text.replace_html_to_mx_markdown if text.present?
 
     platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
       matrix_token = platform_post.channel.token

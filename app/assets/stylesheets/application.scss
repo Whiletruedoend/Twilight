@@ -221,6 +221,12 @@ pre.ascii {
     }
   }
 
+  /* Privacy menu */
+  select{
+    background-color: #222426;
+    border: 1px dashed #555;
+  }
+
   .preview{
     height: 97%;
     max-height: 97%;
@@ -329,6 +335,13 @@ pre.ascii {
 .content-attachments{
   padding-bottom: 20px;
 }
+
+/* privacy icons */
+
+.green-icon{ color: $color-green; }
+.blue-icon { color: #1375b2; }
+.twilight-icon{ color: #4e518b; }
+.red-icon { color: #df4655; }
 
 /* channels */
 

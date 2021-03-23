@@ -83,7 +83,8 @@ class SendPostToPlatforms
     # No content - no post :\
     Content.where(post: @post).each do |content|
       title = @post.title
-      content_text = @markdown.render(@post.get_content) if @post.get_content.present?
+      content_text = @markdown.render(content.text) if content.text.present? #if @post.get_content.present?
+      content_text = content_text.replace_html_to_mx_markdown if content_text.present?
       text = title.present? ? "<b>#{title}</b><br><br>#{content_text}" : "#{content_text}"
 
       if content.has_attachments?
