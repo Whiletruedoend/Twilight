@@ -329,6 +329,7 @@ DEPENDENCIES
   redcarpet
   rmagick
   rollbar
+  rubyzip
   sass-rails (>= 6)
   selenium-webdriver
   sidekiq

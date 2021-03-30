@@ -1,0 +1,28 @@
+<body style="background: #181a1b;">
+  <div class="container">
+    <center><h2><%= I18n.t("posts.import") %></h2></center>
+
+    <%= form_tag(import_post_path, multipart: false) do |form| %>
+      <center>
+        <div id="attachments" class="import-form">
+          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="10" data-dropzone-max-files="1">
+            <%= file_field_tag :file, multiple: false, direct_upload: true, data: { target: 'dropzone.input' } %>
+            <div class="dropzone-msg dz-message needsclick">
+              <h4 class="dropzone-msg-title"><%= I18n.t("posts.attachments_msg_title") %></h4>
+              <span class="dropzone-msg-desc text-sm"><%= I18n.t("posts.import_msg") %></span>
+            </div>
+          </div>
+          <%= submit_tag I18n.t("posts.import") %>
+
+          <div class="links">
+            <div><%= link_to "<--- #{I18n.t("posts.all_posts")}", posts_path %></div>
+            <div style="float: right;"><%= link_to "#{I18n.t("posts.profile")} --->", edit_user_path %></div>
+          </div>
+        </div>
+      </center>
+    <% end %>
+
+  </div>
+</body>
+
+<%= javascript_include_tag 'application.js' %>

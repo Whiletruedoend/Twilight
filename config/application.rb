@@ -19,6 +19,7 @@ module Twilight
 
     require 'ext/string'
     require 'ext/matrix'
+    require 'ext/zip_file_generator'
 
     def secret_key_base
       if Rails.env.test? || Rails.env.development?

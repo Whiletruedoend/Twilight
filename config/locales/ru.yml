@@ -54,6 +54,9 @@ ru:
     privacy_public: Для всех
     privacy_registered: Только участники
     privacy_onlyme: Только я
+    export: Экспорт
+    import: Импорт
+    import_msg: Поддерживаются только .md файлы!
   tags:
     tags_header: Новые тэги
     name: Название

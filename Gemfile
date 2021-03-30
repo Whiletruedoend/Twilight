@@ -70,6 +70,7 @@ gem "mini_magick"
 gem 'image_processing'
 gem 'open-uri'
 gem 'pg'
+gem 'rubyzip'
 
 gem 'sidekiq'
 

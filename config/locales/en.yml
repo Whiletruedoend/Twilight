@@ -54,6 +54,9 @@ en:
     privacy_public: Public
     privacy_registered: Only registered users
     privacy_onlyme: Only me
+    export: Export
+    import: Import
+    import_msg: Supports only .md file format!
   tags:
     tags_header: New tags
     name: Name

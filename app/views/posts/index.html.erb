@@ -6,6 +6,7 @@
       <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.present? && current_user.is_admin%>
+      <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user.present? && current_user.is_admin%>
       <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
     </center>
     <% @post.each do |post| %>
@@ -21,10 +22,14 @@
           </a>
         </h1>
         <div class="beba"></div>
-        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%y.%m.%d %H:%M") %></i></p>
+        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>
-          <% if current_user == post.user %> | <a href="posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a> | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a><% end %>
+          <% if current_user == post.user %>
+            | <a href="/posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
+            | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
+            | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
+          <% end %>
           </i>
         </p>
       </header>
