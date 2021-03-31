@@ -262,7 +262,7 @@ class SendPostToPlatforms
 
   def upload_to_telegram(bot, room_attachments, attachment_content)
     attachment_channel = room_attachments
-    attachment_content.attachments.order(:creation_date, :asc).map do |att|
+    attachment_content.attachments.order("created_at ASC").map do |att|
       begin
         blob_signed_id = att.blob.signed_id
         file = File.open(ActiveStorage::Blob.service.send(:path_for, att.blob.key))
