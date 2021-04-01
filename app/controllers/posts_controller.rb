@@ -98,7 +98,8 @@ class PostsController < ApplicationController
       item_posts = ItemTag.select { |item| (item.item_type == "Post") && (user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }
       item_posts.map!{ |item| item.item_id }.reject { |v| v.nil? }
       if item_posts.any?
-        @posts = Post.where(id: all_posts.reject{ |post| item_posts.exclude?(post) }).order(created_at: :desc)
+        post_without_tags = Post.where(id: all_posts).without_active_tags.map{ |p| p.id }
+        @posts = Post.where(id: (all_posts.reject{ |post| item_posts.exclude?(post) }+post_without_tags)).order(created_at: :desc)
       else
         @posts = Post.where(id: all_posts).order(created_at: :desc)
       end
