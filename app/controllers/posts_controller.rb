@@ -219,6 +219,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:_method, :id, :authenticity_token, :commit, :channels => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :attachments, :privacy])
+    params.permit(:_method, :id, :authenticity_token, :commit, :channels => {}, :options => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :attachments, :privacy])
   end
 end

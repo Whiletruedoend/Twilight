@@ -1,0 +1,26 @@
+<div id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="card">
+    <div class="card-header" role="tab" id="headingTwo">
+      <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#add" aria-expanded="false" aria-controls="add">
+        <%=I18n.t("comments.add")%>
+      </a>
+    </div>
+    <div id="add" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="card-block">
+        <%= form_with(model: Comment, :method => 'put', :remote => true) do  |f| %>
+          <%= hidden_field(:comment, :post, { value: @post.id }) %>
+          <div id="markdown" class="tab-pane in active title">
+            <div class="comment-editor">
+              <%= f.text_area :content, { id: "comments_content", placeholder: "#{I18n.t("posts.text_placeholder")}" } %>
+            </div>
+            <p><br><%= f.submit I18n.t("channels.add")%><br></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_include_tag 'application.js' %>
+<%= javascript_include_tag 'showdown.min.js' %>
+<%= javascript_include_tag 'script.js' %>

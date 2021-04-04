@@ -21,7 +21,6 @@
             <% end %>
           </a>
         </h1>
-        <div class="beba"></div>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.login%>"><%= post.user.login %></a>

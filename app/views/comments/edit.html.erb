@@ -1,0 +1,33 @@
+<body style="background: #181a1b;">
+<div class="container">
+  <h2><%= I18n.t("comments.edit_header") %></h2>
+
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#markdown"><%= I18n.t("posts.markdown") %></a></li>
+    <li><a data-toggle="tab" href="#attachments"><%= I18n.t("posts.attachments") %></a></li>
+  </ul>
+
+  <%= form_with(model: @comment, local: true) do |f| %>
+    <%= render 'shared/errors', object: @comment %>
+
+    <div class="tab-content">
+      <div id="markdown" class="tab-pane in active title">
+        <div class="markdown-editor">
+          <%= f.text_area :content, { id: "post_content", placeholder: "#{I18n.t("posts.text_placeholder")}", value: @comment.text } %>
+          <div id="preview" class="preview"></div>
+        </div>
+        <p id="chars" class="chars"><%=@comment.text.length%> chars</p>
+      </div>
+      <div id="attachments" class="tab-pane title">
+        Not yet! D:
+      </div><br>
+
+    </div>
+    <%= link_to "<--- #{I18n.t("posts.back")}", post_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+    <center><%= f.submit %> </center><% end %>
+</div>
+</body>
+
+<%= javascript_include_tag 'application.js' %>
+<%= javascript_include_tag 'showdown.min.js' %>
+<%= javascript_include_tag 'script.js' %>

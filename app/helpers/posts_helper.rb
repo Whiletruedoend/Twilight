@@ -18,7 +18,7 @@ module PostsHelper
     end
   end
 
-  def get_image_link(att)
+  def get_full_attachment_link(att)
     "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}#{url_for(att)}"
   end
 

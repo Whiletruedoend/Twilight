@@ -18,9 +18,11 @@ class CheckChannel
     errs = []
     options = {}
 
+    return if params[:channel][:enabled].present? && params[:channel][:enabled] == "0" # when disable from settings
+
     begin
       me = bot.get_me
-    rescue Telegram::Bot::NotFound
+    rescue Telegram::Bot::Error
       errs << "Invalid bot token!"
       return errors.add(:base, errs)
     end
@@ -51,6 +53,8 @@ class CheckChannel
     options.merge!(room_attachments: room_attachments) if room_attachments.present?
     options.merge!(author: author) if author.present?
 
+    options.merge!(notifications_enabled: (params[:channel][:enable_notifications] == "1"))
+
     comments_enabled = (params[:channel][:enable_comments] == "1")
     options.merge!(comments_enabled: comments_enabled)
 
@@ -76,9 +80,17 @@ class CheckChannel
 
     avatar = get_chat_avatar(bot, params[:channel][:room])
     if avatar.present?
-      file = URI.parse(avatar[:link]).open
-      @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: file.content_type)
+      if @channel.options&.dig("avatar_size").nil? || (@channel.options["avatar_size"].present? && @channel.options["avatar_size"] != avatar[:file_size])
+        file = URI.parse(avatar[:link]).open
+        @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: file.content_type)
+      end
       options.merge!(:avatar_size=>avatar[:file_size])
+    elsif avatar.nil? && @channel.avatar.present?
+      #remove channel avatar
+      options.merge!(:avatar_size=>0)
+      @channel.avatar.purge
+    else
+      options.merge!(:avatar_size=>0)
     end
 
     @channel.options = options
@@ -92,6 +104,8 @@ class CheckChannel
 
     options = { comments_enabled: false }
 
+    return if params[:channel][:enabled].present? && params[:channel][:enabled] == "0" # when disable from settings
+
     # Server & access token validation
     begin
       method = "account/whoami"
@@ -99,7 +113,7 @@ class CheckChannel
 
       options.merge!(user_id: info["user_id"]) if info["user_id"].present?
 
-      errs << "#{info["errcode"]}: #{info["error"]}" if info["errcode"].present?
+      errs << "#{info[:errcode]}: #{info[:error]}" if info[:errcode].present?
     rescue Exception
       errs << "Getting about me info failed! (wrong server or access token?)"
     end
@@ -128,9 +142,16 @@ class CheckChannel
 
       avatar = Matrix.download(server, token, avatar_server, avatar_id,{})
 
-      file = avatar.open
-      @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: avatar.content_type)
+      if @channel.options&.dig("avatar_size").nil? || (@channel.options["avatar_size"].present? && @channel.options["avatar_size"] != avatar.size)
+        file = avatar.open
+        @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: avatar.content_type)
+      end
       options.merge!(:avatar_size=>avatar.size)
+    elsif avatar_mx["url"].nil? && @channel.avatar.present?
+      options.merge!(:avatar_size=>0)
+      @channel.avatar.purge
+    else
+      options.merge!(:avatar_size=>0)
     end
 
     @channel.options = options

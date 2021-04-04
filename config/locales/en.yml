@@ -80,7 +80,7 @@ en:
     password_confirmation: Password confirmation
     current_password: Current password
     password_may_empty: (leave blank if you don't want to change it)
-    password_confirm: (enter your current password to confirm changes)
+    password_confirm: (enter to confirm changes)
     sym_minimum: characters minimum
     cancel_account: Cancel account
     cancel_account_button: Delete account
@@ -96,10 +96,12 @@ en:
     copy: Copy
     main_information: Main Information
     personal_tags: Personal Tags
+    avatar: Avatar
   channels:
     channels: Channels
     new_channel: New channel
     main: Main
+    options: Options
     platform: Platform
     select_platform: Please, select platform
     bot_token: Bot token
@@ -110,6 +112,7 @@ en:
     api_server_address: API server address
     enable_comments: Enable comments?
     add: Add
+    update: Update
     edit: Edit
     delete: Delete
     delete_channel_confirm: Are you sure?
@@ -117,14 +120,25 @@ en:
     channels_not_found: Channels not found!
     need_more_channels: Need more channels?
     comments: Comments
+    enable: Enable
     c_enabled: Enabled
     c_disabled: Disabled
     status: Status
     enabled: Enabled
     disabled: Disabled
+    edit_header: Channel settings
+    local: Local
+    global: Global
+    option_enable_notifications: Enable notifications?
   comments:
     comment_header: Comments
     comments_not_found: Comments not found.
+    edit_header: Edit comment
+    blog: Blog
+    telegram: Telegram
+    add: Add new comment
+    edit: Edit
+    delete: Delete comment
   devise:
     registrations:
       user:

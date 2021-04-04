@@ -175,7 +175,12 @@ class UpdatePostMessages
             begin
               new_text = @markdown.render(@text)
               new_text = new_text.replace_html_to_tg_markdown
-              msg = bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html" })
+
+              # если несколько сообщений, берём последнее, ибо какая разница, всё равно одни и те же опции
+              options = platform_post[:identifier].is_a?(Array) ? platform_post[:identifier].last["options"] : platform_post[:identifier]["options"]
+              option_notification = options.dig("enable_notifications") || false
+
+              msg = bot.send_message({ chat_id: channel[:identifier]["chat_id"], text: new_text, parse_mode: "html", disable_notification: !option_notification })
             rescue # Message don't send (if bot don't have access to message)
               Rails.logger.error("Failed send telegram message at #{Time.now.utc.iso8601}")
             end
@@ -193,7 +198,7 @@ class UpdatePostMessages
             begin
               new_text = @markdown.render(@text[clear_text...4096])
               new_text = new_text.replace_html_to_tg_markdown
-              bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html" })
+              bot.edit_message_text({ chat_id: channel[:identifier]["chat_id"], message_id: channel[:identifier]["message_id"], text: new_text, parse_mode: "html"})
             rescue # Message don't edit (if you previous text == current text || if bot don't have access to message)
               Rails.logger.error("Failed edit telegram message at #{Time.now.utc.iso8601}")
             end

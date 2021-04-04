@@ -30,12 +30,23 @@
         </div>
         <div id="other" class="tab-pane">
           <h3><%= I18n.t("posts.channels") %></h3>
+
           <% if @current_user.channels.where(enabled: true).any? %>
             <div class="colorful-checkboxes">
               <% @current_user.channels.where(enabled: true).each do |channel| %>
                 <% title = channel.options&.dig("title") %>
-                <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
-                <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                <% if channel.platform.title == "telegram" %>
+                  <%=check_box("channels", channel.id, { "data-toggle" => "collapse", "data-target"=>"#options-#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                  <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                  <div id="options-<%=channel.id%>" class="collapse">
+                    * <%=check_box("options", "enable_notifications_#{channel.id}", { :id=> "enable_notifications_#{channel.id}", :class=>"colorful-checkbox", :checked => channel.options["notifications_enabled"] })%>
+                    <%= label_tag "enable_notifications_#{channel.id}", "Enable notifications?" %>
+                  </div>
+                  <% else %>
+                  <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
+                  <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                <% end %>
+                <br>
               <% end %>
             </div>
           <% else %>
@@ -51,7 +62,7 @@
               <div class="colorful-tags">
                 <% Tag.all.each do |tag| %>
                   <div class="form-check form-check-inline">
-                    <%=check_box("tags", tag.id, { :class=>"form-check-input colorful-checkbox", :checked => tag.enabled_by_default, :style => "margin: auto 2px auto 2px;" })%>
+                    <%=check_box("tags", tag.id, { :class=>"form-check-input colorful-checkbox", :checked => false, :style => "margin: auto 2px auto 2px;" })%>
                     <%=label_tag "tags_#{tag.id}", "##{tag.name}"%>
                   </div>
                 <% end %>
@@ -66,7 +77,6 @@
       <center><%= f.submit %> </center>
     <% end %>
   </div>
-
 </body>
 
 <%= javascript_include_tag 'application.js' %>

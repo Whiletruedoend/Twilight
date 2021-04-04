@@ -9,6 +9,8 @@ class User < ApplicationRecord
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: "item_tags", :as => :item, foreign_key: "item_id", :dependent => :delete_all
   has_many :active_tags, -> { active("User") }, class_name: 'ItemTag', foreign_key: "item_id"
 
+  has_one_attached :avatar
+
   validates :login, presence: true, uniqueness: true
   before_create :generate_rss
 

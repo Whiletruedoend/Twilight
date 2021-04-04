@@ -30,6 +30,10 @@ Rails.application.routes.draw do
   resources :channels, except: [:index, :show, :destroy]
   get 'channels/delete/:id', to: 'channels#destroy', as: :channel_path
 
+  put '/comments', to: 'comments#create', as: :create_comments_path
+  resources :comments, only: [:create, :edit, :update]
+  get 'comments/delete/:id', to: 'comments#destroy', as: :comment_path
+
   root to: 'pages#main'
 
   telegram_webhook TelegramController

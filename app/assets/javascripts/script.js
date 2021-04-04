@@ -1,4 +1,3 @@
-
 // showdown
 
 showdown.setOption('strikethrough', 'true');

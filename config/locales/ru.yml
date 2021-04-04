@@ -80,7 +80,7 @@ ru:
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль
     password_may_empty: (оставьте поле пустым, если не хотите его менять)
-    password_confirm: (введите текущий пароль для применения изменений)
+    password_confirm: (введите для применения изменений)
     sym_minimum: символов минимум
     cancel_account: Закрыть аккаунт
     cancel_account_button: Удалить аккаунт
@@ -96,10 +96,12 @@ ru:
     copy: Скопировать
     main_information: Основная Информация
     personal_tags: Персональные Тэги
+    avatar: Аватар
   channels:
     channels: Каналы
     new_channel: Новый канал
     main: Основное
+    options: Дополнительно
     platform: Платформа
     select_platform: Пожалуйста, выберите платформу
     bot_token: Токен бота
@@ -110,6 +112,7 @@ ru:
     api_server_address: Адрес сервера API
     enable_comments: Включить комментарии?
     add: Добавить
+    update: Обновить
     edit: Изменить
     delete: Удалить
     delete_channel_confirm: Вы серьёзно?
@@ -117,14 +120,25 @@ ru:
     channels_not_found: Каналы не найдены!
     need_more_channels: Нужно больше каналов?
     comments: Комментарии
+    enable: Включить
     c_enabled: Включены
     c_disabled: Отключены
     status: Статус
     enabled: Включен
     disabled: Выключен
+    edit_header: Настройки канала
+    local: Локальные
+    global: Глобальные
+    option_enable_notifications: Включить уведомления?
   comments:
     comment_header: Комментарии
     comments_not_found: Комментарии отсутствуют.
+    edit_header: Редактировать комментарий
+    blog: Блог
+    telegram: Telegram
+    add: Добавить комментарий
+    edit: Редактировать
+    delete: Удалить
   devise:
     registrations:
       user:

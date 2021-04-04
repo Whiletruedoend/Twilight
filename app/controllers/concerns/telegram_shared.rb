@@ -10,8 +10,10 @@ module TelegramShared
     if photo_msg.present? && photo_msg["result"]["photo"].present?
       photo = photo_msg["result"]["photo"]
       file_id = photo["big_file_id"]
-      file_path = bot.get_file(file_id: file_id)["result"]["file_path"]
-      { link: "https://api.telegram.org/file/bot#{bot.token}/#{file_path}", file_size: "1" } # lol
+      file_msg = bot.get_file(file_id: file_id)
+      file_path = file_msg["result"]["file_path"]
+      file_size = file_msg["result"]["file_size"] || "1"
+      { link: "https://api.telegram.org/file/bot#{bot.token}/#{file_path}", file_size: file_size } # lol
     else
       nil
     end

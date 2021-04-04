@@ -8,6 +8,8 @@ class SendPostToPlatforms
     @post = post
     @attachments = @params[:post][:attachments]
     @channels = nil
+    @options = @params[:options]
+    @options = @options&.to_unsafe_h&.inject({}) { |h, (k, v)| h[k] = !v.to_i.zero?; h } if @options.present?
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
                                             disable_indented_code_blocks: true, autolink: false, tables: false,
@@ -206,6 +208,11 @@ class SendPostToPlatforms
       bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
       bot = bots_hash.first[1]
 
+      #disable_notification = @options[channel.id.to_sym]
+      options = {}
+      option_notification = @options.dig("enable_notifications_#{channel[:id]}") || false
+      options.merge!(enable_notifications: option_notification)
+
       created_messages.each do |message|
 
         has_attachments = message.has_attachments
@@ -219,14 +226,14 @@ class SendPostToPlatforms
           #bot = Telegram::Bot::Client.new(channel[:token])
           if first_message && has_attachments
             if att_with_caption
-              text.present? ? send_telegram_attachments(bot, channel[:id], channel[:room], channel[:room_attachments], attachment_content, text) : send_telegram_attachments(bot, channel[:id], channel[:room], channel[:room_attachments], attachment_content)
+              text.present? ? send_telegram_attachments(bot, channel, options, attachment_content, text) : send_telegram_attachments(bot, channel, options, attachment_content)
               break
             else
-              send_telegram_attachments(bot, channel[:id], channel[:room], channel[:room_attachments], attachment_content)
+              send_telegram_attachments(bot, channel, options, attachment_content)
             end
           else
-            msg = bot.send_message({ chat_id: channel[:room], text: text, parse_mode: "html" })
-            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"] }, platform: Platform.find_by_title("telegram"), post: @post, content: message, channel_id: channel[:id])
+            msg = bot.send_message({ chat_id: channel[:room], text: text, parse_mode: "html", disable_notification: !option_notification })
+            PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"], options: options }, platform: Platform.find_by_title("telegram"), post: @post, content: message, channel_id: channel[:id])
           end
         rescue
           Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
@@ -235,8 +242,8 @@ class SendPostToPlatforms
     end
   end
 
-  def send_telegram_attachments(bot, channel_id, channel_room, room_attachments, attachment_content, text=nil)
-    media = upload_to_telegram(bot, room_attachments, attachment_content)
+  def send_telegram_attachments(bot, channel, options, attachment_content, text=nil)
+    media = upload_to_telegram(bot, channel[:room_attachments], attachment_content)
     msg_ids = []
     # Видео и картиночки могут стакаться, остальное - нет
     begin
@@ -246,17 +253,17 @@ class SendPostToPlatforms
         m = media.group_by{|x| x[:type] }
         m["#{m.keys.last}"].last.merge!(caption: text, parse_mode: "html") if m.present? && text.present? # Last post caption
         m.each do |k, v|
-          msg = bot.send_media_group({ chat_id: channel_room, media: v })
-          v.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: v[i][:media], type: v[i][:type], blob_signed_id: v[i][:blob_signed_id] }) }
+          msg = bot.send_media_group({ chat_id: channel[:room], media: v, disable_notification: !(options.dig(:enable_notifications)) })
+          v.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: v[i][:media], type: v[i][:type], blob_signed_id: v[i][:blob_signed_id], options: options }) }
         end
       else
         media.first.merge!(caption: text, parse_mode: "html") if media.present? && text.present? # First post caption
-        msg = bot.send_media_group({ chat_id: channel_room, media: media })
-        media.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: media[i][:media], type: media[i][:type], blob_signed_id: media[i][:blob_signed_id] }) }
+        msg = bot.send_media_group({ chat_id: channel[:room], media: media, disable_notification: !(options.dig(:enable_notifications)) })
+        media.count.times { |i| msg_ids.append({ chat_id: msg["result"][0]["chat"]["id"], message_id: msg["result"][0]["message_id"] + i, file_id: media[i][:media], type: media[i][:type], blob_signed_id: media[i][:blob_signed_id], options: options }) }
       end
-      PlatformPost.create!(identifier: msg_ids, platform: Platform.find_by_title("telegram"), post: @post, content: attachment_content, channel_id: channel_id )
+      PlatformPost.create!(identifier: msg_ids, platform: Platform.find_by_title("telegram"), post: @post, content: attachment_content, channel_id: channel[:id] )
     rescue
-      Rails.logger.error("Failed create telegram message for chat #{channel_room} at #{Time.now.utc.iso8601}")
+      Rails.logger.error("Failed create telegram message (attachment) for chat #{channel[:room]} at #{Time.now.utc.iso8601}")
     end
   end
 
