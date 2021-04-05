@@ -40,5 +40,10 @@
     <% end %>
   </div>
 <% else %>
-  <div class="comments-container comments-width"><center><%= I18n.t("comments.comments_not_found") %></center></div>
+  <div class="comments-container comments-width">
+    <center>
+      <%= render "comments/add" if current_user.present? %><br>
+      <%= I18n.t("comments.comments_not_found") %>
+    </center>
+  </div>
 <% end %>
