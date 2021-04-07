@@ -84,7 +84,7 @@ module PostsHelper
 
   def display_attachments(post)
     content = ""
-    size = case post.get_content_attachments.count
+    size = case post.get_content_attachments&.count || 0
              when 1
                300
              when 2

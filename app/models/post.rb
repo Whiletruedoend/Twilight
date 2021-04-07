@@ -10,7 +10,7 @@ class Post < ApplicationRecord
 
   scope :without_active_tags, -> { select{ |post| post.active_tags.empty? } }
 
-  self.per_page = 5
+  self.per_page = 15
 
   def active_tags_names
     self.active_tags.map { |s| s.tag.name }
