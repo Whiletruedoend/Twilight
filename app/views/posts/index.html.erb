@@ -32,12 +32,12 @@
           </i>
         </p>
       </header>
-      <%= display_attachments(post) if post.get_content_attachments.present? && post.get_content_attachments.any? %>
+      <%= display_attachments(post) if post.get_content_attachments.present? %>
       <div class="posts-content"><% if post.get_content.length > 512 %>
-          <%= markdown(truncate(strip_tags(post.get_content), length: 512)) %>
+          <%= markdown(truncate(post.get_content, length: 512)) %>
           <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.id}", class: "read-more-#{post.id}" %>
         <% else %>
-          <%= markdown(strip_tags(post.get_content)) %>
+          <%= markdown(post.get_content) %>
         <% end %>
       </div>
     </article>

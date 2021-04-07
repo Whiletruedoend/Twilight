@@ -33,7 +33,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
           else
             "<a target=\"_blank\" href=\"#{get_full_attachment_link(attachment)}\"> #{image_tag url_for('/assets/file.png')} </a>"
           end
-        end.join(' ')+"<br>" if attachments.any?
+        end.join(' ')+"<br>" if attachments.present?
         full_text = attachments.present? ? attachments + text : text
 
         xml.description @markdown.render(full_text)

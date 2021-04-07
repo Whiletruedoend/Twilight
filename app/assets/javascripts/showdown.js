@@ -134,7 +134,7 @@ function getDefaultOpts (simple) {
       type: 'boolean'
     },
     openLinksInNewWindow: {
-      defaultValue: false,
+      defaultValue: true,
       description: 'Open all links in new windows',
       type: 'boolean'
     },

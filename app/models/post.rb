@@ -10,7 +10,7 @@ class Post < ApplicationRecord
 
   scope :without_active_tags, -> { select{ |post| post.active_tags.empty? } }
 
-  self.per_page = 5
+  self.per_page = 15
 
   def active_tags_names
     self.active_tags.map { |s| s.tag.name }
@@ -33,7 +33,7 @@ class Post < ApplicationRecord
   end
 
   def get_content_attachments
-    Content.where(post: self).map{ |c| c.attachments }&.first
+    Content.where(post: self).select{ |c| c.attachments.any? }.map{ |c| c.attachments }[0]
   end
 
   def check_privacy(current_user)

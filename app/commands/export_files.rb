@@ -32,14 +32,14 @@ class ExportFiles
       f.write(text)
     end
 
-    if @post.get_content_attachments.any?
+    if @post.get_content_attachments.present?
       @post.get_content_attachments.each do |attachment|
         filename = attachment.blob.filename.to_s
         FileUtils.cp(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key), "#{post_dir}/#{filename}")
       end
     end
 
-    if @post.get_content_attachments.any?
+    if @post.get_content_attachments.present?
       output_file = "tmp/export/#{@post.id.to_s}.zip"
       zf = ZipFileGenerator.new(post_dir, output_file)
       zf.write

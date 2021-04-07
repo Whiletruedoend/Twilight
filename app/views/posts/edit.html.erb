@@ -33,7 +33,7 @@
             </div>
           <% end %>
           <% attachments = @post.get_content_attachments %>
-          <% if attachments.present? && attachments.any? %>
+          <% if attachments.present? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>
                 <div class="attachment"> <!-- TODO? -->

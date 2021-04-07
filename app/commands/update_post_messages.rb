@@ -18,7 +18,7 @@ class UpdatePostMessages
     @next_post = false
 
     # For matrix
-    @attachments_count = @post.get_content_attachments.count
+    @attachments_count = @post.get_content_attachments&.count || 0
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
   end
@@ -327,7 +327,7 @@ class UpdatePostMessages
       #end
     end
 
-    if need_delete_attachments && @attachments_count == @post.get_content_attachments.count
+    if need_delete_attachments && @attachments_count == (@post.get_content_attachments&.count || 0)
       @deleted_attachments.each { |attachment| @post.get_content_attachments.find_by_blob_id(ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == "0" } if @deleted_attachments.present?
     end
   end
