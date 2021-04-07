@@ -2,7 +2,14 @@ unless current_user.present? || (params.has_key?(:rss_token) && User.find_by_rss
   return xml.title "Access denied! Please, use rss_token from account settings :/"
 end
 
-@markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
+@markdown = Redcarpet::Markdown.new(CustomRender.new({ hard_wrap: true,
+                                                       no_intra_emphasis: true,
+                                                       fenced_code_blocks: true,
+                                                       disable_indented_code_blocks: true,
+                                                       autolink: true,
+                                                       tables: true,
+                                                       underline: true,
+                                                       highlight: true}))
 
 xml.instruct! :xml, :version=>"1.0"
 xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
