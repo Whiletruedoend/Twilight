@@ -33,7 +33,7 @@ class Post < ApplicationRecord
   end
 
   def get_content_attachments
-    Content.where(post: self).map{ |c| c.attachments }&.first
+    Content.where(post: self).select{ |c| c.attachments.any? }.map{ |c| c.attachments }[0]
   end
 
   def check_privacy(current_user)
