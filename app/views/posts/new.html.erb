@@ -41,10 +41,17 @@
                   <div id="options-<%=channel.id%>" class="collapse">
                     * <%=check_box("options", "enable_notifications_#{channel.id}", { :id=> "enable_notifications_#{channel.id}", :class=>"colorful-checkbox", :checked => channel.options["notifications_enabled"] })%>
                     <%= label_tag "enable_notifications_#{channel.id}", "Enable notifications?" %>
+
+                    * <%=check_box("options", "onlylink_#{channel.id}", { :id=> "onlylink_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "onlylink_#{channel.id}", "Publish only link?" %>
                   </div>
                   <% else %>
-                  <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
+                  <%=check_box("channels", channel.id, { "data-toggle" => "collapse", "data-target"=>"#options-#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
                   <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                  <div id="options-<%=channel.id%>" class="collapse">
+                    * <%=check_box("options", "onlylink_#{channel.id}", { :id=> "onlylink_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "onlylink_#{channel.id}", "Publish only link?" %>
+                  </div>
                 <% end %>
                 <br>
               <% end %>

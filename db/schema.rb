@@ -10,13 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_21_110754) do
+ActiveRecord::Schema.define(version: 2021_05_30_112946) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -27,7 +30,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
-    t.integer "byte_size", null: false
+    t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.string "service_name", null: false
@@ -41,8 +44,8 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
   end
 
   create_table "channels", force: :cascade do |t|
-    t.integer "platform_id"
-    t.integer "user_id"
+    t.bigint "platform_id"
+    t.bigint "user_id"
     t.boolean "enabled"
     t.string "token"
     t.string "room"
@@ -56,9 +59,9 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
   create_table "comments", force: :cascade do |t|
     t.string "text"
     t.json "identifier"
-    t.integer "post_id"
-    t.integer "user_id"
-    t.integer "platform_user_id"
+    t.bigint "post_id"
+    t.bigint "user_id"
+    t.bigint "platform_user_id"
     t.boolean "has_attachments", default: false
     t.boolean "is_edited", default: false
     t.datetime "created_at", precision: 6, null: false
@@ -70,8 +73,8 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
 
   create_table "contents", force: :cascade do |t|
     t.string "text"
-    t.integer "post_id"
-    t.integer "user_id"
+    t.bigint "post_id"
+    t.bigint "user_id"
     t.boolean "has_attachments", default: false
     t.index ["post_id"], name: "index_contents_on_post_id"
     t.index ["user_id"], name: "index_contents_on_user_id"
@@ -89,8 +92,8 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
   create_table "platform_posts", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "platform_id"
-    t.integer "post_id"
+    t.bigint "platform_id"
+    t.bigint "post_id"
     t.json "identifier"
     t.bigint "content_id"
     t.bigint "channel_id"
@@ -102,7 +105,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
 
   create_table "platform_users", force: :cascade do |t|
     t.json "identifier"
-    t.integer "platform_id"
+    t.bigint "platform_id"
     t.index ["platform_id"], name: "index_platform_users_on_platform_id"
   end
 
@@ -115,7 +118,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
     t.integer "privacy", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -135,6 +138,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_110754) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer "access_level", default: 2
+    t.json "options", default: {}
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

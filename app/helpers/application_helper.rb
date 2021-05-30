@@ -4,11 +4,11 @@ module ApplicationHelper
                  no_intra_emphasis: true,
                  fenced_code_blocks: true,
                  disable_indented_code_blocks: true,
-                 autolink: true,
+                 space_after_headers: true,
                  tables: true,
                  underline: true,
                  highlight: true }
-    redcarpet = Redcarpet::Markdown.new(CustomRender.new(renderer))
+    redcarpet = Redcarpet::Markdown.new(CustomRender.new(renderer), autolink: true)
     redcarpet.render(text).html_safe
   end
 end

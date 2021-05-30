@@ -49,7 +49,7 @@ function getDefaultOpts (simple) {
       type: 'boolean'
     },
     simplifiedAutoLink: {
-      defaultValue: false,
+      defaultValue: true,
       describe: 'Turn on/off GFM autolink style',
       type: 'boolean'
     },

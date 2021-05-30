@@ -50,7 +50,7 @@ class SendPostToPlatforms
       end
     end
 
-    @channels = merged # { "telegram"=>[1, 2], "matrix"=>3 }
+    @channels = merged.sort_by { |k, _v| k }.reverse.to_h # { "telegram"=>[1, 2], "matrix"=>3 }
 
     @channels.each do |k,v|
       check_platforms(k,v)
@@ -72,7 +72,7 @@ class SendPostToPlatforms
       { id: channel.id, room: channel.room, matrix_token: channel.token, server: channel.options["server"] }
     end
 
-    unless @post.get_content.present? || @post.get_content_attachments.present? # Content not created!
+    unless @post.get_content.present? || (!@post.get_content.present? && @post.get_content_attachments.present?) # Content not created!
       content_text = params[:post][:content]
 
       if @attachments.present?
@@ -85,8 +85,16 @@ class SendPostToPlatforms
     # No content - no post :\
     Content.where(post: @post).each do |content|
       title = @post.title
-      content_text = @markdown.render(content.text) if content.text.present? #if @post.get_content.present?
-      content_text = content_text.replace_html_to_mx_markdown if content_text.present?
+
+      if content.text.present?
+        if Content.where(post: @post, has_attachments: false).count >= 2 # Already upload in tg, also check down below
+          content_text = @markdown.render(@post.get_content)
+          content_text = content_text.replace_html_to_mx_markdown
+        else # Tg has 1 content or no contents
+          content_text = @markdown.render(content.text)
+          content_text = content_text.replace_html_to_mx_markdown
+        end
+      end
       text = title.present? ? "<b>#{title}</b><br><br>#{content_text}" : "#{content_text}"
 
       if content.has_attachments?
@@ -120,6 +128,33 @@ class SendPostToPlatforms
         # TODO: ENCRYPTED FILE UPLOAD SUPPORT
         channel_ids.each do |channel|
           uploaded_atts = []
+
+          # Only link publish (for 'attachments' method lol)
+          options = {}
+          option_onlylink = @options.dig("onlylink_#{channel[:id]}") || false
+          options.merge!(onlylink: option_onlylink)
+
+          if option_onlylink
+            begin
+              post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+              full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+              text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : "#{full_post_link}"
+              method = "rooms/#{channel[:room]}/send/m.room.message"
+              data = {
+                  "msgtype":"m.text",
+                  "format": "org.matrix.custom.html",
+                  "body": text,
+                  "formatted_body": text
+              }
+              msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
+              identifier = { event_id: JSON.parse(msg)["event_id"], room_id: channel[:room], options: options }
+              PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: content, channel_id: channel[:id])
+            rescue
+              Rails.logger.error("Failed create matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
+            end
+            next
+          end
+
           atts.each do |uploaded_attachment|
             method = "rooms/#{channel[:room]}/send/m.room.message"
             info = {
@@ -145,12 +180,23 @@ class SendPostToPlatforms
                     "info": info
             }
             msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
-            uploaded_atts.append({ event_id: JSON.parse(msg)["event_id"], room_id: channel[:room], type: type, blob_signed_id: uploaded_attachment[:blob_signed_id] })
+            uploaded_atts.append({ event_id: JSON.parse(msg)["event_id"], room_id: channel[:room], options: options, type: type, blob_signed_id: uploaded_attachment[:blob_signed_id] })
           end
           PlatformPost.create!(identifier: uploaded_atts, platform: Platform.find_by_title("matrix"), post: @post, content: content, channel_id: channel[:id])
         end
       elsif content_text.present?
         channel_ids.each do |channel|
+
+          options = {}
+          option_onlylink = @options.dig("onlylink_#{channel[:id]}") || false
+          options.merge!(onlylink: option_onlylink)
+
+          if option_onlylink
+            post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+            full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+            text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : "#{full_post_link}"
+          end
+
           method = "rooms/#{channel[:room]}/send/m.room.message"
           data = {
               "msgtype":"m.text",
@@ -159,11 +205,12 @@ class SendPostToPlatforms
               "formatted_body": text
                 }
           msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
-          identifier = { event_id: JSON.parse(msg)["event_id"], room_id: channel[:room] }
+          identifier = { event_id: JSON.parse(msg)["event_id"], room_id: channel[:room], options: options }
           PlatformPost.create!(identifier: identifier, platform: Platform.find_by_title("matrix"), post: @post, content: content, channel_id: channel[:id])
         end
         break # If posts exists && content count >2, then for matrix PlatformPost content has first content id
       end
+      next if Content.where(post: @post, has_attachments: false).count >= 2
     end
   end
 
@@ -211,7 +258,22 @@ class SendPostToPlatforms
       #disable_notification = @options[channel.id.to_sym]
       options = {}
       option_notification = @options.dig("enable_notifications_#{channel[:id]}") || false
-      options.merge!(enable_notifications: option_notification)
+      option_onlylink = @options.dig("onlylink_#{channel[:id]}") || false
+      options.merge!(enable_notifications: option_notification, onlylink: option_onlylink)
+
+      if option_onlylink
+        begin
+          message = created_messages[0] # lol
+          post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+          full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+          text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{full_post_link}" : "#{full_post_link}"
+          msg = bot.send_message({ chat_id: channel[:room], text: text, parse_mode: "html", disable_notification: !option_notification })
+          PlatformPost.create!(identifier: { chat_id: msg["result"]["chat"]["id"], message_id: msg["result"]["message_id"], options: options }, platform: Platform.find_by_title("telegram"), post: @post, content: message, channel_id: channel[:id])
+        rescue
+          Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
+        end
+        next
+      end
 
       created_messages.each do |message|
 

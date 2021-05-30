@@ -12,6 +12,15 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   validates :login, presence: true, uniqueness: true
+
+  validate do |u|
+    rss_posts_count = u.options.dig("visible_posts_count") || Rails.configuration.credentials[:rss_default_visible_posts].to_s
+    max_rss_posts_count = Rails.configuration.credentials[:rss_max_visible_posts]
+    u.errors.add(:base, "Bad RSS displayed posts count value!") if ((rss_posts_count.to_i.to_s != rss_posts_count) || (rss_posts_count.to_i > max_rss_posts_count || rss_posts_count.to_i <= 0))
+    #numericality: { only_integer: true, greater_than: 0 }
+  end
+
+
   before_create :generate_rss
 
   def active_tags_names

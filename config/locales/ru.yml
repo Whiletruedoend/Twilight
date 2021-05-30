@@ -76,6 +76,8 @@ ru:
     manage_tab: Управление
     stats_tab: Статистика
     token: Токен
+    max: макс
+    rss_visible_posts: Количество отображаемых постов
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль

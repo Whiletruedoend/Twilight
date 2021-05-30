@@ -91,8 +91,9 @@ class PostsController < ApplicationController
 
   def rss
     user = current_user.present? ? current_user : (User.find_by_rss_token(params[:rss_token]) if params.has_key?(:rss_token))
-    my_posts =  current_user.present? ? Post.where(user: current_user).ids : []
-    not_my_posts = Post.where.not(user: current_user).where(privacy: [0,1]).ids
+    posts_limit = current_user.present? ? current_user.options.dig("visible_posts_count") || Rails.configuration.credentials[:rss_default_visible_posts] : Rails.configuration.credentials[:rss_default_visible_posts]
+    my_posts =  current_user.present? ? Post.order("created_at desc").limit(posts_limit.to_i).where(user: current_user).ids : []
+    not_my_posts = Post.order("created_at desc").limit(posts_limit.to_i).where.not(user: current_user).where(privacy: [0,1]).ids
     all_posts = my_posts + not_my_posts
     if user.present?
       item_posts = ItemTag.select { |item| (item.item_type == "Post") && (user.active_tags_names.include?(item.tag.name)) && (item.enabled == true) }

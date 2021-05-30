@@ -6,10 +6,9 @@ end
                                                        no_intra_emphasis: true,
                                                        fenced_code_blocks: true,
                                                        disable_indented_code_blocks: true,
-                                                       autolink: true,
                                                        tables: true,
                                                        underline: true,
-                                                       highlight: true}))
+                                                       highlight: true}), autolink: true)
 
 xml.instruct! :xml, :version=>"1.0"
 xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do

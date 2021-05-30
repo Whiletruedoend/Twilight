@@ -76,6 +76,8 @@ en:
     manage_tab: Manage
     stats_tab: Statistics
     token: Token
+    max: max
+    rss_visible_posts: Displayed posts count
     token_not_generated: Token not generated!
     password_confirmation: Password confirmation
     current_password: Current password

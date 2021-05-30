@@ -11,6 +11,10 @@ class String
     # replace list, make it 'code-style'
     a.gsub!("<li>", "* ")
     a.gsub!("</li>", "")
+    # numeric list
+    a.gsub!("<ol>", "")
+    a.gsub!("</ol>", "")
+    # list
     a.gsub!("\n\n<ul>", "<code>")
     a.gsub!("\n</ul>", "</code>")
     # replace 'images', make it 'link-style'

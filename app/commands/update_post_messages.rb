@@ -59,6 +59,8 @@ class UpdatePostMessages
       bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
       bot = bots_hash.first[1]
 
+      next if platform_post.identifier.dig("options", "onlylink")
+
       current_content = platform_post.content
       next_content = Content.find_by_id(platform_post.content.id+1)
 
@@ -152,6 +154,8 @@ class UpdatePostMessages
       bots_hash = Telegram.bots.select{ |k,v| k == bots_from_config.first[0] }
       bot = bots_hash.first[1]
 
+      next if platform_post.identifier.dig("options", "onlylink")
+
       if @length >= 4096
         @only_one_post = false
         clear_text = @next_post ? 0 : @title.length + 9
@@ -234,6 +238,9 @@ class UpdatePostMessages
       need_delete_attachments = true if del_att.any?
 
       platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+
+        next if platform_post.identifier.dig("options", "onlylink")
+
         matrix_token = platform_post.channel.token
         server = platform_post.channel.options["server"]
 
@@ -277,6 +284,9 @@ class UpdatePostMessages
     text = text.replace_html_to_mx_markdown if text.present?
 
     platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
+
+      next if platform_post.identifier.dig("options", "onlylink")
+
       matrix_token = platform_post.channel.token
       server = platform_post.channel.options["server"]
       method = "rooms/#{platform_post[:identifier]["room_id"]}/send/m.room.message"
