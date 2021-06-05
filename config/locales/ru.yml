@@ -78,6 +78,7 @@ ru:
     token: Токен
     max: макс
     rss_visible_posts: Количество отображаемых постов
+    theme: Тема
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль

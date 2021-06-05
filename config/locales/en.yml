@@ -78,6 +78,7 @@ en:
     token: Token
     max: max
     rss_visible_posts: Displayed posts count
+    theme: Theme
     token_not_generated: Token not generated!
     password_confirmation: Password confirmation
     current_password: Current password

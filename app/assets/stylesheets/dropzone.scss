@@ -1,33 +1,37 @@
 @import "dropzone/dist/min/dropzone.min.css";
 @import "dropzone/dist/min/basic.min.css";
 
-$color-lightgray: #555555;
-$color-darkgray: #222426;
+/*
+$color-border: #555555;
+$color-form-textarea-bg: #222426;
+*/
 
-.dropzone .dz-preview.dz-image-preview{
-  background: none;
-  .dz-image{
+@mixin dropzone($color-border, $color-form-textarea-bg){
+  .dropzone .dz-preview.dz-image-preview{
     background: none;
+    .dz-image{
+      background: none;
+    }
   }
-}
 
-.dropzone .dz-preview.dz-file-preview .dz-image{
-  background: $color-lightgray;
-}
+  .dropzone .dz-preview.dz-file-preview .dz-image{
+    background: $color-border;
+  }
 
-.dropzone {
-  background: $color-darkgray;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border: 2px dashed $color-lightgray;
+  .dropzone {
+    background: $color-form-textarea-bg;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 2px dashed $color-border;
 
-  @apply border-2 rounded-lg border-gray-400 border-dashed;
+    @apply border-2 rounded-lg border-gray-400 border-dashed;
 
-  &.dz-drag-hover {
-    @apply border-2 rounded-lg border-gray-200 border-dashed;
+    &.dz-drag-hover {
+      @apply border-2 rounded-lg border-gray-200 border-dashed;
 
-    .dz-message {
-      opacity: 0.9;
+      .dz-message {
+        opacity: 0.9;
+      }
     }
   }
 }

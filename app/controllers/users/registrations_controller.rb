@@ -74,7 +74,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   def configure_permitted_parameters
-    attributes = [:options => {}]
+    attributes = [:avatar, :options => {}]
     devise_parameter_sanitizer.permit(:sign_up, keys: attributes)
     devise_parameter_sanitizer.permit(:account_update, keys: attributes)
   end

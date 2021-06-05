@@ -11,4 +11,8 @@ module ApplicationHelper
     redcarpet = Redcarpet::Markdown.new(CustomRender.new(renderer), autolink: true)
     redcarpet.render(text).html_safe
   end
+
+  def current_theme
+    current_user&.options&.dig("theme") || 'default_theme'
+  end
 end

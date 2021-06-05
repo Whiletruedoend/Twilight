@@ -1,0 +1,769 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import "dropzone";
+@import "fonts";
+
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/*
+ *= require font-awesome
+ */
+
+/*
+$bg: #181a1b;
+
+$color-link-light: #22c6c6;
+$color-link: #10A0A0;
+$color-link-dark: #0c6a6a;
+
+$color-avatar-bg: #3E5A68;
+$color-avatar-border: #FBFBFB;
+
+$color-checkbox-process_checking: #a1bfa1;
+$color-checkbox-channels-bg: #5cb85c;
+$color-checkbox-text-checked: #6af68a;
+
+$color-privacy-registered-p: #1375b2;
+$color-privacy-me: #4e518b;
+
+$color-checkbox-text-unchecked: #df4655;
+$color-checkbox-unchecked-bg: #631119;
+
+$color-wrapper: #515151;
+
+$color-border: #555555;
+$color-nav-focus-bg: #3939398c;
+$color-gray: #2E2F30;
+$color-form-textarea-bg: #222426;
+$color-checkbox-focus: #1b1b1c;
+
+$color-container-bg: #121414;
+
+$color-scrollbar-light: #454a4d;
+$color-scrollbar-dark: #202324;
+
+$color-darkpurple: #31303b;
+
+$color-checkbox-bg: #1f2123;
+$color-checkbox-border: #454646;
+$color-checkbox-checked-bg: #1d2021;
+$color-checkbox-checked-border: #bdae93;
+
+$color-code-bg: #222426;
+
+$font: #f0f0f0;
+$font-link: #b3b3b3;
+
+$color-white: #ffffff;
+$color-black: #000000;
+*/
+@mixin base($bg, $color-darkpurple, $color-code-bg,
+        $font, $font-link, $color-white, $color-black,
+        $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
+        $color-checkbox-channels-bg,
+        $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,
+        $color-checkbox-focus, $color-container-bg, $color-scrollbar-light, $color-scrollbar-dark,
+        $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
+        $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me,
+        $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
+        $color-button-bg, $color-button-text){
+  @include dropzone($color-border, $color-form-textarea-bg);
+  code{
+    /* #cc241d */
+    background-color: $color-code-bg;
+    color: $color-link-light;
+  }
+
+  body {
+    color: $color-white;
+    background-color: $color-black;
+    font-family: 'Hack', monospace;
+    /* line-height: 1.3rem; */
+    letter-spacing: -0.010em;
+  }
+
+  body#bg{
+    background-color:$bg;
+    footer{
+      color: $font;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  tr, th, td{
+    padding: 0;
+  }
+
+  footer{
+    border-top: solid 2px $color-darkpurple !important;
+    color: $color-white;
+    bottom: 0;
+    padding: 1em;
+    position: static;
+    width: 100%;
+    text-align: center;
+  }
+
+  a{
+    color: $color-link;
+    outline: none;
+    text-decoration: none;
+    border-bottom-color: transparent;
+  }
+
+  a:hover {
+    color: $color-link-dark;
+  }
+
+  input, button{
+    border: solid $color-gray;
+    border-radius: 8px;
+    color: $color-white;
+    background: $color-darkpurple;
+  }
+
+  hr{
+    margin: 15px 0;
+  }
+
+  /* main page */
+
+  .main-page{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    color: $color-white;
+  }
+
+  .information-left {
+    max-height: 100%;
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .information-right {
+    padding: 2% 0 0 5%;
+    height: 100%;
+    width: 25%;
+    font-size: 16px;
+  }
+
+  .block{
+    border-left: solid 4px $color-darkpurple !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.8em 0 0.8em 4em;
+  }
+
+  .block-login{
+    border-left: solid 4px $color-darkpurple !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.5em 0 0.8em 2em;
+  }
+
+  pre.ascii {
+    font-size: 14px;
+    line-height: 1.6em;
+    border: none;
+    font-family: "Source Code Pro", monospace;
+    color: $color-white;
+    background-color: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  .information-left p{
+    padding-left: 1%;
+  }
+
+  .icon {
+    width: 25px;
+  }
+
+  /* posts new, edit */
+
+  .container{
+    color: $font;
+  }
+
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs li a:hover, .nav-tabs > li.active > a:focus{ color: $color-link-light; background-color: $color-nav-focus-bg; }
+
+  .tab-content{
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+
+    .chars{
+      float: right;
+    }
+
+    .tags{
+      margin-bottom: 20px;
+    }
+
+    .title{
+      margin-top: 20px;
+      opacity: 75%;
+    }
+    .form-control{
+      height: 100%;
+      background-color: $color-form-textarea-bg;
+      border-color: $color-border;
+      color: $font;
+    }
+
+    .markdown-editor{
+      padding-top: 20px;
+      display: flex;
+      width: 100%;
+      height: 40em;
+      scrollbar-color: $color-scrollbar-dark $color-scrollbar-light;
+
+      textarea{
+        margin-right: 10px;
+        background-color: $color-form-textarea-bg;
+        border-color: $color-border;
+        resize: none;
+        height: 97%;
+        max-height: 97%;
+        width: 50%;
+      }
+    }
+
+    /* Privacy menu */
+    select{
+      background-color: $color-form-textarea-bg;
+      border: 1px dashed $color-border;
+    }
+
+    .preview{
+      height: 97%;
+      max-height: 97%;
+      border: 1px solid $color-border;
+      background-color: $color-form-textarea-bg;
+      overflow-y: scroll;
+      width: 50%;
+      padding: 10px;
+    }
+  }
+
+  .field input{
+    border: 1px solid white;
+    color: $font;
+    border-radius: 8px;
+    background: $color-darkpurple;
+  }
+
+  /* import */
+
+  .import-form{
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+  }
+
+  /* post */
+
+  .h1 + *{
+    margin-top: 0;
+  }
+
+  .metadata{
+    font-family: 'DejaVu Serif', serif;
+    opacity: 85%;
+  }
+
+  .posts-content{
+    line-height: normal;
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    padding-top: 10px;
+  }
+
+  .posts-container{
+    line-height: 1.5rem;
+    font-size: 16px;
+    background-color: $color-container-bg;
+    color: $font;
+    box-sizing: border-box;
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 20px 10px;
+
+    h1{
+      overflow: hidden;
+      display: block;
+      font-size: 2.5rem;
+    }
+
+    li p{
+      margin: 0;
+    }
+
+    p{
+      margin: 0 0 16px;
+    }
+
+    header p{
+      margin: 0 0 8px;
+    }
+
+    article header h1 a {
+      .left-small {
+        font-size: 65%;
+      }
+    }
+
+    .right-small{
+      float: right;
+      font-size: 65%;
+    }
+
+    .comments{
+      margin-left: 1%;
+    }
+
+    section article header{
+
+      h1::after{
+        content: "------------------------------------------------------------------------------------------------";
+        position: static;
+        bottom: 10px;
+        left: 0;
+      }
+    }
+
+    .tags{
+      list-style: none;
+      text-align: center;
+      margin: 0;
+    }
+
+    .tags > li{
+      display: inline-block;
+      padding: .25em .4em;
+      border-radius: .25rem;
+      background-color: $color-gray;
+      a{ color: $color-white; }
+      a:hover{ color: $font-link; }
+    }
+  }
+
+  .content-attachments{
+    padding-bottom: 20px;
+  }
+
+  /* privacy icons */
+
+  .green-icon{ color: $color-privacy-registered; }
+  .blue-icon { color: $color-privacy-registered-p; }
+  .twilight-icon{ color: $color-privacy-me; }
+  .red-icon { color: $color-privacy-me-p; }
+
+  /* channels */
+
+  .channels-container{
+    line-height: 1.5rem;
+    font-size: 16px;
+    background-color: $color-container-bg;
+    color: $font;
+    box-sizing: border-box;
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 20px 10px;
+
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+
+    select{
+      background: $color-white;
+      color: $color-black;
+    }
+
+    .btn{
+      margin-top: 2%;
+    }
+  }
+
+
+  /* tags */
+
+  .tags-right {
+    float: right;
+    padding: 0 30% 0 0;
+  }
+
+  .block-tags{
+    border: solid 4px $color-darkpurple !important;
+    margin: 0.8em 0 1em 0;
+    padding: 0.8em 0.8em 0.8em 0.8em;
+  }
+
+  /* profile */
+
+  .btn{
+    background: $color-button-bg;
+    color: $color-button-text;
+  }
+
+  .links {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+
+    div {
+      float: right;
+      width: 10em;
+      max-width: 100%;
+      text-align: center;
+    }
+    div:nth-of-type(odd) {
+      float: left;
+      clear: right;
+    }
+  }
+
+  .custom-control-label{
+    margin-right: 5px;
+  }
+
+  /* useful */
+
+  .header {
+    padding-top: 0.5%;
+    padding-left: 1.5%;
+    font-weight: bold;
+    font-size: 34px;
+  }
+
+  .small-header {
+    font-style: italic;
+    margin-top: 0.2579%;
+    margin-left: 13.654321%;
+  }
+
+  .alert{
+    padding: 0px 10px 5px 10px;
+  }
+
+  .alert-danger{
+    margin: 2% 20% auto 20%;
+  }
+
+  /* WTF */
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: $color-border;
+    color: $color-white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: $color-border transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* Platform checkboxes */
+
+  .colorful-checkboxes{
+    label{
+      font-weight: 400;
+    }
+    input[type="checkbox"]:checked + label{
+      color: $color-checkbox-text-checked;
+      font-weight: 400;
+    }
+    input[type="checkbox"] + label{
+      color: $color-checkbox-text-unchecked;
+      font-weight: 400;
+    }
+
+    .colorful-checkbox {
+      position: absolute;
+      z-index: -1;
+      opacity: 0;
+    }
+
+    .colorful-checkbox+label {
+      display: inline-flex;
+      align-items: center;
+      user-select: none;
+      padding-right: 0.2em;
+    }
+
+    .colorful-checkbox+label::before {
+      content: '';
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      background-color: $color-checkbox-unchecked-bg;
+      border: 1px solid $color-checkbox-unchecked-bg;
+      border-radius: 0.25em;
+      margin-right: 0.2em;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 50% 50%;
+    }
+
+    .colorful-checkbox:checked+label::before {
+      border-color: $color-checkbox-channels-bg;
+      background-color: $color-checkbox-channels-bg;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+    }
+
+    /* стили при наведении курсора на checkbox */
+    .colorful-checkbox:not(:disabled):not(:checked)+label:hover::before {
+      border-color: $color-checkbox-unchecked-bg;
+    }
+    /* стили для активного состояния чекбокса (при нажатии на него) */
+    .colorful-checkbox:not(:disabled):active+label::before {
+      background-color: $color-checkbox-process_checking;
+      border-color: $color-checkbox-process_checking;
+    }
+    /* стили для чекбокса, находящегося в фокусе */
+    .colorful-checkbox:focus+label::before {
+      box-shadow: 0 0 0 0.1rem $color-checkbox-focus;
+    }
+    /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+    .colorful-checkbox:focus:not(:checked)+label::before {
+      border-color: $color-checkbox-unchecked-bg;
+    }
+    /* стили для чекбокса, находящегося в состоянии disabled */
+    .colorful-checkbox:disabled+label::before {
+      border-color: $color-checkbox-focus;
+      background-color: $color-gray;
+    }
+  }
+
+  /* tags */
+
+  .colorful-tags{
+    display: inline;
+
+    .form-check-inline{
+      display: inline;
+    }
+
+    label{
+      font-weight: 400;
+    }
+    input[type="checkbox"]:checked + label{
+      background: $color-checkbox-checked-bg;
+      border: 2px solid $color-checkbox-checked-border;
+      border-radius: 4px;
+      color: $color-checkbox-text-checked;
+      font-weight: 400;
+    }
+    input[type="checkbox"] + label{
+      background: $color-checkbox-bg;
+      border: 2px solid $color-checkbox-border;
+      border-radius: 4px;
+      color: $color-checkbox-text-unchecked;
+      font-weight: 400;
+      margin-left: 7px;
+    }
+
+    .colorful-checkbox {
+      position: absolute;
+      z-index: -1;
+      opacity: 0;
+    }
+
+    .colorful-checkbox+label {
+      text-align: center;
+      user-select: none;
+      padding-right: 0.2em;
+      min-width: 6%;
+      min-height: 5%;
+      width: auto;
+    }
+
+    .colorful-checkbox+label::before {
+      opacity:0;
+    }
+    .colorful-checkbox:checked+label::before {
+      opacity:0;
+    }
+    /* стили при наведении курсора на checkbox */
+    .colorful-checkbox:not(:disabled):not(:checked)+label:hover::before {
+      opacity:0;
+    }
+    /* стили для активного состояния чекбокса (при нажатии на него) */
+    .colorful-checkbox:not(:disabled):active+label::before {
+      opacity:0;
+    }
+    /* стили для чекбокса, находящегося в фокусе */
+    .colorful-checkbox:focus+label::before {
+      opacity:0;
+    }
+    /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+    .colorful-checkbox:focus:not(:checked)+label::before {
+      opacity:0;
+    }
+    /* стили для чекбокса, находящегося в состоянии disabled */
+    .colorful-checkbox:disabled+label::before {
+      opacity:0;
+    }
+  }
+
+  /* comments */
+
+  .comments-width{
+    max-width: 60%;
+  }
+
+  .comments-container{
+    font-size: 16px;
+    background-color: $color-container-bg;
+    color: $font;
+    box-sizing: border-box;
+    /* max-width: 60%; */
+    margin: 2% auto;
+    padding: 20px 10px;
+
+    line-height: normal;
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+
+    .comment-editor{
+      padding-top: 20px;
+      display: flex;
+      width: 100%;
+      height: 10em;
+      scrollbar-color: $color-scrollbar-dark $color-scrollbar-light;
+
+      textarea{
+        margin-right: 10px;
+        background-color: $color-form-textarea-bg;
+        border-color: $color-border;
+        resize: none;
+        height: 100%;
+        max-height: 100%;
+        width: 100%;
+      }
+    }
+
+    .comment-header{
+      font-size: 25px;
+    }
+
+    .comment{
+      position: relative;
+      margin-top: 1%;
+      margin-bottom: 2%;
+
+      .wrapper {
+        width: 300px;
+        height: 300px;
+        border: 5px solid $color-wrapper;
+      }
+
+      .comment-avatar{
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        float:left; /* Выравнивание по левому краю */
+        margin: 7px 7px 0 0; /* Отступы вокруг картинки */
+        position: static;
+        width: 75px;
+        height: 75px;
+
+        background: $color-avatar-bg;
+        border: 1px solid $color-avatar-border;
+        box-sizing: border-box;
+        border-radius: 90px;
+
+        img{
+          height: 100%;
+          width: auto;
+        }
+      }
+
+      .comment-metadata{
+        left: 8%;
+        top: 8%;
+        font-size: 20px;
+        margin-bottom: 10px;
+
+        .comment-small{ font-size: 16px; }
+        .right{
+          float: right;
+          margin-right: 1%;
+        }
+      }
+    }
+  }
+
+  .user-avatar{
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 15% 0 0 10%; /* Отступы вокруг картинки */
+    width: 100px;
+    height: 100px;
+
+    background: $color-avatar-bg;
+    border: 1px solid $color-avatar-border;
+    box-sizing: border-box;
+    border-radius: 90px;
+
+    img{
+      height: 100%;
+      width: auto;
+    }
+  }
+}

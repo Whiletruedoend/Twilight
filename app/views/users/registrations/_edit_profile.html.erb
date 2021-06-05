@@ -15,6 +15,9 @@
     <%= f.fields :options, model: f.object.options do |field| %>
       <%= field.text_field :visible_posts_count, class: "form-control", size: 1, value: f.object.options.dig("visible_posts_count") || Rails.configuration.credentials[:rss_default_visible_posts], data: { numeric: true } %>
       <i>(<%=I18n.t("edit.max")%>: <%=Rails.configuration.credentials[:rss_max_visible_posts]%>)</i>
+      <br><br>
+      <%= field.label "#{I18n.t("edit.theme")}:" %>
+      <%= field.select :theme, Twilight::Application::THEMES.map{ |s| [s.split('_theme')[0].capitalize, s] }.sort, :selected => (current_user.options.dig("theme") || "default_theme") %>
     <% end %>
   </div>
 

@@ -1,0 +1,64 @@
+@import "base";
+
+$bg: #ffffff;
+
+$color-link-light: #bd6d76;
+$color-link: #df4655;
+$color-link-dark: #631119;
+
+$color-avatar-bg: #bd6d76;
+$color-avatar-border: #1b1b1c;
+
+$color-privacy-registered-p: #1375b2;
+$color-privacy-registered: #5cb85c;
+$color-privacy-me-p: #df4655;
+$color-privacy-me: #4e518b;
+
+$color-wrapper: #515151;
+
+$color-border: #555555;
+$color-nav-focus-bg: #fafbfc;
+$color-gray: #2E2F30;
+$color-form-textarea-bg: #f6f8fa;
+
+$color-container-bg: #f1f8ff;
+
+$color-scrollbar-light: #bbc1c7;
+$color-scrollbar-dark: #93989e;
+
+$color-darkpurple: #31303b;
+$color-button-bg: #306593;
+$color-button-text: #f0f0f0;
+
+$color-checkbox-bg: #fafbfc;
+$color-checkbox-border: #000000;
+$color-checkbox-checked-bg: #fafbfc;
+$color-checkbox-checked-border: #000000;
+
+$color-checkbox-channels-bg: #5cb85c;
+
+$color-checkbox-text-checked: #6af68a;
+$color-checkbox-process_checking: #a1bfa1;
+$color-checkbox-unchecked-bg: #df4655;
+$color-checkbox-text-unchecked: #df4655;
+$color-checkbox-focus: #1b1b1c;
+
+$color-code-bg: #222426;
+
+$font: #000000;
+$font-link: #b3b3b3;
+
+$color-white: #f0f0f0;
+$color-black: #000000;
+
+@include base($bg, $color-darkpurple, $color-code-bg,
+        $font, $font-link, $color-white, $color-black,
+        $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
+        $color-checkbox-channels-bg,
+        $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,
+        $color-checkbox-focus, $color-container-bg, $color-scrollbar-light, $color-scrollbar-dark,
+        $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
+        $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me,
+        $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
+        $color-button-bg, $color-button-text
+);
