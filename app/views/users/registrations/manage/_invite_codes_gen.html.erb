@@ -1,0 +1,23 @@
+<h4 class="dashed-line"><%=I18n.t("manage.invite_code_generate_header") %><br/></h4><br>
+<%= form_with(model: InviteCode.new(user: @current_user)) do |f| %>
+  <div class="colorful-checkboxes">
+    <%=f.check_box(:is_enabled, { :class=>"colorful-checkbox", :checked => false })%>
+    <%= f.label :is_enabled, I18n.t("manage.generate_invite_enabled") %>
+    <br>
+    <%=f.check_box("is_multiple_use", { "data-toggle" => "collapse", "data-target"=>"#is_multiple_use", :class=>"colorful-checkbox", :checked => false })%>
+    <%= f.label "is_multiple_use", I18n.t("manage.generate_invite_multiple") %>
+    <div id="is_multiple_use" class="collapse">
+      <%= f.label :max_usages, "#{I18n.t("manage.generate_invite_max_usages")}:" %>
+      <%=f.text_field :max_usages, size: 2%> <small><%=I18n.t("manage.generate_invite_max_small")%></small>
+    </div>
+    <br>
+    <%=f.check_box(:is_expires_at, { "data-toggle" => "collapse", "data-target"=>"#is_expires_at", :class=>"colorful-checkbox", :checked => false })%>
+    <%= f.label :is_expires_at, I18n.t("manage.generate_invite_expires_at") %>
+    <div id="is_expires_at" class="collapse">
+      <%= f.label :expires_at, "#{I18n.t("manage.generate_invite_expires_date")}:" %>
+      <%= f.date_field :expires_at %>
+    </div>
+  </div>
+
+  <br><%= f.submit I18n.t("manage.invite_code_generate"), class: "actions btn btn-primary" %>
+<% end %>

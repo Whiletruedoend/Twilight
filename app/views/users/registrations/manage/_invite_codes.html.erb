@@ -1,0 +1,32 @@
+<h4 class="dashed-line"><%=I18n.t("manage.invite_code_all_codes") %><br/></h4>
+
+<% object = InviteCode.all if object.nil? %>
+<% if object.count == 0 %>
+  <center><%=I18n.t("manage.invite_codes_not_found")%></center>
+  <% else %>
+  <table>
+    <tr>
+      <th>#</th>
+      <th><%= I18n.t("manage.list_invite_code") %></th>
+      <th><%= I18n.t("manage.list_invite_enabled") %></th>
+      <th><%= I18n.t("manage.list_invite_single_use") %></th>
+      <th><%= I18n.t("manage.list_invite_usages") %>/<%= I18n.t("manage.list_invite_max_usages") %></th>
+      <th><%= I18n.t("manage.list_invite_expires_at") %></th>
+      <th><%= I18n.t("manage.list_invite_created_at") %></th>
+
+    </tr>
+    <% i = 0 %>
+    <% object.each do |code| %>
+      <% i += 1 %>
+      <tr>
+        <td><%= i %></td>
+        <td><%= code.code %></td>
+        <td><%= code.is_enabled %></td>
+        <td><%= code.is_single_use %></td>
+        <td><%= "#{code.usages || "-"}/#{code.max_usages || "-"}" %></td>
+        <td><%= code.expires_at || "-" %></td>
+        <td><%= code.created_at %></td>
+      </tr>
+    <% end %>
+  </table>
+  <% end %>

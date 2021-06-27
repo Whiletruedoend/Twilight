@@ -1,0 +1,9 @@
+<% if current_user.nil? || (current_user.present? && !current_user.is_admin) %>
+  <div class="comments-container"><center><%=I18n.t("manage.manage_admins_only")%></center></div>
+<% else %>
+  <div class="comments-container">
+    <%= render "users/registrations/manage/invite_codes_gen" %><br>
+    <%= render "users/registrations/manage/invite_codes", object: InviteCode.first(10) %><br>
+    <%= (button_to I18n.t("manage.all_invite_codes_list"), full_invite_codes_list_path, class: "actions btn btn-primary", method: :get) if InviteCode.any? %>
+  </div>
+<% end %>

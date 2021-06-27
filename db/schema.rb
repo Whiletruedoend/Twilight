@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_30_112946) do
+ActiveRecord::Schema.define(version: 2021_06_25_164505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,19 @@ ActiveRecord::Schema.define(version: 2021_05_30_112946) do
     t.boolean "has_attachments", default: false
     t.index ["post_id"], name: "index_contents_on_post_id"
     t.index ["user_id"], name: "index_contents_on_user_id"
+  end
+
+  create_table "invite_codes", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "code"
+    t.boolean "is_enabled"
+    t.boolean "is_single_use"
+    t.integer "usages", default: 0
+    t.integer "max_usages"
+    t.datetime "expires_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_invite_codes_on_user_id"
   end
 
   create_table "item_tags", force: :cascade do |t|

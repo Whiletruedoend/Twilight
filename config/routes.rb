@@ -34,6 +34,11 @@ Rails.application.routes.draw do
   resources :comments, only: [:create, :edit, :update]
   get 'comments/delete/:id', to: 'comments#destroy', as: :comment_path
 
+  resources :invite_codes, only: [:create]
+
+  get '/stats/full_users_list', to: 'pages#full_users_list', as: :full_users_list
+  get '/manage/full_invite_codes_list', to: 'pages#full_invite_codes_list', as: :full_invite_codes_list
+
   root to: 'pages#main'
 
   telegram_webhook TelegramController

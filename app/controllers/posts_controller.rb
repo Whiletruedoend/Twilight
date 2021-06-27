@@ -8,14 +8,7 @@ class PostsController < ApplicationController
   end
 
   def index
-    user_post = if params.has_key?(:user)
-                  privacy = (current_user.present? && (User.find_by_login(params[:user]) == current_user) ? [0,1,2] : [0,1])
-                  Post.where(privacy: privacy, user: User.find_by_login(params[:user]))
-                else
-                  my_posts =  current_user.present? ? Post.where(user: current_user).ids : []
-                  not_my_posts = Post.where.not(user: current_user).where(privacy: [0,1]).ids
-                  Post.where(id: my_posts+not_my_posts)
-                end
+    user_post = Post.get_posts(params, current_user)
     if user_post.present? && params.has_key?(:tags)
       ids = user_post.joins(:active_tags).where(active_tags: {tag_id: params[:tags]}).ids.uniq
       user_post = user_post.where(id: ids)

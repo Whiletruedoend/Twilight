@@ -16,6 +16,7 @@
             <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
             <a> <i class="fa fa-file left-small"></i> </a>
             <% end %>
+          <h1 class="dashed-line"></h1>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">

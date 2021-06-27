@@ -37,6 +37,11 @@
           </div>
         </div>
       </div>
+      <% if Rails.configuration.credentials[:invite_codes_register_only] %>
+        <div class="form-group">
+          <input class="form-control input-lg" autofocus="autofocus" placeholder="Enter invite code..." type="text" name="user[code]" id="user_code">
+        </div>
+      <% end %>
       <hr>
       <center> <%= f.submit I18n.t("auth.sign_up_button"), class: "btn btn-primary btn-lg" %> </center>
     </div>
@@ -50,3 +55,10 @@
 </center>
 
 <%= javascript_include_tag 'application.js' %>
+
+<script>
+    var alert = document.getElementsByClassName('need2hide');
+    for (var i = 0; i < alert.length; i ++) {
+        alert[i].style.display = 'none';
+    }
+</script>

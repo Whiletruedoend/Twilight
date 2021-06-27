@@ -57,6 +57,7 @@ en:
     export: Export
     import: Import
     import_msg: Supports only .md file format!
+    search_without_results: Search hasn't given any results!
   tags:
     tags_header: New tags
     name: Name
@@ -133,6 +134,34 @@ en:
     local: Local
     global: Global
     option_enable_notifications: Enable notifications?
+  manage:
+    manage_admins_only: You don't have permissions to manage options!
+    all_invite_codes_list: All invite codes list
+    invite_codes_not_found: Invite codes not found!
+    invite_code_generate_header: Generate invite code
+    invite_code_all_codes: All codes
+    invite_code_generate: Generate
+    generate_invite_enabled: Enabled?
+    generate_invite_multiple: Multiple use?
+    generate_invite_max_usages: Max. usages
+    generate_invite_max_small: (enter 0 for infinite usages)
+    generate_invite_expires_at: Expires at?
+    generate_invite_expires_date: Date
+    list_invite_code: Code
+    list_invite_enabled: Enabled?
+    list_invite_single_use: Single use?
+    list_invite_usages: Usages
+    list_invite_max_usages: Max usages
+    list_invite_expires_at: Expires at
+    list_invite_created_at: Created at
+  stats:
+    stats_admins_only: You don't have permissions to view stats!
+    user_list: User list
+    all_users_list: All users list
+    list_login: Login
+    list_rss_token: RSS Token
+    list_created_at: Created At
+    list_invite_code: Invite code (if used)
   comments:
     comment_header: Comments
     comments_not_found: Comments not found.

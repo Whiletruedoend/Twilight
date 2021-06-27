@@ -1,0 +1,22 @@
+<h3 class="dashed-line"><%= I18n.t("stats.user_list") %><br/></h3>
+<table>
+  <tr>
+    <th>#</th>
+    <th><%= I18n.t("stats.list_login") %></th>
+    <th><%= I18n.t("stats.list_rss_token") %></th>
+    <th><%= I18n.t("stats.list_created_at") %></th>
+    <th><%= I18n.t("stats.list_invite_code") %></th>
+  </tr>
+  <% i = 0 %>
+  <% object = User.all if object.nil? %>
+  <% object.each do |user| %>
+    <% i += 1 %>
+    <tr>
+      <td><%= i %></td>
+      <td><%= user.login %></td>
+      <td><%= user.rss_token %></td>
+      <td><%= user.created_at %></td>
+      <td><%= user.options.dig("invite_code") || "-" %></td>
+    </tr>
+  <% end %>
+</table>

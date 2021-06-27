@@ -57,6 +57,7 @@ ru:
     export: Экспорт
     import: Импорт
     import_msg: Поддерживаются только .md файлы!
+    search_without_results: Поиск не дал результатов!
   tags:
     tags_header: Новые тэги
     name: Название
@@ -133,6 +134,34 @@ ru:
     local: Локальные
     global: Глобальные
     option_enable_notifications: Включить уведомления?
+  manage:
+    manage_admins_only: У вас нет прав для управления настройками!
+    all_invite_codes_list: Список всех инвайт кодов
+    invite_codes_not_found: Инвайт коды не ещё не созданы!
+    invite_code_generate_header: Генерация инвайт кода
+    invite_code_all_codes: Все инвайт коды
+    invite_code_generate: Сгенерировать
+    generate_invite_enabled: Включен?
+    generate_invite_multiple: Многоразовый?
+    generate_invite_max_usages: Макс. активаций
+    generate_invite_max_small: (введите 0 для безлимитной активации)
+    generate_invite_expires_at: Код истекает?
+    generate_invite_expires_date: Дата
+    list_invite_code: Код
+    list_invite_enabled: Включен?
+    list_invite_single_use: Одноразовый?
+    list_invite_usages: Использовано
+    list_invite_max_usages: Макс. Исп.
+    list_invite_expires_at: Дата просрочки
+    list_invite_created_at: Дата создания
+  stats:
+    stats_admins_only: У вас нет прав для просмотра статистики!
+    user_list: Список пользователей
+    all_users_list: Список всех пользователей
+    list_login: Логин
+    list_rss_token: RSS Токен
+    list_created_at: Дата регистрации
+    list_invite_code: Инвайт код (если использовался)
   comments:
     comment_header: Комментарии
     comments_not_found: Комментарии отсутствуют.

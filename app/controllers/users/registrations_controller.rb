@@ -12,15 +12,46 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    if valid_captcha?(params[:user][:captcha])
-      super
-      if current_user.present?
-        Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
-        #SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
+    return redirect_to(sign_up_url, :alert => ["Invalid captcha!"]) unless valid_captcha?(params[:user][:captcha])
+    return redirect_to(sign_up_url, :alert => ["Invalid invite code!"]) unless validate_code(params[:user][:code])
+    super
+    if current_user.present?
+      if Rails.configuration.credentials[:invite_codes_register_only]
+        options = current_user.options
+        options.merge!(invite_code: params[:user][:code])
+        current_user.update!(options: options)
       end
-    else
-      redirect_to(sign_up_url)
+      Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
+      #SendAuthorMessage.call(params[:user][:login]) if Rails.configuration.credentials[:telegram][:reg_notify] # todo: more platform support
     end
+  end
+
+  def validate_code(code)
+    return true unless Rails.configuration.credentials[:invite_codes_register_only]
+    code = InviteCode.find_by_code(code)
+
+    return false if code.nil? || !code.is_enabled
+
+    if code.expires_at.present? && (DateTime.now > code.expires_at)
+      code.is_enabled = false
+      code.save!
+      return false
+    end
+
+    if code.is_single_use
+      code.usages += 1
+      code.is_enabled = false
+    else
+      if (code.usages < code.max_usages) || (code.max_usages == 0)
+        code.usages += 1
+        code.is_enabled = false if (code.usages >= code.max_usages) && (code.max_usages != 0)
+      else
+        return false
+      end
+    end
+
+    code.save!
+    true
   end
 
   # GET /resource/edit
@@ -37,7 +68,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
     end
     if params.dig(:user,:options).present? && current_user.present?
-      current_user.options = params[:user][:options]
+      options = current_user.options
+      new_options = params[:user][:options]
+      new_options.each { |k,v| options.merge!(k=>v) if v != options[k] }
+      current_user.options = options
       current_user.save! if current_user.valid?
     end
     super

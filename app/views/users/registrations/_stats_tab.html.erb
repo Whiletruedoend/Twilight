@@ -1,0 +1,8 @@
+<% if current_user.nil? || (current_user.present? && !current_user.is_admin) %>
+  <div class="comments-container"><center><%=I18n.t("stats.stats_admins_only")%></center></div>
+<% else %>
+  <div class="comments-container">
+    <%= render "users/registrations/stats/user_list", object: User.first(10) %><br>
+    <%= button_to I18n.t("stats.all_users_list"), full_users_list_path, class: "actions btn btn-primary", method: :get %>
+  </div>
+<% end %>

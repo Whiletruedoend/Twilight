@@ -2,13 +2,23 @@
   <div class="posts-container">
 
   <section>
-    <center>
+
+    <div class="block-header">
       <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.present? && current_user.is_admin%>
       <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user.present? && current_user.is_admin%>
-      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user)%>
-    </center>
+      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user) || params.has_key?(:search)%>
+        <input type="text" class="search" placeholder="Search..." />
+    </div><br>
+
+    <% if params[:search].present? && (@post.count == 0) %>
+      <article>
+        <hr>
+        <center><%= I18n.t("posts.search_without_results") %></center>
+      </article>
+    <% end %>
+
     <% @post.each do |post| %>
     <article>
       <header>
@@ -20,6 +30,7 @@
             <a><i class="fa fa-file right-small"></i></a>
             <% end %>
           </a>
+          <h1 class="dashed-line"></h1>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
@@ -47,3 +58,11 @@
 
   </div>
 </body>
+
+<%= javascript_include_tag 'application.js' %>
+
+<script>
+    $(document).on("change", ".search", function () {
+        window.location.href = "/posts?search="+$(".search").val();
+    });
+</script>

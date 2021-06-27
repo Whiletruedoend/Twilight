@@ -82,7 +82,7 @@ $color-black: #000000;
         $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
         $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me,
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
-        $color-button-bg, $color-button-text){
+        $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -293,6 +293,16 @@ $color-black: #000000;
     opacity: 85%;
   }
 
+  .block-header{
+    text-align: center;
+    line-height: 1.5;
+    margin-left: 4%;
+    input{
+      line-height: 1.0;
+      float: right;
+    }
+  }
+
   .posts-content{
     line-height: normal;
     font-family: 'Roboto', sans-serif;
@@ -344,14 +354,8 @@ $color-black: #000000;
       margin-left: 1%;
     }
 
-    section article header{
-
-      h1::after{
-        content: "------------------------------------------------------------------------------------------------";
-        position: static;
-        bottom: 10px;
-        left: 0;
-      }
+    article header h1{
+        margin-bottom: 0;
     }
 
     .tags{
@@ -470,6 +474,21 @@ $color-black: #000000;
 
   .alert-danger{
     margin: 2% 20% auto 20%;
+  }
+
+  .dashed-line {
+    margin: 0;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .dashed-line:after {
+    content: "-------------------------------------------------------------------------------------------------------------------------------------------------------------";
+    font-size: 25px;
+    font-weight: 500;
+    font-family: "Hack", monospace;
+    display: inline-block;
+    vertical-align: 3px;
   }
 
   /* WTF */
@@ -743,6 +762,28 @@ $color-black: #000000;
           margin-right: 1%;
         }
       }
+    }
+
+    table {
+      font-size: 14px;
+      max-width: 100%;
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      font-weight: normal;
+      color: $color-table-th;
+      border-bottom: 1px solid $color-table-th-border;
+      padding: 10px 8px;
+    }
+    td {
+      color: $color-table-td;
+      padding: 9px 8px;
+      transition: .3s linear;
+    }
+    tr:hover td {
+      color: $color-table-tr-hover;
     }
   }
 

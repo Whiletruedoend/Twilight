@@ -43,6 +43,11 @@ $color-checkbox-unchecked-bg: #631119;
 $color-checkbox-text-unchecked: #df4655;
 $color-checkbox-focus: #1b1b1c;
 
+$color-table-th: #306593;
+$color-table-th-border: #306593;
+$color-table-td: #306593;
+$color-table-tr-hover: #f0f0f0;
+
 $color-code-bg: #222426;
 
 $font: #f0f0f0;
@@ -60,5 +65,5 @@ $color-black: #000000;
         $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
         $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me,
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
-        $color-button-bg, $color-button-text
+        $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover
 );
