@@ -27,8 +27,10 @@ ru:
     all_posts: Все посты
     reset_filters: Сбросить фильтры
     publish_date: Дата публикации
+    options: Опции
     profile: Профиль
     author: Автор
+    download: Загрузить
     edit_post: Редактировать
     delete_post: Удалить статью
     delete_post_confirm: Вы серьёзно?
@@ -43,7 +45,8 @@ ru:
     title_placeholder: Введите заголовок...
     text_placeholder: Введите текст...
     attachments_msg_title: Перетащите сюда некоторые файлы
-    attachments_msg_description: "Максимальный размер (Мб) и количество файлов: 10"
+    attachments_msg_max_size: Макс. размер файлов
+    attachments_msg_max_count: Макс. количество файлов
     channels: Каналы
     channels_not_found: Каналы не найдены!
     tags: Тэги
@@ -58,6 +61,7 @@ ru:
     import: Импорт
     import_msg: Поддерживаются только .md файлы!
     search_without_results: Поиск не дал результатов!
+    raw: Текст
   tags:
     tags_header: Новые тэги
     name: Название

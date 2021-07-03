@@ -27,8 +27,10 @@ en:
     all_posts: All posts
     reset_filters: Reset filters
     publish_date: Publish date
+    options: Options
     profile: Profile
     author: Author
+    download: Download
     edit_post: Edit
     delete_post: Delete post
     delete_post_confirm: Are you sure?
@@ -43,7 +45,8 @@ en:
     title_placeholder: Enter title...
     text_placeholder: Enter some text...
     attachments_msg_title: Drag here to upload or click here to browse
-    attachments_msg_description: 10 MB file size and count maximum.
+    attachments_msg_max_size: Max file size
+    attachments_msg_max_count: Max files count
     channels: Channels
     channels_not_found: Channels not found!
     tags: Tags
@@ -58,6 +61,7 @@ en:
     import: Import
     import_msg: Supports only .md file format!
     search_without_results: Search hasn't given any results!
+    raw: Raw
   tags:
     tags_header: New tags
     name: Name

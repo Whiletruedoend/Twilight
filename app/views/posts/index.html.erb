@@ -38,8 +38,14 @@
           <% if current_user == post.user %>
             | <a href="/posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
             | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
-            | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
           <% end %>
+          </i>
+        </p>
+        <p class="metadata">
+          <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.id%>"><%= I18n.t("posts.raw") %></a>
+            <% if current_user == post.user %>
+              | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
+            <% end %>
           </i>
         </p>
       </header>

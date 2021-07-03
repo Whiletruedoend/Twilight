@@ -20,11 +20,11 @@
           <p id="chars" class="chars">0 chars</p>
         </div>
         <div id="attachments" class="tab-pane">
-          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="10" data-dropzone-max-files="10">
+          <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="<%=Rails.configuration.credentials[:max_file_size]%>" data-dropzone-max-files="<%=Rails.configuration.credentials[:max_upload_files]%>">
             <%= f.file_field :attachments, multiple: true, direct_upload: true, data: { target: 'dropzone.input' } %>
             <div class="dropzone-msg dz-message needsclick">
               <h3 class="dropzone-msg-title"><%= I18n.t("posts.attachments_msg_title") %></h3>
-              <span class="dropzone-msg-desc text-sm"><%= I18n.t("posts.attachments_msg_description") %></span>
+              <span class="dropzone-msg-desc text-sm"><%= "#{I18n.t("posts.attachments_msg_max_size")}: #{Rails.configuration.credentials[:max_file_size]} MB;  #{I18n.t("posts.attachments_msg_max_count")}: #{Rails.configuration.credentials[:max_upload_files]}" %></span>
             </div>
           </div>
         </div>

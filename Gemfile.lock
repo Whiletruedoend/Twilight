@@ -202,6 +202,8 @@ GEM
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
+    reverse_markdown (2.0.0)
+      nokogiri
     rmagick (4.2.2)
     rollbar (3.2.0)
     rspec-core (3.10.1)
@@ -325,6 +327,7 @@ DEPENDENCIES
   rack-mini-profiler (~> 2.0)
   rails (~> 6.1.2)
   redcarpet
+  reverse_markdown
   rmagick
   rollbar
   rubyzip

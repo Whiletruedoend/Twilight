@@ -5,12 +5,13 @@ class ExportFiles
 
   def initialize(post)
     @post = post
+    @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)
   end
 
   def call
 
     title = @post.title
-    content_text = @post.get_content
+    content_text = ReverseMarkdown.convert(@markdown.render(@post.get_content), unknown_tags: :pass_through)
     text = title.present? ? "## #{title}\n\n#{content_text}" : "#{content_text}"
 
     post_dir = "tmp/export/#{@post.id.to_s}"

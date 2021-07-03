@@ -71,6 +71,7 @@ gem 'image_processing'
 gem 'open-uri'
 gem 'pg'
 gem 'rubyzip'
+gem 'reverse_markdown'
 
 gem 'sidekiq'
 

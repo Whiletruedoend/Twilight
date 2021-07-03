@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
 
-  before_action :authenticate_user!, except: [:rss, :show]
-  before_action :check_admin, except: [:rss, :index, :show]
+  before_action :authenticate_user!, except: [:rss, :show, :export, :raw]
+  before_action :check_admin, except: [:rss, :index, :show, :export, :raw]
 
   def check_admin
     redirect_to root_path unless current_user.is_admin
@@ -106,7 +106,7 @@ class PostsController < ApplicationController
   def export
     @post = Post.find_by_id(params[:id])
     if @post.present?
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404 if !@post.check_privacy(current_user) || (@post.user != current_user)
+      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404 if @post.user != current_user
     else
       return render file: "#{Rails.root}/public/404.html", layout: false, status: 404
     end
@@ -116,6 +116,16 @@ class PostsController < ApplicationController
     file = ExportFiles.call(@post).result
 
     send_file(file[:path], filename: file[:filename], type: file[:type])
+  end
+
+  def raw
+    @post = Post.find_by_id(params[:id])
+    if @post.present?
+      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404 unless @post.check_privacy(current_user)
+    else
+      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404
+    end
+    render 'posts/raw', layout: 'clear'
   end
 
   def import

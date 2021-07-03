@@ -105,6 +105,20 @@ $color-black: #000000;
     }
   }
 
+  body#bg-clear{
+    background-color:$bg;
+    footer{
+      color: $font;
+    }
+    pre{
+      color: $font;
+      background-color: $bg;
+      border: none;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
   table {
     border-collapse: collapse;
   }

@@ -1,6 +1,6 @@
 @import "base";
 
-$bg: #ffffff;
+$bg: #f2f2f4;
 
 $color-link-light: #bd6d76;
 $color-link: #df4655;
@@ -12,7 +12,7 @@ $color-avatar-border: #1b1b1c;
 $color-privacy-registered-p: #1375b2;
 $color-privacy-registered: #5cb85c;
 $color-privacy-me-p: #df4655;
-$color-privacy-me: #4e518b;
+$color-privacy-me: #5659e0;
 
 $color-wrapper: #515151;
 
@@ -53,7 +53,7 @@ $color-code-bg: #222426;
 $font: #000000;
 $font-link: #b3b3b3;
 
-$color-white: #f0f0f0;
+$color-white: #fcfcff;
 $color-black: #000000;
 
 @include base($bg, $color-darkpurple, $color-code-bg,

@@ -95,7 +95,14 @@ module PostsHelper
                150
              else
                100
-             end
+           end
+
+    documents = post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }
+    documents.each do |att|
+      content += "<br><a target=\"_blank\" href=\"#{url_for(att)}\"> #{I18n.t("posts.download")} #{truncate(att.filename.to_s, length: 100)} </a>"
+    end if documents.any?
+    content += "<br><br>" if documents.any?
+
     post.get_content_attachments&.each do |att|
       case
         when att.image?

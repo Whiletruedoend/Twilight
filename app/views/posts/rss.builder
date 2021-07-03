@@ -14,8 +14,8 @@ xml.instruct! :xml, :version=>"1.0"
 xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
   xml.channel do
-    xml.title 'Title'
-    xml.description 'Description'
+    xml.title "#{Rails.configuration.credentials[:title]}"
+    xml.description "#{Rails.configuration.credentials[:rss_description]}"
     xml.link root_url
     xml.language 'ru'
     xml.tag! 'atom:link', rel: 'self', type: 'application/rss+xml', href: "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/rss?rss_token=#{(params.has_key?(:rss_token) && User.find_by_rss_token(params[:rss_token].to_s).present?) ? params[:rss_token] : (current_user&.rss_token || "none")}"
