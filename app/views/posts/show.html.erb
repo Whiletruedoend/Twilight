@@ -11,11 +11,21 @@
       <header>
         <h1>
           <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
-          <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %></a>
+          <% if Rails.configuration.credentials[:enable_categories] %>
+            <div class="category" style="<%="border-left: 5px solid #{@post.category.color};" if @post.category.present? %>">
+              <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
+              <%= render "privacy-icons", object: @post %>
+              <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+                <a><i class="fa fa-file right-small"></i></a>
+              <% end %>
+            </div>
+          <% else %>
+            <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
             <%= render "privacy-icons", object: @post %>
             <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-            <a> <i class="fa fa-file left-small"></i> </a>
+              <a><i class="fa fa-file right-small"></i></a>
             <% end %>
+          <% end %>
           <h1 class="dashed-line"></h1>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
@@ -34,6 +44,13 @@
             <% end %>
           </i>
         </p>
+        <% if Rails.configuration.credentials[:enable_categories] %>
+          <% if @post.category&.name.present? %>
+            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=@post.category.id%>"><%= @post.category.name %></a></i></p>
+          <% else %>
+            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
+          <% end %>
+        <% end %>
       </header>
       <%= display_attachments(@post) if @post.get_content_attachments.present? %>
       <div class="posts-content"><%= markdown(@post.get_content) %></div>

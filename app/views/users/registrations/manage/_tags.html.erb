@@ -1,0 +1,56 @@
+<h4 class="dashed-line"><%= I18n.t("tags.manage_tags") %><br/></h4>
+
+<% if Tag.all.count == 0 %>
+  <%= I18n.t("tags.not_found") %><br>
+<% else %>
+  <table>
+    <tr>
+      <th>#</th>
+      <th><%= I18n.t("tags.name") %></th>
+      <th><%= I18n.t("tags.actions") %></th>
+    </tr>
+    <tbody class="sortables">  <!-- sortable target -->
+    <% Tag.order(:sort).all.each_with_sortable_id do |item, sortable_id| %>
+      <tr id="<%= sortable_id %>">  <!-- Needs id tag on sorting elements -->
+        <td><%= item.sort %></td>
+        <td><center><%= item.name %></td>
+        <td>
+          <div class="form-inline">
+            <%= form_with(model: item) do |f| %>
+              <div class="form-group", style="display: inline-block">
+                <%= f.hidden_field(:id, value: item.id) %>
+                <%= f.text_field :name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("tags.new_name"), value: "" %>
+                <div class="colorful-checkboxes" style="display: inherit">
+                  <%=check_box("tag", item.id, { :class=>"colorful-checkbox", :checked => item.enabled_by_default})%>
+                  <%=label_tag "tag_#{item.id}", I18n.t("tags.by_default")%>
+                </div>
+              </div>
+              <%= f.submit I18n.t("tags.update"), { action: "update", id: item.id, class: "actions btn btn-primary" } %>
+              <%= f.submit I18n.t("tags.delete"), { action: "delete", id: item.id, class: "actions btn btn-primary" } %>
+            <% end %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+<br>
+<%= form_with(model: Tag.new) do |f| %>
+  <div class="form-inline">
+    <div class="form-group">
+      <%= f.text_field :name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("tags.new_tag") %>
+      <div class="colorful-checkboxes" style="display: inherit">
+        <%= f.check_box(:enabled_by_default, { :class=>"colorful-checkbox", :checked => true }) %>
+        <%= f.label :enabled_by_default, I18n.t("tags.by_default") %>
+      </div>
+    </div>
+    <%= f.submit I18n.t("tags.create"), class: "actions btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+    $(function() {
+        $('.sortables').railsSortable();
+    });
+</script>

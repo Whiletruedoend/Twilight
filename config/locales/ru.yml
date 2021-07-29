@@ -9,7 +9,6 @@ ru:
     contacts: Контакты
     new_post: Новый пост
     all_posts: Все посты
-    manage_tags: Управление тэгами
     please_log_in: (пожалуйста, войдите!)
   auth:
     sign_up_header: Регистрация
@@ -62,7 +61,12 @@ ru:
     import_msg: Поддерживаются только .md файлы!
     search_without_results: Поиск не дал результатов!
     raw: Текст
+    category: Категория
+    no_category: Без категории
+    new_category: "*Не обязательно* Название"
+    new_tags: "*Не обязательно* тэг1,тэг2,тэг3"
   tags:
+    manage_tags: Управление тэгами
     tags_header: Новые тэги
     name: Название
     new_name: Новое название
@@ -71,10 +75,13 @@ ru:
     rename: Переименовать
     delete: Удалить
     update: Обновить
+    new_tag: Введите название тэга...
     update_tags: Обновить тэги
     rename_tags: Переименовать тэги
     delete_tags: Удалить тэги
     not_found: Тэги не найдены!
+    by_default: По-умолчанию?
+    actions: Действия
   edit:
     profile_tab: Профиль
     channels_tab: Каналы
@@ -158,6 +165,14 @@ ru:
     list_invite_max_usages: Макс. Исп.
     list_invite_expires_at: Дата просрочки
     list_invite_created_at: Дата создания
+  categories:
+    manage_categories: Управление категориями
+    no_categories: У вас нет категорий!
+    new_category: Введите название...
+    new_name: Новое название...
+    name: Название
+    color: Цвет
+    actions: Действия
   stats:
     stats_admins_only: У вас нет прав для просмотра статистики!
     user_list: Список пользователей

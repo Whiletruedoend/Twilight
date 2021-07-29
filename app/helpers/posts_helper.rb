@@ -99,18 +99,18 @@ module PostsHelper
 
     documents = post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }
     documents.each do |att|
-      content += "<br><a target=\"_blank\" href=\"#{url_for(att)}\"> #{I18n.t("posts.download")} #{truncate(att.filename.to_s, length: 100)} </a>"
+      content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{I18n.t("posts.download")} #{truncate(att.filename.to_s, length: 100)} </a>"
     end if documents.any?
     content += "<br><br>" if documents.any?
 
     post.get_content_attachments&.each do |att|
       case
         when att.image?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
+          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
         when att.video?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
+          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
         when att.audio?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
         else
           #content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag("/assets/file.png", height: 75, width: 75)}</a>"
       end

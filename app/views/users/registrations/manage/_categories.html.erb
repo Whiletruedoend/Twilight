@@ -1,0 +1,52 @@
+<h4 class="dashed-line"><%= I18n.t("categories.manage_categories") %><br/></h4>
+
+<% if @current_user.categories.all.count == 0 %>
+  <%= I18n.t("categories.no_categories") %><br>
+<% else %>
+  <table>
+    <tr>
+      <th>#</th>
+      <th><%= I18n.t("categories.name") %></th>
+      <th><%= I18n.t("categories.color") %></th>
+      <th><%= I18n.t("categories.actions") %></th>
+    </tr>
+    <tbody class="sortable">  <!-- sortable target -->
+    <% @current_user.categories.order(:sort).all.each_with_sortable_id do |item, sortable_id| %>
+      <tr id="<%= sortable_id %>">  <!-- Needs id tag on sorting elements -->
+        <td><%= item.sort %></td>
+        <td><%= item.name %></td>
+        <td><%= item.color %></td>
+        <td>
+          <div class="form-inline">
+            <%= form_with(model: item) do |f| %>
+              <div class="form-group", style="display: inline-block">
+                <%= f.hidden_field(:id, value: item.id) %>
+                <%= f.text_field :name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("categories.new_name"), value: "" %>
+                <%= f.color_field :color, class: "color-picker" %>
+              </div>
+              <%= f.submit I18n.t("tags.update"), { action: "update", id: item.id, class: "actions btn btn-primary" } %>
+              <%= f.submit I18n.t("tags.delete"), { action: "delete", id: item.id, class: "actions btn btn-primary" } %>
+            <% end %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+<br>
+<%= form_with(model: Category.new(user: @current_user)) do |f| %>
+  <div class="form-inline">
+    <div class="form-group">
+      <%= f.text_field :name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("categories.new_category") %>
+      <%= f.color_field :color, class: "color-picker" %>
+    </div>
+    <%= f.submit I18n.t("tags.create"), class: "actions btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+    $(function() {
+        $('.sortable').railsSortable();
+    });
+</script>

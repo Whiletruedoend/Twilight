@@ -85,9 +85,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     Channel.where(user: current_user).delete_all
     PlatformPost.where(post: posts).delete_all
     posts.each { |post| post.get_content_attachments&.delete_all }
+    Comment.where(post: posts).delete_all
     posts.delete_all
     Content.where(post: posts).delete_all
     Content.where(user: current_user).delete_all
+    Category.where(user: current_user).delete_all
     super
   end
 

@@ -9,7 +9,6 @@ en:
     contacts: Contacts
     new_post: New post
     all_posts: All posts
-    manage_tags: Manage tags
     please_log_in: (please, sign in)
   auth:
     sign_up_header: Sign up
@@ -62,7 +61,12 @@ en:
     import_msg: Supports only .md file format!
     search_without_results: Search hasn't given any results!
     raw: Raw
+    category: Category
+    no_category: No category
+    new_category: "*Optional* New category"
+    new_tags: "*Optional* tag1,tag2,tag3"
   tags:
+    manage_tags: Manage tags
     tags_header: New tags
     name: Name
     new_name: New name
@@ -71,10 +75,13 @@ en:
     rename: Rename
     delete: Delete
     update: Update
+    new_tag: Enter tag name...
     update_tags: Update tags
     rename_tags: Rename tags
     delete_tags: Delete tags
     not_found: Tags not found!
+    by_default: By dafault?
+    actions: Actions
   edit:
     profile_tab: Profile
     channels_tab: Channels
@@ -158,6 +165,14 @@ en:
     list_invite_max_usages: Max usages
     list_invite_expires_at: Expires at
     list_invite_created_at: Created at
+  categories:
+    manage_categories: Manage categories
+    no_categories: You have no categories!
+    new_category: Enter name...
+    new_name: Enter new name...
+    name: Name
+    color: Color
+    actions: Actions
   stats:
     stats_admins_only: You don't have permissions to view stats!
     user_list: User list

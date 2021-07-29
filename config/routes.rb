@@ -9,12 +9,8 @@ Rails.application.routes.draw do
   resources :users, except: [:edit]
   post '/edit', to: 'users#edit', as: :edit_user
 
-  resources :tags, only: [:create, :destroy]
   #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
   #get '/sign_in', to: 'user_sessions#new', as: :sign_in
-  get '/tags/manage', to: 'tags#manage', as: :manage_tag
-  post '/tags/update', to: 'tags#update', as: :update_tag
-  post '/tags/rename', to: 'tags#rename', as: :rename_tag
 
   get '/settings', to: 'pages#settings', as: :settings
 
@@ -35,6 +31,8 @@ Rails.application.routes.draw do
   get 'comments/delete/:id', to: 'comments#destroy', as: :comment_path
 
   resources :invite_codes, only: [:create]
+  resources :tags, only: [:create, :update]
+  resources :categories, only: [:create, :update]
 
   get '/stats/full_users_list', to: 'pages#full_users_list', as: :full_users_list
   get '/manage/full_invite_codes_list', to: 'pages#full_invite_codes_list', as: :full_invite_codes_list

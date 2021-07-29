@@ -76,7 +76,7 @@ $color-black: #000000;
 @mixin base($bg, $color-darkpurple, $color-code-bg,
         $font, $font-link, $color-white, $color-black,
         $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
-        $color-checkbox-channels-bg,
+        $color-checkbox-channels-bg, $color-category-default,
         $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,
         $color-checkbox-focus, $color-container-bg, $color-scrollbar-light, $color-scrollbar-dark,
         $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
@@ -505,6 +505,23 @@ $color-black: #000000;
     vertical-align: 3px;
   }
 
+  .category {
+    padding-left: 10px;
+    border-left: 5px solid $color-category-default;
+    height: 25px;
+  }
+
+  .color-picker{
+    display: inherit;
+    padding: 0;
+    margin: 0;
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    border: none;
+    background: none;
+  }
+
   /* WTF */
 
   .tooltip {
@@ -778,7 +795,7 @@ $color-black: #000000;
       }
     }
 
-    table {
+    .width-table {
       font-size: 14px;
       max-width: 100%;
       width: 100%;

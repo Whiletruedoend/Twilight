@@ -8,7 +8,7 @@
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.present? && current_user.is_admin%>
       <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user.present? && current_user.is_admin%>
-      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user) || params.has_key?(:search)%>
+      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user) || params.has_key?(:search) || params.has_key?(:category)%>
         <input type="text" class="search" placeholder="Search..." />
     </div><br>
 
@@ -19,17 +19,27 @@
       </article>
     <% end %>
 
+    <% enable_categories = Rails.configuration.credentials[:enable_categories] %>
     <% @post.each do |post| %>
     <article>
       <header>
         <h1>
           <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
-          <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
+          <% if enable_categories %>
+            <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
+              <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
+              <%= render "privacy-icons", object: post %>
+              <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+                <a><i class="fa fa-file right-small"></i></a>
+              <% end %>
+            </div>
+          <% else %>
+            <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
             <%= render "privacy-icons", object: post %>
             <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-            <a><i class="fa fa-file right-small"></i></a>
+              <a><i class="fa fa-file right-small"></i></a>
             <% end %>
-          </a>
+          <% end %>
           <h1 class="dashed-line"></h1>
         </h1>
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>

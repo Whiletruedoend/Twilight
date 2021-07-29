@@ -78,6 +78,8 @@ gem 'sidekiq'
 gem 'will_paginate', '~> 3.1.0'
 gem 'bootstrap-sass'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'rails_sortable'
 gem 'font-awesome-rails'
 gem 'font-awesome-sass', '~> 5.15.1'
 gem 'therubyracer', :platforms => :ruby

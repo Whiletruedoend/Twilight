@@ -12,6 +12,8 @@ class PostsController < ApplicationController
     if user_post.present? && params.has_key?(:tags)
       ids = user_post.joins(:active_tags).where(active_tags: {tag_id: params[:tags]}).ids.uniq
       user_post = user_post.where(id: ids)
+    elsif user_post.present? && params.has_key?(:category)
+      user_post = user_post.where(category_id: params[:category])
     end
     @post = user_post.order(created_at: :desc).paginate(page: params[:page])
   end
@@ -42,7 +44,32 @@ class PostsController < ApplicationController
       return render file: "#{Rails.root}/public/404.html", layout: false, status: 404
     end
     if @post.update(title: posts_params[:post][:title], privacy: (posts_params[:post][:privacy] || 2))
-      params[:tags].each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if params.has_key?(:tags)
+
+      tags = params[:tags].to_unsafe_h || {}
+
+      if posts_params[:post][:new_tags_name].present?
+        new_tags = posts_params[:post][:new_tags_name].split(",")
+        new_tags.each do |tag|
+          unless Tag.find_by_name(tag).present?
+            enabled = !posts_params[:post][:new_tags_enabled_by_default].to_i.zero?
+            @tag = Tag.create!(name: tag, enabled_by_default: enabled)
+            User.all.each { |usr| ItemTag.create!(item: usr, tag_id: @tag.id, enabled: enabled) }
+            Post.all.each { |post| ItemTag.create!(item: post, tag_id: @tag.id, enabled: false) }
+            tags.merge!({"#{@tag.id}": "1"})
+          end
+        end
+      end
+
+      tags.each{ |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: (tag[1].to_i)) } if tags.any?
+
+      if posts_params[:post][:category_name].present?
+        cat = current_user.categories.find_by_name(posts_params[:post][:category_name])
+        @post.update(category: (cat.present? ? cat : Category.create!(user: current_user, name: posts_params[:post][:category_name], color: posts_params[:post][:category_color])))
+      elsif !posts_params[:post][:category_name].present? && posts_params[:post][:category].present? # We need category owned by user checking?
+        @post.update(category_id: posts_params[:post][:category]) if @post.category_id != posts_params[:post][:category]
+      elsif posts_params[:post][:category_name].empty? && !posts_params[:post][:category].present?
+        @post.update(category_id: nil) unless @post.category_id.nil?
+      end
 
       channels_p = params["channels"]&.to_unsafe_h
       if channels_p.present?
@@ -72,9 +99,34 @@ class PostsController < ApplicationController
     @post = Post.new(title: posts_params[:post][:title])
     @post.user = current_user
     @post.privacy = posts_params.dig(:post, :privacy) || 2
+
+    if posts_params[:post][:category_name].present?
+      cat = current_user.categories.find_by_name(posts_params[:post][:category_name])
+      @post.category = (cat.present? ? cat : Category.create!(user: current_user, name: posts_params[:post][:category_name], color: posts_params[:post][:category_color]))
+    elsif !posts_params[:post][:category_name].present? && posts_params[:post][:category].present?
+      @post.category_id = posts_params[:post][:category]
+    end
+
+    new_tags = {}
+
+    if posts_params[:post][:new_tags_name].present?
+      tags = posts_params[:post][:new_tags_name].split(",")
+      tags.each do |tag|
+        unless Tag.find_by_name(tag).present?
+          enabled = !posts_params[:post][:new_tags_enabled_by_default].to_i.zero?
+          @tag = Tag.create!(name: tag, enabled_by_default: enabled)
+          User.all.each { |usr| ItemTag.create!(item: usr, tag_id: @tag.id, enabled: enabled) }
+          Post.all.each { |post| ItemTag.create!(item: post, tag_id: @tag.id, enabled: false) }
+          new_tags.merge!({"#{@tag.id}": "1"})
+        end
+      end
+    end
+
     @post.save!
     if @post.save
-      params[:tags].each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: (tag[1].to_i)) } if params.has_key?(:tags)
+      tags = params[:tags].to_unsafe_h || {}
+      tags.merge!(new_tags) if new_tags.any?
+      tags.each{ |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: (tag[1].to_i)) } if tags.any?
       SendPostToPlatforms.call(@post, params)
       redirect_to @post
     else
@@ -164,8 +216,14 @@ class PostsController < ApplicationController
           privacy = 2
         end
 
+        # Parse post category
+        category = text.match("<CATEGORY>([^\\D>]+)<\\/CATEGORY>")
+        category = category.captures.first if category.present?
+        category = category.to_i if category.present?
+        category = current_user.categories.find_by_id(category).present? ? category : nil
+
         # Create post, lol
-        post = Post.create!(user: current_user, title: content_title, privacy: privacy, created_at: date)
+        post = Post.create!(user: current_user, title: content_title, privacy: privacy, category_id: category, created_at: date)
 
         # Parse post tags
         tags = text.match("<TAGS>([^\\>]+)<\\/TAGS>")
@@ -223,6 +281,6 @@ class PostsController < ApplicationController
 
   private
   def posts_params
-    params.permit(:_method, :id, :authenticity_token, :commit, :channels => {}, :options => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :attachments, :privacy])
+    params.permit(:_method, :id, :authenticity_token, :commit, :channels => {}, :options => {}, :deleted_attachments=> {}, :tags => {}, :attachments => [], :post => [:title, :content, :category, :category_name, :category_color, :attachments, :privacy, :new_tags_name, :new_tags_enabled_by_default])
   end
 end

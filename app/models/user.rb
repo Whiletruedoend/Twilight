@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :channels
   has_many :comments
   has_many :invite_codes
+  has_many :categories
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: "item_tags", :as => :item, foreign_key: "item_id", :dependent => :delete_all
   has_many :active_tags, -> { active("User") }, class_name: 'ItemTag', foreign_key: "item_id"
 
