@@ -107,12 +107,12 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
     docile (1.4.0)
-    dry-configurable (0.12.1)
+    dry-configurable (0.13.0)
       concurrent-ruby (~> 1.0)
-      dry-core (~> 0.5, >= 0.5.0)
-    dry-container (0.8.0)
+      dry-core (~> 0.6)
+    dry-container (0.9.0)
       concurrent-ruby (~> 1.0)
-      dry-configurable (~> 0.1, >= 0.1.3)
+      dry-configurable (~> 0.13, >= 0.13.0)
     dry-core (0.7.1)
       concurrent-ruby (~> 1.0)
     dry-inflector (0.2.1)
@@ -158,6 +158,7 @@ GEM
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
     libv8 (3.16.14.19)
+    libv8 (3.16.14.19-x86_64-linux)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -362,8 +363,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  actionpack (>= 6.1.4.1)
   activerecord (>= 6.1.2.1)
-  addressable
+  addressable (>= 2.8.0)
   bootsnap (>= 1.4.4)
   bootstrap-sass
   byebug
@@ -407,7 +409,7 @@ DEPENDENCIES
   tzinfo-data
   web-console (>= 4.1.0)
   webdrivers
-  webpacker (>= 5.0)
+  webpacker (>= 5.4.2)
   will_paginate (~> 3.3.1)
 
 RUBY VERSION
