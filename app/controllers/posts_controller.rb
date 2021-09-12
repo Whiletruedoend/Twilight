@@ -45,7 +45,7 @@ class PostsController < ApplicationController
 
   def update
     @post = Post.find_by(id: params[:id])
-    if (@post.present? && (!@post.check_privacy(current_user) || (@post.user != current_user))) || !@post.present?
+    if (@post.present? && (!@post.check_privacy(current_user) || (@post.user != current_user))) || @post.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
     end
 
@@ -180,7 +180,7 @@ class PostsController < ApplicationController
 
   def export
     @post = Post.find_by(id: params[:id])
-    if (@post.present? && (@post.user != current_user)) || !@post.present?
+    if (@post.present? && (@post.user != current_user)) || @post.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false,
                     status: :not_found
     end
@@ -194,7 +194,7 @@ class PostsController < ApplicationController
 
   def raw
     @post = Post.find_by(id: params[:id])
-    if (@post.present? && !@post.check_privacy(current_user)) || !@post.present?
+    if (@post.present? && !@post.check_privacy(current_user)) || @post.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false,
                     status: :not_found
     end
@@ -203,7 +203,7 @@ class PostsController < ApplicationController
   end
 
   def import
-    return unless params[:file].present?
+    return if params[:file].blank?
 
     file_blob = ActiveStorage::Blob.find_signed!(params[:file])
 
@@ -299,7 +299,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post = Post.find_by(id: params[:id])
-    if (@post.present? && !@post.check_privacy(current_user)) || !@post.present?
+    if (@post.present? && !@post.check_privacy(current_user)) || @post.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false,
                     status: :not_found
     end

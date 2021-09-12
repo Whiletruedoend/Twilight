@@ -118,7 +118,7 @@ class UpdatePostMessages
   end
 
   def make_checks_attachments(platform_posts)
-    return unless @deleted_attachments.present?
+    return if @deleted_attachments.blank?
 
     attachments = @deleted_attachments.to_unsafe_h
     del_att = attachments.select { |val| attachments[val] == '0' }
@@ -157,7 +157,7 @@ class UpdatePostMessages
       end
     end
 
-    return unless @deleted_attachments.present?
+    return if @deleted_attachments.blank?
 
     @deleted_attachments.each do |attachment|
       @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == '0'

@@ -157,7 +157,7 @@ class SendPostToPlatforms
           # Only link publish (for 'attachments' method lol)
           options = {}
           option_onlylink = @options["onlylink_#{channel[:id]}"] || false
-          options.merge!(onlylink: option_onlylink)
+          options[:onlylink] = option_onlylink
 
           if option_onlylink
             begin
@@ -219,7 +219,7 @@ class SendPostToPlatforms
         channel_ids.each do |channel|
           options = {}
           option_onlylink = @options["onlylink_#{channel[:id]}"] || false
-          options.merge!(onlylink: option_onlylink)
+          options[:onlylink] = option_onlylink
 
           if option_onlylink
             post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
@@ -294,7 +294,8 @@ class SendPostToPlatforms
       options = {}
       option_notification = @options["enable_notifications_#{channel[:id]}"] || false
       option_onlylink = @options["onlylink_#{channel[:id]}"] || false
-      options.merge!(enable_notifications: option_notification, onlylink: option_onlylink)
+      options[:enable_notifications] = option_notification
+      options[:onlylink] = option_onlylink
 
       if option_onlylink
         begin

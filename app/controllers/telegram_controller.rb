@@ -155,7 +155,7 @@ class TelegramController < Telegram::Bot::UpdatesController
           media_comment.save!
           return
         else
-          identifier.merge!(media_group_id: attachment[:media_group_id].to_s)
+          identifier[:media_group_id] = attachment[:media_group_id].to_s
         end
       end
       comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
@@ -233,15 +233,16 @@ class TelegramController < Telegram::Bot::UpdatesController
       avatar = get_avatar(tg_user)
     end
 
-    user = PlatformUser.select do |usr|
-      usr[:identifier]['id'] == tg_user && usr.platform_id == @telegram_platform.id
-    end.first
+    user =
+      PlatformUser.find do |usr|
+        usr[:identifier]['id'] == tg_user && usr.platform_id == @telegram_platform.id
+      end
 
     if user.present?
       Rails.logger.debug('TG: USER FOUND'.red) if Rails.env.development?
       old_identifier = user.identifier
       identifier = { id: tg_user, fname: tg_fname, lname: tg_lname, username: tg_username }
-      identifier.merge!(avatar_size: avatar[:file_size]) if avatar.present?
+      identifier[:avatar_size] = avatar[:file_size] if avatar.present?
 
       if old_identifier['avatar_size'] != identifier[:avatar_size] # Update user avatar
         user.avatar.purge if user.avatar.present?
@@ -258,7 +259,7 @@ class TelegramController < Telegram::Bot::UpdatesController
       if avatar.present?
         file = URI.parse(avatar[:link]).open
         user.avatar.attach(io: file, filename: 'avatar.jpg', content_type: file.content_type)
-        user.identifier.merge!(avatar_size: avatar[:file_size])
+        user.identifier[:avatar_size] = avatar[:file_size]
         user.save!
       end
     end

@@ -15,7 +15,7 @@ gem 'puma', '>= 5.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacke
-gem 'webpacker', '>= 5.0'
+gem 'webpacker', '>= 5.4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '>= 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -24,7 +24,7 @@ gem 'jbuilder', '>= 2.7'
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-
+gem 'actionpack', '>= 6.1.4.1'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
@@ -59,7 +59,13 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem 'addressable'
+# rubocop
+gem 'code-scanning-rubocop'
+gem 'panolint'
+gem 'rubocop'
+gem 'rubocop-rails'
+
+gem 'addressable', '>= 2.8.0'
 gem 'devise'
 gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'enumerize'
@@ -73,8 +79,6 @@ gem 'redcarpet'
 gem 'reverse_markdown'
 gem 'rmagick'
 gem 'rollbar'
-gem 'rubocop'
-gem 'rubocop-rails'
 gem 'rubyzip'
 gem 'simple_command'
 gem 'telegram-bot'

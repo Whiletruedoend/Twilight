@@ -22,7 +22,7 @@ class ChannelsController < ApplicationController
 
   def update
     @channel = Channel.find_by(id: params[:id])
-    if (@channel.present? && (@channel.user != current_user)) || !@channel.present?
+    if (@channel.present? && (@channel.user != current_user)) || @channel.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false,
                     status: :not_found
     end

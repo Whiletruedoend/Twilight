@@ -1,0 +1,28 @@
+# pulled from repo
+name: "Rubocop"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master ]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # If running on a self-hosted runner, check it meets the requirements
+    # listed at https://github.com/ruby/setup-ruby#using-self-hosted-runners
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+
+    - name: Rubocop run
+      run: |
+        gem install bundler
+        bundle install -j 4
+        bundle exec rubocop

@@ -18,11 +18,11 @@ module Users
 
       super
 
-      return unless current_user.present?
+      return if current_user.blank?
 
       if Rails.configuration.credentials[:invite_codes_register_only]
         options = current_user.options
-        options.merge!(invite_code: params[:user][:code])
+        options[:invite_code] = params[:user][:code]
         current_user.update!(options: options)
       end
       Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }

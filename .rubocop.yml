@@ -1,12 +1,19 @@
+require:
+  - rubocop
+  - rubocop-performance
+
 AllCops:
-  NewCops: disable
+  NewCops: enable
   TargetRubyVersion: 2.7
   Exclude:
     - 'bin/*'
     - 'config/**/*'
     - 'db/**/*'
     - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
     - 'app/views/posts/rss.builder'
+  SuggestExtensions: false
 
 Style/Documentation:
   Enabled: false

@@ -31,7 +31,7 @@ class CheckChannel
 
     errs << "Bot can't read group messages!" if me.dig('result', 'can_read_all_group_messages') != true
 
-    options.merge!(id: me['result']['id'])
+    options[:id] = me['result']['id']
 
     begin
       chat = bot.get_chat(chat_id: params[:channel][:room])
@@ -52,13 +52,13 @@ class CheckChannel
     room_attachments = params[:channel][:room_attachments]
     author = params[:channel][:author]
 
-    options.merge!(room_attachments: room_attachments) if room_attachments.present?
-    options.merge!(author: author) if author.present?
+    options[:room_attachments] = room_attachments if room_attachments.present?
+    options[:author] = author if author.present?
 
-    options.merge!(notifications_enabled: (params[:channel][:enable_notifications] == '1'))
+    options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')
 
     comments_enabled = (params[:channel][:enable_comments] == '1')
-    options.merge!(comments_enabled: comments_enabled)
+    options[:comments_enabled] = comments_enabled
 
     if comments_enabled
       comment_chat_id = chat.dig('result', 'linked_chat_id')
@@ -79,10 +79,11 @@ class CheckChannel
         return errors.add(:base, errs) if errs.any?
       end
 
-      options.merge!(room_comments: comment_chat_id)
+      options[:room_comments] = comment_chat_id
     end
 
-    options.merge!(title: chat['result']['title'], username: chat['result']['username'])
+    options[:title] = chat['result']['title']
+    options[:username] = chat['result']['username']
 
     avatar = get_chat_avatar(bot, params[:channel][:room])
     if avatar.present?
@@ -91,13 +92,13 @@ class CheckChannel
         file = URI.parse(avatar[:link]).open
         @channel.avatar.attach(io: file, filename: 'avatar.jpg', content_type: file.content_type)
       end
-      options.merge!(avatar_size: avatar[:file_size])
+      options[:avatar_size] = avatar[:file_size]
     elsif avatar.nil? && @channel.avatar.present?
       # remove channel avatar
-      options.merge!(avatar_size: 0)
+      options[:avatar_size] = 0
       @channel.avatar.purge
     else
-      options.merge!(avatar_size: 0)
+      options[:avatar_size] = 0
     end
 
     @channel.options = options
@@ -118,7 +119,7 @@ class CheckChannel
       method = 'account/whoami'
       info = Matrix.get(server, token, method, {})
 
-      options.merge!(user_id: info['user_id']) if info['user_id'].present?
+      options[:user_id] = info['user_id'] if info['user_id'].present?
 
       errs << "#{info[:errcode]}: #{info[:error]}" if info[:errcode].present?
     rescue StandardError
@@ -127,7 +128,7 @@ class CheckChannel
 
     return errors.add(:base, errs) if errs.any?
 
-    options.merge!(server: server)
+    options[:server] = server
 
     # Check room state
     room = params[:channel][:room]
@@ -140,7 +141,7 @@ class CheckChannel
 
     # Get chat name & avatar
     title = Matrix.get(server, token, "rooms/#{room}/state/m.room.name", {})
-    options.merge!(title: title['name']) if title['name'].present?
+    options[:title] = title['name'] if title['name'].present?
 
     avatar_mx = Matrix.get(server, token, "rooms/#{room}/state/m.room.avatar", {})
     if avatar_mx['url'].present?
@@ -154,12 +155,12 @@ class CheckChannel
         file = avatar.open
         @channel.avatar.attach(io: file, filename: 'avatar.jpg', content_type: avatar.content_type)
       end
-      options.merge!(avatar_size: avatar.size)
+      options[:avatar_size] = avatar.size
     elsif avatar_mx['url'].nil? && @channel.avatar.present?
-      options.merge!(avatar_size: 0)
+      options[:avatar_size] = 0
       @channel.avatar.purge
     else
-      options.merge!(avatar_size: 0)
+      options[:avatar_size] = 0
     end
 
     @channel.options = options
