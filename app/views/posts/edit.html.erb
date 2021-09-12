@@ -16,10 +16,10 @@
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @post.title }) %>
           <div class="markdown-editor">
-            <%= f.text_area :content, placeholder: "#{I18n.t("posts.text_placeholder")}", value: @post.get_content %>
+            <%= f.text_area :content, placeholder: "#{I18n.t("posts.text_placeholder")}", value: @post.text %>
             <div id="preview" class="preview"></div>
           </div>
-          <p id="chars" class="chars"><%=@post.get_content.length%> chars</p>
+          <p id="chars" class="chars"><%=@post.text.length%> chars</p>
         </div>
         <div id="attachments" class="tab-pane">
           <h3><%= I18n.t("posts.current_attachments") %>:</h3>
@@ -32,7 +32,7 @@
               </div>
             </div>
           <% end %>
-          <% attachments = @post.get_content_attachments %>
+          <% attachments = @post.content_attachments %>
           <% if attachments.present? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>

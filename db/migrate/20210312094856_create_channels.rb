@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateChannels < ActiveRecord::Migration[6.1]
   def up
     create_table :channels do |t|
@@ -12,6 +14,7 @@ class CreateChannels < ActiveRecord::Migration[6.1]
     add_column :platform_posts, :channel_id, :bigint
     add_index :platform_posts, :channel_id
   end
+
   def down
     remove_index :platform_posts, :channel_id
     remove_column :platform_posts, :channel_id

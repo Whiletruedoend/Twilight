@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateArticles < ActiveRecord::Migration[6.0]
   def up
     create_table :articles do |t|
@@ -8,6 +10,7 @@ class CreateArticles < ActiveRecord::Migration[6.0]
       t.timestamps
     end
   end
+
   def down
     drop_table :articles
   end

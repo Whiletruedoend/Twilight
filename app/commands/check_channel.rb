@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CheckChannel
   prepend SimpleCommand
   include TelegramShared
@@ -10,7 +12,7 @@ class CheckChannel
   end
 
   def call
-    params[:channel][:platform] == "telegram" ? check_telegram : check_matrix
+    params[:channel][:platform] == 'telegram' ? check_telegram : check_matrix
   end
 
   def check_telegram
@@ -18,32 +20,32 @@ class CheckChannel
     errs = []
     options = {}
 
-    return if params[:channel][:enabled].present? && params[:channel][:enabled] == "0" # when disable from settings
+    return if params[:channel][:enabled].present? && params[:channel][:enabled] == '0' # when disable from settings
 
     begin
       me = bot.get_me
     rescue Telegram::Bot::Error
-      errs << "Invalid bot token!"
+      errs << 'Invalid bot token!'
       return errors.add(:base, errs)
     end
 
-    errs << "Bot can't read group messages!" if me.dig("result", "can_read_all_group_messages") != true
+    errs << "Bot can't read group messages!" if me.dig('result', 'can_read_all_group_messages') != true
 
-    options.merge!(id: me["result"]["id"])
+    options.merge!(id: me['result']['id'])
 
     begin
       chat = bot.get_chat(chat_id: params[:channel][:room])
     rescue Telegram::Bot::Error
-      errs << "Channel not available! (Not found or bot access problems?)"
+      errs << 'Channel not available! (Not found or bot access problems?)'
     end
 
     begin
-      chat_attachments = bot.get_chat(chat_id: params[:channel][:room_attachments])
+      bot.get_chat(chat_id: params[:channel][:room_attachments])
     rescue Telegram::Bot::Error
-      errs << "Attachments channel not available! (Not found or bot access problems?)"
+      errs << 'Attachments channel not available! (Not found or bot access problems?)'
     end
 
-    errs << "Channel ID == Attachment Channel ID" if params[:channel][:room] == params[:channel][:room_attachments]
+    errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == params[:channel][:room_attachments]
 
     return errors.add(:base, errs) if errs.any?
 
@@ -53,22 +55,26 @@ class CheckChannel
     options.merge!(room_attachments: room_attachments) if room_attachments.present?
     options.merge!(author: author) if author.present?
 
-    options.merge!(notifications_enabled: (params[:channel][:enable_notifications] == "1"))
+    options.merge!(notifications_enabled: (params[:channel][:enable_notifications] == '1'))
 
-    comments_enabled = (params[:channel][:enable_comments] == "1")
+    comments_enabled = (params[:channel][:enable_comments] == '1')
     options.merge!(comments_enabled: comments_enabled)
 
     if comments_enabled
-      comment_chat_id = chat.dig("result", "linked_chat_id")
+      comment_chat_id = chat.dig('result', 'linked_chat_id')
 
       begin
         comment_chat = bot.get_chat(chat_id: comment_chat_id)
       rescue Telegram::Bot::Error
-        errs << "Comments chat not available! (Not found or bot access problems?)"
+        errs << 'Comments chat not available! (Not found or bot access problems?)'
         return errors.add(:base, errs) if errs.any?
       end
 
-      unless comment_chat.dig("result","permissions","can_send_messages") || comment_chat.dig("result","permissions","can_send_media_messages")  || comment_chat.dig("result","permissions","can_send_other_messages")
+      unless comment_chat.dig('result', 'permissions',
+                              'can_send_messages') || comment_chat.dig('result', 'permissions',
+                                                                       'can_send_media_messages') || comment_chat.dig(
+                                                                         'result', 'permissions', 'can_send_other_messages'
+                                                                       )
         errs << "Bot don't have permissions to send messages!"
         return errors.add(:base, errs) if errs.any?
       end
@@ -76,21 +82,22 @@ class CheckChannel
       options.merge!(room_comments: comment_chat_id)
     end
 
-    options.merge!(:title=>chat["result"]["title"], :username=>chat["result"]["username"])
+    options.merge!(title: chat['result']['title'], username: chat['result']['username'])
 
     avatar = get_chat_avatar(bot, params[:channel][:room])
     if avatar.present?
-      if @channel.options&.dig("avatar_size").nil? || (@channel.options["avatar_size"].present? && @channel.options["avatar_size"] != avatar[:file_size])
+      if @channel.options&.dig('avatar_size').nil? ||
+         (@channel.options['avatar_size'].present? && @channel.options['avatar_size'] != avatar[:file_size])
         file = URI.parse(avatar[:link]).open
-        @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: file.content_type)
+        @channel.avatar.attach(io: file, filename: 'avatar.jpg', content_type: file.content_type)
       end
-      options.merge!(:avatar_size=>avatar[:file_size])
+      options.merge!(avatar_size: avatar[:file_size])
     elsif avatar.nil? && @channel.avatar.present?
-      #remove channel avatar
-      options.merge!(:avatar_size=>0)
+      # remove channel avatar
+      options.merge!(avatar_size: 0)
       @channel.avatar.purge
     else
-      options.merge!(:avatar_size=>0)
+      options.merge!(avatar_size: 0)
     end
 
     @channel.options = options
@@ -104,18 +111,18 @@ class CheckChannel
 
     options = { comments_enabled: false }
 
-    return if params[:channel][:enabled].present? && params[:channel][:enabled] == "0" # when disable from settings
+    return if params[:channel][:enabled].present? && params[:channel][:enabled] == '0' # when disable from settings
 
     # Server & access token validation
     begin
-      method = "account/whoami"
+      method = 'account/whoami'
       info = Matrix.get(server, token, method, {})
 
-      options.merge!(user_id: info["user_id"]) if info["user_id"].present?
+      options.merge!(user_id: info['user_id']) if info['user_id'].present?
 
       errs << "#{info[:errcode]}: #{info[:error]}" if info[:errcode].present?
-    rescue Exception
-      errs << "Getting about me info failed! (wrong server or access token?)"
+    rescue StandardError
+      errs << 'Getting about me info failed! (wrong server or access token?)'
     end
 
     return errors.add(:base, errs) if errs.any?
@@ -127,31 +134,32 @@ class CheckChannel
     method = "rooms/#{room}/state"
     info = Matrix.get(server, token, method, {})
 
-    errs << "#{info["errcode"]}: #{info["error"]}" unless info.is_a?(Array)
+    errs << "#{info['errcode']}: #{info['error']}" unless info.is_a?(Array)
 
     return errors.add(:base, errs) if errs.any?
 
     # Get chat name & avatar
     title = Matrix.get(server, token, "rooms/#{room}/state/m.room.name", {})
-    options.merge!(:title=>title["name"]) if title["name"].present?
+    options.merge!(title: title['name']) if title['name'].present?
 
     avatar_mx = Matrix.get(server, token, "rooms/#{room}/state/m.room.avatar", {})
-    if avatar_mx["url"].present?
-      avatar_server = avatar_mx["url"].split("/")[2]
-      avatar_id = avatar_mx["url"].split("/")[3]
+    if avatar_mx['url'].present?
+      avatar_server = avatar_mx['url'].split('/')[2]
+      avatar_id = avatar_mx['url'].split('/')[3]
 
-      avatar = Matrix.download(server, token, avatar_server, avatar_id,{})
+      avatar = Matrix.download(server, token, avatar_server, avatar_id, {})
 
-      if @channel.options&.dig("avatar_size").nil? || (@channel.options["avatar_size"].present? && @channel.options["avatar_size"] != avatar.size)
+      if @channel.options&.dig('avatar_size').nil? ||
+         (@channel.options['avatar_size'].present? && @channel.options['avatar_size'] != avatar.size)
         file = avatar.open
-        @channel.avatar.attach(io: file, filename: "avatar.jpg", content_type: avatar.content_type)
+        @channel.avatar.attach(io: file, filename: 'avatar.jpg', content_type: avatar.content_type)
       end
-      options.merge!(:avatar_size=>avatar.size)
-    elsif avatar_mx["url"].nil? && @channel.avatar.present?
-      options.merge!(:avatar_size=>0)
+      options.merge!(avatar_size: avatar.size)
+    elsif avatar_mx['url'].nil? && @channel.avatar.present?
+      options.merge!(avatar_size: 0)
       @channel.avatar.purge
     else
-      options.merge!(:avatar_size=>0)
+      options.merge!(avatar_size: 0)
     end
 
     @channel.options = options

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PlatformUser < ApplicationRecord
   belongs_to :platform
   has_many :comments

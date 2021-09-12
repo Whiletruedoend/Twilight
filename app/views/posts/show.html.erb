@@ -15,14 +15,14 @@
             <div class="category" style="<%="border-left: 5px solid #{@post.category.color};" if @post.category.present? %>">
               <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
               <%= render "privacy-icons", object: @post %>
-              <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+              <% if @post.content_attachments.present? && @post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
                 <a><i class="fa fa-file right-small"></i></a>
               <% end %>
             </div>
           <% else %>
             <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
             <%= render "privacy-icons", object: @post %>
-            <% if @post.get_content_attachments.present? && @post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <% if @post.content_attachments.present? && @post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <a><i class="fa fa-file right-small"></i></a>
             <% end %>
           <% end %>
@@ -52,8 +52,8 @@
           <% end %>
         <% end %>
       </header>
-      <%= display_attachments(@post) if @post.get_content_attachments.present? %>
-      <div class="posts-content"><%= markdown(@post.get_content) %></div>
+      <%= display_attachments(@post) if @post.content_attachments.present? %>
+      <div class="posts-content"><%= markdown(@post.text) %></div>
       <hr style="border-top: dashed 2px;" />
       <% item_tags = @post.active_tags %>
       <% if item_tags.any? %>

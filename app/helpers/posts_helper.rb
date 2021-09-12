@@ -1,20 +1,24 @@
+# frozen_string_literal: true
+
 module PostsHelper
   def get_post_tags(post)
     tags = post.active_tags_names.join(' ')
-    tags.present? ? tags : "no tags"
+    tags.presence || 'no tags'
   end
 
   def get_published_platforms(post)
-    post.platform_posts.map do |p| { name: p.platform.title, link: get_post_link(p) } end
+    post.platform_posts.map { |p| { name: p.platform.title, link: post_link(p) } }
   end
 
-  def get_post_link(p)
+  def post_link(post)
     case p.platform.title
-    when "telegram"
-      chat = Telegram.bot.get_chat(chat_id: p.identifier["chat_id"])
-      "https://t.me/#{chat["result"]["username"]}/#{p.identifier["message_id"]}" if chat["result"]["username"].present? && (chat["result"]["type"] != "private")
-      else # todo: moare platform support!
-        nil
+    when 'telegram'
+      chat = Telegram.bot.get_chat(chat_id: post.identifier['chat_id'])
+      if chat['result']['username'].present? && (chat['result']['type'] != 'private')
+        "https://t.me/#{chat['result']['username']}/#{post.identifier['message_id']}"
+      end
+      # else # TODO: moare platform support!
+      # nil
     end
   end
 
@@ -23,7 +27,7 @@ module PostsHelper
   end
 
   def table_link_columns
-    content = ""
+    content = ''
 
     github = Rails.configuration.credentials[:links][:github]
     if github.present?
@@ -53,7 +57,7 @@ module PostsHelper
   end
 
   def table_contacts_columns
-    content = ""
+    content = ''
 
     telegram = Rails.configuration.credentials[:links][:telegram]
     if telegram.present?
@@ -83,54 +87,68 @@ module PostsHelper
   end
 
   def display_attachments(post)
-    content = ""
-    size = case post.get_content_attachments&.count || 0
-             when 1
-               300
-             when 2
-               250
-             when 3
-               200
-             when 4,5
-               150
-             else
-               100
-           end
+    content = ''
+    attachments_count = post.content_attachments&.count || 0
+    size =
+      case attachments_count
+      when 1
+        300
+      when 2
+        250
+      when 3
+        200
+      when 4, 5
+        150
+      else
+        100
+      end
 
-    documents = post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }
-    documents.each do |att|
-      content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{I18n.t("posts.download")} #{truncate(att.filename.to_s, length: 100)} </a>"
-    end if documents.any?
-    content += "<br><br>" if documents.any?
+    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    if documents.any?
+      documents.each do |att|
+        content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{I18n.t('posts.download')} #{truncate(
+          att.filename.to_s, length: 100
+        )} </a>"
+      end
+    end
+    content += '<br><br>' if documents.any?
 
-    post.get_content_attachments&.each do |att|
-      case
-        when att.image?
-          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
-        when att.video?
-          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
-        when att.audio?
-          content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
-        else
-          #content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag("/assets/file.png", height: 75, width: 75)}</a>"
+    post.content_attachments&.each do |att|
+      if att.image?
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [
+                                                                                                                      size, size
+                                                                                                                    ]))}</a>"
+      elsif att.video?
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [
+                                                                                                                      size, size
+                                                                                                                    ]).processed)}</a>"
+      elsif att.audio?
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\"> #{audio_tag(url_for(att),
+                                                                                                autoplay: false, controls: true)}</a>"
       end
     end
     content.html_safe
   end
 
   def display_comment_attachments(comment)
-    content = ""
+    content = ''
     comment.attachments.each do |att|
-      case
-        when att.image?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [100, 100]))}</a>"
-        when att.video?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [100, 100]).processed)}</a>"
-        when att.audio?
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+      content +=
+        if att.image?
+          "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.variant(resize_to_limit: [
+                                                                                            100, 100
+                                                                                          ]))}</a>"
+        elsif att.video?
+          "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag url_for(att.preview(resize_to_limit: [
+                                                                                            100, 100
+                                                                                          ]).processed)}</a>"
+        elsif att.audio?
+          "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{audio_tag(url_for(att), autoplay: false,
+                                                                                    controls: true)}</a>"
         else
-          content += "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag("/assets/file.png", height: 100, width: 100)}</a>"
-      end
+          "<a target=\"_blank\" href=\"#{url_for(att)}\"> #{image_tag('/assets/file.png', height: 100,
+                                                                                          width: 100)}</a>"
+        end
     end
     content.html_safe
   end

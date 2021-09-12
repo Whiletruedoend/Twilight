@@ -29,14 +29,14 @@
             <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
               <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
               <%= render "privacy-icons", object: post %>
-              <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+              <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
                 <a><i class="fa fa-file right-small"></i></a>
               <% end %>
             </div>
           <% else %>
             <a href="/posts/<%= post.id %>"><%= post.title.present? ? post.title : "##{post.id}" %> </a>
             <%= render "privacy-icons", object: post %>
-            <% if post.get_content_attachments.present? && post.get_content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <a><i class="fa fa-file right-small"></i></a>
             <% end %>
           <% end %>
@@ -59,12 +59,12 @@
           </i>
         </p>
       </header>
-      <%= display_attachments(post) if post.get_content_attachments.present? %>
-      <div class="posts-content"><% if post.get_content.length > 512 %>
-          <%= markdown(truncate(post.get_content, length: 512)) %>
+      <%= display_attachments(post) if post.content_attachments.present? %>
+      <div class="posts-content"><% if post.text.length > 512 %>
+          <%= markdown(truncate(post.text, length: 512)) %>
           <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.id}", class: "read-more-#{post.id}" %>
         <% else %>
-          <%= markdown(post.get_content) %>
+          <%= markdown(post.text) %>
         <% end %>
       </div>
     </article>

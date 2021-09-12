@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreatePlatformPosts < ActiveRecord::Migration[6.0]
   def up
     create_table :platform_posts do |t|
@@ -5,6 +7,7 @@ class CreatePlatformPosts < ActiveRecord::Migration[6.0]
       t.timestamps
     end
   end
+
   def down
     drop_table :platform_posts
   end

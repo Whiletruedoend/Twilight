@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CategoriesController < ApplicationController
   before_action :check_admin
 
@@ -7,7 +9,8 @@ class CategoriesController < ApplicationController
 
   def update
     return redirect_to sign_in_path if current_user.nil?
-    if params[:commit] == "Update"
+
+    if params[:commit] == 'Update'
       @category = Category.find(params[:category][:id].to_i)
 
       @category.name = params[:category][:name] if params[:category][:name].present?
@@ -20,7 +23,7 @@ class CategoriesController < ApplicationController
         render :new
       end
     else # Delete
-      @category = Category.find_by_id(params[:category][:id].to_i)
+      @category = Category.find_by(id: params[:category][:id].to_i)
       @category.delete if @category.user == current_user
       redirect_to edit_user_path
     end
@@ -28,11 +31,13 @@ class CategoriesController < ApplicationController
 
   def new
     return redirect_to sign_in_path if current_user.nil?
+
     @category = Category.new
   end
 
   def create
     return redirect_to sign_in_path if current_user.nil?
+
     @category = Category.new
 
     @category.user = current_user
@@ -47,4 +52,3 @@ class CategoriesController < ApplicationController
     end
   end
 end
-

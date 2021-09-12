@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Category < ApplicationRecord
   include RailsSortable::Model
   set_sortable :sort  # Indicate a sort column

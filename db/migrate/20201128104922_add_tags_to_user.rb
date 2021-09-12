@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTagsToUser < ActiveRecord::Migration[6.0]
   def up
     create_table :tags do |t|
@@ -9,6 +11,7 @@ class AddTagsToUser < ActiveRecord::Migration[6.0]
       t.references :item, polymorphic: true
     end
   end
+
   def down
     drop_table :tags
     drop_table :item_tags

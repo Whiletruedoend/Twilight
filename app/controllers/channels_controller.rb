@@ -1,5 +1,6 @@
-class ChannelsController < ApplicationController
+# frozen_string_literal: true
 
+class ChannelsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin
 
@@ -8,25 +9,27 @@ class ChannelsController < ApplicationController
   end
 
   def edit
-    @channel = Channel.find_by_id(params[:id])
+    @channel = Channel.find_by(id: params[:id])
     if @channel.present?
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404 if @channel.user != current_user
+      if @channel.user != current_user
+        render file: "#{Rails.root}/public/404.html", layout: false,
+               status: :not_found
+      end
     else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: 404
+      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
     end
   end
 
   def update
-    @channel = Channel.find_by_id(params[:id])
-    if @channel.present?
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404 if @channel.user != current_user
-    else
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: 404
+    @channel = Channel.find_by(id: params[:id])
+    if (@channel.present? && (@channel.user != current_user)) || !@channel.present?
+      return render file: "#{Rails.root}/public/404.html", layout: false,
+                    status: :not_found
     end
 
     command = CheckChannel.call(@channel, channels_params)
     unless command.success?
-      redirect_to edit_channel_path, :alert => command.errors.full_messages
+      redirect_to edit_channel_path, alert: command.errors.full_messages
       return
     end
 
@@ -50,12 +53,12 @@ class ChannelsController < ApplicationController
 
     command = CheckChannel.call(@channel, channels_params)
     unless command.success?
-      redirect_to new_channel_path, :alert => command.errors.full_messages
+      redirect_to new_channel_path, alert: command.errors.full_messages
       return
     end
 
     @channel.user = current_user
-    @channel.platform = Platform.find_by_title(channels_params[:channel][:platform])
+    @channel.platform = Platform.find_by(title: channels_params[:channel][:platform])
     @channel.token = channels_params[:channel][:token]
     @channel.room = channels_params[:channel][:room]
     @channel.enabled = true
@@ -70,14 +73,15 @@ class ChannelsController < ApplicationController
   def destroy
     @channel = Channel.find(params[:id])
     if @channel.user == current_user
-      #@channel.avatar.destroy!
+      # @channel.avatar.destroy!
       @channel.delete
     end
     redirect_to edit_user_path
   end
 
   private
+
   def channels_params
-    params.permit(:_method, :id, :authenticity_token, :commit, :channel => {})
+    params.permit(:_method, :id, :authenticity_token, :commit, channel: {})
   end
 end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   captcha_route
-  devise_for :user, path: '', controllers: {sessions: 'users/sessions', registrations:'users/registrations'}
+  devise_for :user, path: '', controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
 
   get 'posts/import', to: 'posts#import', as: :import_post
   post 'posts/import', to: 'posts#import'
@@ -9,8 +11,8 @@ Rails.application.routes.draw do
   resources :users, except: [:edit]
   post '/edit', to: 'users#edit', as: :edit_user
 
-  #delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
-  #get '/sign_in', to: 'user_sessions#new', as: :sign_in
+  # delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
+  # get '/sign_in', to: 'user_sessions#new', as: :sign_in
 
   get '/settings', to: 'pages#settings', as: :settings
 
@@ -23,16 +25,16 @@ Rails.application.routes.draw do
 
   get 'posts/export/:id', to: 'posts#export', as: :export_post_path
 
-  resources :channels, except: [:index, :show, :destroy]
+  resources :channels, except: %i[index show destroy]
   get 'channels/delete/:id', to: 'channels#destroy', as: :channel_path
 
   put '/comments', to: 'comments#create', as: :create_comments_path
-  resources :comments, only: [:create, :edit, :update]
+  resources :comments, only: %i[create edit update]
   get 'comments/delete/:id', to: 'comments#destroy', as: :comment_path
 
   resources :invite_codes, only: [:create]
-  resources :tags, only: [:create, :update]
-  resources :categories, only: [:create, :update]
+  resources :tags, only: %i[create update]
+  resources :categories, only: %i[create update]
 
   get '/stats/full_users_list', to: 'pages#full_users_list', as: :full_users_list
   get '/manage/full_invite_codes_list', to: 'pages#full_invite_codes_list', as: :full_invite_codes_list
@@ -42,6 +44,6 @@ Rails.application.routes.draw do
   root to: 'pages#main'
 
   telegram_webhook TelegramController
-  #root 'index'
+  # root 'index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

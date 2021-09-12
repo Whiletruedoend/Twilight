@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenameMessagesTable < ActiveRecord::Migration[6.1]
   def up
     rename_table :messages, :contents
@@ -12,11 +14,12 @@ class RenameMessagesTable < ActiveRecord::Migration[6.1]
       t.belongs_to :post
       t.belongs_to :user
       t.belongs_to :platform_user
-      t.boolean "has_attachments", default: false
-      t.boolean "is_edited", default: false
+      t.boolean 'has_attachments', default: false
+      t.boolean 'is_edited', default: false
       t.timestamps
     end
   end
+
   def down
     rename_table :contents, :messages
     add_column :messages, :type, :string

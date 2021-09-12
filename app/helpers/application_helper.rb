@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def markdown(text)
     renderer = { hard_wrap: true,
@@ -13,6 +15,6 @@ module ApplicationHelper
   end
 
   def current_theme
-    current_user&.options&.dig("theme") || 'default_theme'
+    current_user&.options&.dig('theme') || 'default_theme'
   end
 end

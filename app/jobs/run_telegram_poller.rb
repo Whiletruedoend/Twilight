@@ -1,12 +1,18 @@
+# frozen_string_literal: true
+
 class RunTelegramPoller < ApplicationJob
   queue_as :default
 
   def perform(*)
-    puts("TELEGRAM POLLER STARTED!".green) if Rails.env.development?
+    Rails.logger.debug('TELEGRAM POLLER STARTED!'.green) if Rails.env.development?
     threads = []
 
-    Telegram.bots.values.each { |bot| threads << Thread.new { Telegram::Bot::UpdatesPoller.add(bot, TelegramController).start } }
+    Telegram.bots.each_value do |bot|
+      threads << Thread.new do
+        Telegram::Bot::UpdatesPoller.add(bot, TelegramController).start
+      end
+    end
 
-    threads.each { |th| th.join }
+    threads.each(&:join)
   end
 end

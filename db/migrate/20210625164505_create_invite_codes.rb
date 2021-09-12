@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateInviteCodes < ActiveRecord::Migration[6.1]
   def up
     create_table :invite_codes do |t|
@@ -11,6 +13,7 @@ class CreateInviteCodes < ActiveRecord::Migration[6.1]
       t.timestamps
     end
   end
+
   def down
     drop_table :invite_codes
   end
