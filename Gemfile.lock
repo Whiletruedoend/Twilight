@@ -132,6 +132,13 @@ GEM
       activesupport (>= 3.2)
     erubi (1.10.0)
     execjs (2.8.1)
+    factory_bot (6.2.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.19.0)
+      i18n (>= 1.6, < 2)
     ffi (1.15.4)
     font-awesome-rails (4.7.0.7)
       railties (>= 3.2, < 7)
@@ -257,6 +264,10 @@ GEM
     rexml (3.2.5)
     rmagick (4.2.2)
     rollbar (3.2.0)
+    rspec (3.10.0)
+      rspec-core (~> 3.10.0)
+      rspec-expectations (~> 3.10.0)
+      rspec-mocks (~> 3.10.0)
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.1)
@@ -393,6 +404,8 @@ DEPENDENCIES
   devise
   easy_captcha!
   enumerize
+  factory_bot_rails
+  faker
   font-awesome-rails
   font-awesome-sass (~> 5.15.1)
   grape
@@ -414,8 +427,11 @@ DEPENDENCIES
   reverse_markdown
   rmagick
   rollbar
+  rspec
+  rspec-rails
   rubocop
   rubocop-rails
+  rubocop-rspec
   rubyzip
   sass-rails (>= 6)
   selenium-webdriver

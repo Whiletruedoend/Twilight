@@ -73,7 +73,8 @@ class PostsController < ApplicationController
         @post.update(category: (cat.presence || Category.create!(user: current_user,
                                                                  name: posts_params[:post][:category_name],
                                                                  color: posts_params[:post][:category_color])))
-      elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present? # We need category owned by user checking?
+      # We need category owned by user checking?
+      elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present?
         @post.update(category_id: posts_params[:post][:category]) if @post.category_id != posts_params[:post][:category]
       elsif posts_params[:post][:category_name].empty? && posts_params[:post][:category].blank?
         @post.update(category_id: nil) unless @post.category_id.nil?

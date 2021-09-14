@@ -52,7 +52,8 @@ class CommentsController < ApplicationController
   def destroy
     @comment = Comment.find_by(id: params[:id])
     if (@comment.present? &&
-       ((@comment.user.nil? || current_user.nil?) || ((@comment.user != current_user) && !current_user.is_admin?))) || @comment.blank?
+       ((@comment.user.nil? || current_user.nil?) ||
+       ((@comment.user != current_user) && !current_user.is_admin?))) || @comment.blank?
       return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
     end
 

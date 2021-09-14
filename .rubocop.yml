@@ -19,7 +19,7 @@ Style/Documentation:
   Enabled: false
 
 Layout/LineLength:
-  Max: 140
+  Max: 130
 
 Metrics/ModuleLength:
   Enabled: false

@@ -1,37 +1,21 @@
-# Sqlite 3
+# config/database.yml
 default: &default
-  adapter: sqlite3
+  adapter: postgresql # sqlite3
+  encoding: unicode
+  host: localhost
+  port: 5432
+  username: twilight
+  password: pass
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+
 development:
   <<: *default
-  database: db/development.sqlite3
+  database: twilight_dev # db/development.sqlite3
+
 test:
   <<: *default
-  database: db/test.sqlite3
+  database: twilight_test # db/test.sqlite3
+
 production:
   <<: *default
-  database: db/production.sqlite3
-
-# Postgres
-#development:
-#  adapter: postgresql
-#  host: localhost
-#  port: 5432
-#  username: twilight
-#  password: pass
-#  database: twilight
-#  encoding: unicode
-#  pool: 10
-#  timeout: 5000
-
-#production:
-#  adapter: postgresql
-#  host: localhost
-#  port: 5432
-#  username: twilight
-#  password: pass
-#  database: twilight
-#  encoding: unicode
-#  pool: 10
-#  timeout: 5000
+  database: twilight_production # db/production.sqlite3

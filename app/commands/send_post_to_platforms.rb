@@ -20,8 +20,8 @@ class SendPostToPlatforms
     end
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
-                                                                 disable_indented_code_blocks: true, autolink: false, tables: false,
-                                                                 underline: false, highlight: false)
+                                                                 disable_indented_code_blocks: true, autolink: false,
+                                                                 tables: false, underline: false, highlight: false)
 
     @images = ['image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/webp', 'image/svg+xml']
     @videos = ['video/mp4', 'video/mpeg', 'video/webm', 'video/ogg']

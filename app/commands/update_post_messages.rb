@@ -36,7 +36,9 @@ class UpdatePostMessages
       end
       if @deleted_attachments.present?
         @deleted_attachments.each do |attachment|
-          @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == '0'
+          if attachment[1] == '0'
+            @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge
+          end
         end
       end
       # fix if platform was deleted, but content still exist
@@ -371,7 +373,10 @@ class UpdatePostMessages
       # end
     end
 
-    return unless need_delete_attachments && @attachments_count == (@post.content_attachments&.count || 0) && @deleted_attachments.present?
+    unless need_delete_attachments && @deleted_attachments.present? &&
+           @attachments_count == (@post.content_attachments&.count || 0)
+      return
+    end
 
     @deleted_attachments.each do |attachment|
       @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == '0'
