@@ -154,10 +154,10 @@ class SendPostToPlatforms
       else
         next if has_caption
 
-        msg = bot.send_message({ chat_id: channel[:room],
-                                 text: text,
-                                 parse_mode: 'html',
-                                 disable_notification: !options[:enable_notifications] })
+        @msg = bot.send_message({ chat_id: channel[:room],
+                                  text: text,
+                                  parse_mode: 'html',
+                                  disable_notification: !options[:enable_notifications] })
 
         PlatformPost.create!(identifier: { chat_id: msg['result']['chat']['id'],
                                            message_id: msg['result']['message_id'],

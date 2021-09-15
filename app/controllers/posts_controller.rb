@@ -329,14 +329,14 @@ class PostsController < ApplicationController
                   channels: {},
                   options: {},
                   deleted_attachments: {}, tags: {}, attachments: [],
-                  post: %i[title
-                           content
-                           category
-                           category_name
-                           category_color
-                           attachments
-                           privacy
-                           new_tags_name
-                           new_tags_enabled_by_default])
+                  post: [:title,
+                         :content,
+                         :category,
+                         :category_name,
+                         :category_color,
+                         :privacy,
+                         :new_tags_name,
+                         :new_tags_enabled_by_default,
+                         { attachments: [] }])
   end
 end
