@@ -44,6 +44,9 @@
 
                     * <%=check_box("options", "onlylink_#{channel.id}", { :id=> "onlylink_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
                     <%= label_tag "onlylink_#{channel.id}", "Publish only link?" %>
+
+                    * <%=check_box("options", "caption_#{channel.id}", { :id=> "caption_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "caption_#{channel.id}", "Text is caption (if available?)" %>
                   </div>
                   <% else %>
                   <%=check_box("channels", channel.id, { "data-toggle" => "collapse", "data-target"=>"#options-#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
