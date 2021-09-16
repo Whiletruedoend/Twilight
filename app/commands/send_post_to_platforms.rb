@@ -127,7 +127,7 @@ class SendPostToPlatforms
       options = channel_options(channel)
 
       if options[:onlylink]
-        send_onlylink_post(channel, options)
+        send_tg_onlylink_post(channel, options)
         next
       end
 
@@ -253,7 +253,7 @@ class SendPostToPlatforms
     bots_hash.first[1]
   end
 
-  def send_onlylink_post(channel, options)
+  def send_tg_onlylink_post(channel, options)
     bot = get_tg_bot(channel)
 
     post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
@@ -314,129 +314,139 @@ class SendPostToPlatforms
       text = title.present? ? "<b>#{title}</b><br><br>#{content_text}" : content_text.to_s
 
       if content.has_attachments?
-        atts = []
-
-        # Upload attachment to matrix servers
-        content.attachments.each do |attachment|
-          filename = attachment.blob.filename.to_s
-          content_type = attachment.blob.content_type
-          data = File.read(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key))
-          # КОСТЫЛЬ! Ну даже если разные токены, какая разница куда предварительно загружать?
-          # Главное чтобы серверы одианковые были, или даже просто связь между ними
-          # Ну ладно это угроза безопасности, но если у человека и так есть 2 токена, то не всё ли равно?
-          # Разве что что-то заапложенное обнаружит человек у которого есть один токен, то нет второго.
-          # Ну не знаю, это специфический случай. Возможно когда-нибудь сделаю его фикс. Когда-нибудь.
-          # Возможно.
-          msg = Matrix.upload(channel_ids.first[:server], channel_ids.first[:matrix_token], filename, content_type,
-                              data)
-          content_uri = JSON.parse(msg)['content_uri']
-          width = attachment.blob[:metadata][:width].to_i
-          height = attachment.blob[:metadata][:height].to_i
-          blob_signed_id = attachment.blob.signed_id
-          size = attachment.blob.byte_size
-          next if msg.blank?
-
-          atts.append({ content_uri: content_uri,
-                        filename: filename,
-                        size: size,
-                        content_type: content_type,
-                        width: width,
-                        height: height,
-                        blob_signed_id: blob_signed_id })
-        end
-
-        # TODO: ENCRYPTED FILE UPLOAD SUPPORT
-        channel_ids.each do |channel|
-          uploaded_atts = []
-
-          # Only link publish (for 'attachments' method lol)
-          options = {}
-          option_onlylink = @options["onlylink_#{channel[:id]}"] || false
-          options[:onlylink] = option_onlylink
-
-          if option_onlylink
-            begin
-              post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
-              full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
-              text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
-              method = "rooms/#{channel[:room]}/send/m.room.message"
-              data = {
-                msgtype: 'm.text',
-                format: 'org.matrix.custom.html',
-                body: text,
-                formatted_body: text
-              }
-              msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
-              identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
-              PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
-                                   content: content, channel_id: channel[:id])
-            rescue StandardError
-              Rails.logger.error("Failed create matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
-            end
-            next
-          end
-
-          atts.each do |uploaded_attachment|
-            method = "rooms/#{channel[:room]}/send/m.room.message"
-            info = {
-              size: uploaded_attachment[:size],
-              mimetype: uploaded_attachment[:content_type],
-              w: uploaded_attachment[:width],
-              h: uploaded_attachment[:height]
-            }
-            type =
-              if @images.include?(uploaded_attachment[:content_type])
-                'm.image'
-              elsif @videos.include?(uploaded_attachment[:content_type])
-                'm.video'
-              elsif @audios.include?(uploaded_attachment[:content_type])
-                'm.audio'
-              else
-                'm.file'
-              end
-            data = {
-              msgtype: type,
-              url: uploaded_attachment[:content_uri],
-              body: uploaded_attachment[:filename],
-              info: info
-            }
-            msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
-            uploaded_atts.append({ event_id: JSON.parse(msg)['event_id'],
-                                   room_id: channel[:room],
-                                   options: options,
-                                   type: type,
-                                   blob_signed_id: uploaded_attachment[:blob_signed_id] })
-          end
-          PlatformPost.create!(identifier: uploaded_atts, platform: Platform.find_by(title: 'matrix'), post: @post,
-                               content: content, channel_id: channel[:id])
-        end
+        send_mx_attachments(channel_ids,content)
       elsif content_text.present?
-        channel_ids.each do |channel|
-          options = {}
-          option_onlylink = @options["onlylink_#{channel[:id]}"] || false
-          options[:onlylink] = option_onlylink
-
-          if option_onlylink
-            post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
-            full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
-            text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
-          end
-
-          method = "rooms/#{channel[:room]}/send/m.room.message"
-          data = {
-            msgtype: 'm.text',
-            format: 'org.matrix.custom.html',
-            body: text,
-            formatted_body: text
-          }
-          msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
-          identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
-          PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
-                               content: content, channel_id: channel[:id])
-        end
+        send_mx_content(channel_ids, content, text)
         break # If posts exists && content count >2, then for matrix PlatformPost content has first content id
       end
       next if Content.where(post: @post, has_attachments: false).count >= 2
     end
+  end
+
+  def send_mx_content(channel_ids,content,text)
+    channel_ids.each do |channel|
+      options = channel_options(channel)
+
+      if options[:onlylink]
+        post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+        full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+        text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
+      end
+
+      method = "rooms/#{channel[:room]}/send/m.room.message"
+      data = {
+        msgtype: 'm.text',
+        format: 'org.matrix.custom.html',
+        body: text,
+        formatted_body: text
+      }
+      msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
+      identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
+      PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
+                           content: content, channel_id: channel[:id])
+    end
+  end
+
+  def upload_to_matrix(channel_ids, content)
+    atts = []
+    # Upload attachment to matrix servers
+    content.attachments.each do |attachment|
+      filename = attachment.blob.filename.to_s
+      content_type = attachment.blob.content_type
+      data = File.read(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key))
+      # КОСТЫЛЬ! Ну даже если разные токены, какая разница куда предварительно загружать?
+      # Главное чтобы серверы одианковые были, или даже просто связь между ними
+      # Ну ладно это угроза безопасности, но если у человека и так есть 2 токена, то не всё ли равно?
+      # Разве что что-то заапложенное обнаружит человек у которого есть один токен, то нет второго.
+      # Ну не знаю, это специфический случай. Возможно когда-нибудь сделаю его фикс. Когда-нибудь.
+      # Возможно.
+      msg = Matrix.upload(channel_ids.first[:server], channel_ids.first[:matrix_token], filename, content_type,
+                          data)
+      content_uri = JSON.parse(msg)['content_uri']
+      width = attachment.blob[:metadata][:width].to_i
+      height = attachment.blob[:metadata][:height].to_i
+      blob_signed_id = attachment.blob.signed_id
+      size = attachment.blob.byte_size
+      next if msg.blank?
+
+      atts.append({ content_uri: content_uri,
+                    filename: filename,
+                    size: size,
+                    content_type: content_type,
+                    width: width,
+                    height: height,
+                    blob_signed_id: blob_signed_id })
+    end
+    atts
+  end
+
+  def send_mx_attachments(channel_ids, content)
+    atts = upload_to_matrix(channel_ids, content)
+    # TODO: ENCRYPTED FILE UPLOAD SUPPORT
+    channel_ids.each do |channel|
+      uploaded_atts = []
+
+      # Only link publish (for 'attachments' method lol)
+      options = channel_options(channel)
+
+      if options[:onlylink]
+        send_mx_onlylink_post(channel, options)
+        next
+      end
+
+      atts.each do |uploaded_attachment|
+        method = "rooms/#{channel[:room]}/send/m.room.message"
+        info = {
+          size: uploaded_attachment[:size],
+          mimetype: uploaded_attachment[:content_type],
+          w: uploaded_attachment[:width],
+          h: uploaded_attachment[:height]
+        }
+        type =
+          if @images.include?(uploaded_attachment[:content_type])
+            'm.image'
+          elsif @videos.include?(uploaded_attachment[:content_type])
+            'm.video'
+          elsif @audios.include?(uploaded_attachment[:content_type])
+            'm.audio'
+          else
+            'm.file'
+          end
+        data = {
+          msgtype: type,
+          url: uploaded_attachment[:content_uri],
+          body: uploaded_attachment[:filename],
+          info: info
+        }
+        msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
+        uploaded_atts.append({ event_id: JSON.parse(msg)['event_id'],
+                                room_id: channel[:room],
+                                options: options,
+                                type: type,
+                                blob_signed_id: uploaded_attachment[:blob_signed_id] })
+      end
+      PlatformPost.create!(identifier: uploaded_atts, platform: Platform.find_by(title: 'matrix'), post: @post,
+                            content: content, channel_id: channel[:id])
+    end
+  end
+
+  def send_mx_onlylink_post(channel, options)
+    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+    text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
+
+    method = "rooms/#{channel[:room]}/send/m.room.message"
+    data = {
+      msgtype: 'm.text',
+      format: 'org.matrix.custom.html',
+      body: text,
+      formatted_body: text
+    }
+    msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
+    identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
+    PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
+                         content: content, channel_id: channel[:id])
+  rescue StandardError
+    Rails.logger.error("Failed create matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
   end
 end

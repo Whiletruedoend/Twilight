@@ -118,4 +118,22 @@ RSpec.describe SendPostToPlatforms, type: :service do
     #
     # end
   end
+
+  # describe "#upload_to_telegram" do
+  #  subject { service.upload_to_telegram(bot, room_attachments, content) }
+
+  #  let(:room_attachments) { '-1001234567890' }
+  #  let(:content) { create(:content) }
+
+  #  context 'when attachment is image' do
+  #    before do
+  #      content.attachments.attach(io: File.open(Rails.root.join('spec', 'support', 'image.jpg')),
+  #                                 filename: 'image.jpg', content_type: 'image/jpg')
+  #    end
+
+  # it 'uploads to telegram' do
+  # subject.instance_values['msg'].to eq([{ chat_id: '-1001234567890' }])
+  # end
+  #  end
+  # end
 end
