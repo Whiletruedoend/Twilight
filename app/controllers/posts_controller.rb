@@ -83,7 +83,7 @@ class PostsController < ApplicationController
       channels_p = params['channels']&.to_unsafe_h
       if channels_p.present?
         channels_p.each do |k, v|
-          if !v.to_i == 0 # TODO: make it? Need2fix duplicate content when creating!
+          if v.to_i == 1 # TODO: make it? Need2fix duplicate content when creating!
             # params["platforms"] = { k=>(v ? 1 : 0).to_s }
             # SendPostToPlatforms.call(@post, params)
           else

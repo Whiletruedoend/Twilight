@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Post, type: :model do
   subject(:post) { create(:post) }
-  let(:telegram) { create(:platform, title: 'telegram') }
-  let(:matrix) { create(:platform, title: 'matrix') }
+  let!(:telegram) { create(:platform, title: 'telegram') }
+  let!(:matrix) { create(:platform, title: 'matrix') }
 
   it { is_expected.to be_valid }
 

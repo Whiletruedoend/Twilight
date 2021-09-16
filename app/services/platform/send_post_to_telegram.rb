@@ -86,7 +86,7 @@ class Platform::SendPostToTelegram
     bot = get_tg_bot(channel)
 
     full_text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{@post.text}" : @post.text.to_s
-    has_caption = ((full_text.length < 1024) && !full_text.empty?) && @post.contents[0][:has_attachments]
+    has_caption = ((full_text.length < 1024) && !full_text.empty?) && @post.contents[0][:has_attachments] && options[:caption]
 
     @post.contents.each_with_index do |content, index|
       has_attachments = content[:has_attachments]
