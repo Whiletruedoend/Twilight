@@ -1,88 +1,86 @@
 # Twilight
 
 ### Table of Contents
-* [Идея](#Идея)
-* [Текущие возможности и планы](#Текущие-возможности-и-планы)
-* [Поддержка платформ](#Поддержка-платформ)
-* [Установка](#Установка)
-* [Настройка](#Настройка)
-  + [Комментарии](#Комментарии)
+* [Idea](#Idea)
+* [Current features and plans](#Current-features-and-plans)
+* [Platform support](#Platform-support)
+* [Installation](#Installation)
+* [Setting up](#Setting-up)
+  + [Comments](#Comments)
   + [Matrix](#matrix)
   + [fail2ban](#fail2ban)
-  + [Темы](#Темы)
-  + [Продакшн](#Продакшн)
-* [Баги и некоторые особенности](#Баги-и-некоторые-особенности)
-* [Вопрос к безопасности](#Вопрос-к-безопасности)
-* [Схемы и скриншоты](#Схемы-и-скриншоты)
-* [Контрибьюшен](#Контрибьюшен)
-* [Связь](#Связь)
+  + [Themes](#Themes)
+  + [Production](#Production)
+* [Bugs and some features](#Bugs-and-some-features)
+* [Security question](#Security-question)
+* [Schemas and screenshots](#Schemas-and-screenshots)
+* [Contribution](#Contribution)
+* [Contact](#Contact)
 
  <img src="https://i.imgur.com/3QStroz.png"></img>
 
 
-P.S. Список последних изменений можно посмотреть <a href="https://github.com/Whiletruedoend/Twilight/blob/master/update_log.md">тут</a>
+P.S. The list of recent changes can be found <a href="https://github.com/Whiletruedoend/Twilight/blob/master/update_log.md">here</a>
 
-## Идея
+## Idea
 
-Недавно задумался над реализацией блогов в разных платформах, и пришёл к следующим проблемам:
+Recently I thought about the implementation of blogs in different platforms, and came to the following problems:
  
- * Первая, это то что нет единой площадки куда можно складывать контент;
- * Вторая, проблема в том что все сидят в разных местах;
+ * The first is that there is no single site where you can put content;
+ * Second, the problem is that everyone is sitting in different places;
  
-    из этих двух вытекает:
+    from these two it follows:
  
- * Третья - глупость самому постить одно и то же в разные места;
- * Четвёртая - нужно самому сидеть в других платформах;
+ * Third - stupidity to post the same thing in different places;
+ * Fourth - you need to sit in other platforms yourself;
  
- Поэтому было принято написать что-то вроде агрегатора статей. Всё просто - пишешь пост - он разлетается по разным платформам. Схему и картинки см. в самом конце;
+ Therefore, it was decided to write something like an article aggregator. It's simple - you write an article - it is scattered across different platforms. See the diagram and pictures at the very end;
  
- На схеме видно что есть каналы на платформах которые принадлежат владельцу, доступ рядовому пользователю осуществляется с помощью rss токена. Поясняю: каждый зарегистрировавшейся пользователь получает свой токен и использует его для получения новостей с RSS. Это даёт два преимущества:
+ The diagram shows that there are channels on the platforms that belong to the owner, access to an ordinary user is carried out using the rss token. Let me explain: each registered user receives his own token and uses it to receive news from RSS. This has two advantages:
  
- 1) Персонализация с помощью тегов контента, который пользователь хочет видеть;
- 2) Ограничение автором прав доступа на некоторые статьи;
+ 1) Personalization by tagging the content that the user wants to see;
+ 2) Author's restriction of access rights to some articles;
  
- Конечно, если мы говорим о размещении статей на других открытых платформах, ограничение прав особо не имеет смысла, однако целью автора не было построение полностью изолированной среды с контролем каждой выходной ноды, хотя бы потому что это практически нереализуемо.
+ Of course, if we are talking about posting articles on other open platforms, restricting rights does not make much sense, however, the author's goal was not to build a completely isolated environment with control of each output node, if only because it is practically impossible to implement.
  
- Таблица моделей находится где-то в конце файла;
+ The schematic and table of models is located under the heading [Schemes and screenshots] (# Schemes-and-screenshots); 
  
-## Текущие возможности и планы
+## Current features and plans
   
-  * Поддержка EN/RU языков;
-  * Возможность создавать/менять темы;
-  * Управление каналами, проверка данных при вводе (только для администраторов);
-  * Поиск заметки по заголовку на главной странице;
-  * Каптча при авторизации/регистрации;
-  * Система инвайт-кодов (не обязательно);
-  * Поддержка отдельных опций для каждой платформы;
-  * Спецификаторы доступа заметки (для всех, для пользователей, для себя);
-  * Создание/Удаление тэгов, возможность пользователя выбрать нужные тэги (результат отображается в RSS);
-  * Возможность добавления комментариев к записи;
-  * Просмотр статистики зарегистрированных пользователей (только для администраторов);
+  * EN/RU languages support;
+  * Ability to create/change themes;
+  * Channel management, verification of data when entering (only for administrators);
+  * Search for notes by title on the home page;
+  * Captcha for authorization/registration;
+  * The system of invite codes (optional);
+  * Support for separate options for each platform;
+  * Access specifiers notes (for everyone, for users, for yourself);
+  * Create Delete tags, the ability of the user to select the desired tags (the result is displayed in RSS);
+  * Ability to add comments to the article;
+  * View statistics of registered users (only for administrators); 
   
   
-  Про возможности в будущем см. доску на github во вкладке `projects`;
+  For future options, see the github board in the `projects` tab;
  
-## Поддержка платформ
+## Platform support
  
- * Telegram: 
-   * Отправка в платформы: Да
-   * Редактирование, удаление: Да
-   * Отправка из платформы: Нет
-   * Поддержка комментариев: Да
-   * Поддержка аттачменов: картинки, видео, аудио, файлы
+  * Telegram:
+    * Send to platforms: Yes
+    * Editing, deleting: Yes
+    * Send from platform: No
+    * Comment support: Yes
+    * Support for attachments: pictures, video, audio, files
    
- * Matrix: 
-   * Отправка в платформы: Да
-   * Редактирование, удаление: Да
-   * Отправка из платформы: Нет
-   * Поддержка аттачменов: картинки, видео, аудио, файлы
+  * Matrix:
+    * Send to platforms: Yes
+    * Editing, deleting: Yes
+    * Send from platform: No
+    * Support for attachments: pictures, video, audio, files 
  
- Пока что всё
+## Installation
  
-## Установка
- 
-  * Ставим ruby;
-  * Ставим проект: 
+  * Install ruby (2.7);
+  * Clone & install project: 
   
     ```ssh
      git clone https://github.com/Whiletruedoend/Twilight
@@ -92,39 +90,42 @@ P.S. Список последних изменений можно посмот�
      rails db:migrate
     ```
      
-  * Настраиваем: `credentials.yml`
-  * Запускаем: `rails s`
+  * Setting up: `credentials.yml`
+  * Run: `rails s`
   
-Теперь сайт будет доступен по адресу: `http://localhost:3080`
+The site will now be available at: `http://localhost:3080`
 
-## Настройка
-Некоторые настройки делаются через консоль (`rails c`), но большинство работает и так при условии правильно введённых данных;
-  * После регистрации делаем себя админом (для публикации постов и всего-всего):
+## Setting up
+
+Some settings are done through the console (`rails c`), but most work anyway, provided the data is entered correctly;
+  * After registration, we make ourselves an administrator (for publishing articles and everything):
       ```ssh
        User.last.update(is_admin: true)
       ```
-### Комментарии
-Чтобы работали комментарии в Telegram, необходимо:
-1. Проверить настройки приватности бота;
-2. Добавить бота в чат с комментариями;
-3. При добавлении канала поставить галку 'Включить комментарии';
+### Comments
 
-**Далее, парсинг комментариев пока что НЕ запускается автоматически при загрузке rails. Поэтому для запуска нужно::**
+For comments to work in Telegram, you must:
+1. Check the bot's privacy settings;
+2. Add a bot to the chat with comments;
+3. When adding a channel, check the 'Include comments' checkbox; 
 
-1. ~~В config/application.rb закомментировать строку: RunTelegramPoller.perform_later~~ (пока что не нужно)
-2. В ручную запустить poller командой: `rake tg:start`
+**Further, comment parsing is NOT automatically started when rails is loaded yet. Therefore, to run you need::**
+
+1. ~~In config/application.rb comment out the line: RunTelegramPoller.perform_later~~ (not yet needed)
+2. Manually run poller with the command: `rake tg:start`
 
 ### Matrix
- Краткая инструкция по настройке matrix.
+
+A quick guide to setting up the matrix.
  
- 1. Доступ осуществляется через access_token. Его получение через клиент Element: `Все настройки -> Помощь & О программе --> *в самом низу* Токен доступа`
- 2. Для получения ID комнаты, создаём комнату, после чего ПКМ на комнате и `Настройки --> Подробности --> и тут 'Внутренний ID комнаты'`
+ 1. Access is through the access_token. Receiving it through the Element client: `Settings -> Help & About --> *at the bottom* Acess token`
+ 2. To get the room ID, create a room, then RMB on the room and `Settings --> Details --> and here 'Internal room ID'`
 ### fail2ban
-Для возможности блокировки IP адресов тех, кто пытается сбрутофорсить RSS токен, используется [fail2ban](https://www.dmosk.ru/instruktions.php?object=fail2ban). Инструкция:
-* Поставить пакет fail2ban;
-* Настроить `credentials.yml`: выставить `enabled:` на `true`;
-* Создать фильтр: `vim /etc/fail2ban/filter.d/twilight.conf`
-* Вставить туда:
+To be able to block the IP addresses of those who are trying to bypass the RSS token, used [fail2ban](https://www.fail2ban.org/wiki/index.php/Main_Page). Instructions:
+* Install fail2ban;
+* Setting up `credentials.yml`: switch `enabled:` on `true`;
+* Create filter: `vim /etc/fail2ban/filter.d/twilight.conf`
+* Paste there:
     ```ssh                                                  
     [INCLUDES]
     before = common.conf
@@ -132,8 +133,8 @@ P.S. Список последних изменений можно посмот�
     [Definition]
     failregex = ^.* (\[.*\])* Failed bypass token from <HOST> at .*$
     ```
-* Создать jail: `vim /etc/fail2ban/jail.d/twilight.conf`
-* Вставить туда:
+* Create jail: `vim /etc/fail2ban/jail.d/twilight.conf`
+* Paste there:
     ```
     [twilight]
     enabled = true
@@ -145,76 +146,76 @@ P.S. Список последних изменений можно посмот�
     port = http,https
     logpath = /home/user/Twilight/log/production.log
     ```
-  (**Важно!** Не забудьте поменять путь *logpath* на свой. Подробнее про параметры см.выше по ссылке);
-* Перезапустить: `systemctl restart fail2ban`
+  (**Important!** Don't forget to change the *logpath* to your own. For more information about the parameters, see the link above);
+* Restart: `systemctl restart fail2ban`
 
-(Забаненные IP можно узнать командой:`sudo fail2ban-client status twilight`)
-### Темы
-Для создания своей темы необходимо создавать файл в формате `app/assets/stylesheets/название_theme.scss`, отредактировать его, затем перезапустить приложение;
-### Продакшн
-Для прода не забыть прекомпилировать ассеты:
+(Banned IPs can be found with the command: `sudo fail2ban-client status twilight`)
+### Themes
+To create your own theme, you need to create a file in the format `app/assets/stylesheets/mytheme_theme.scss`, edit it, then restart the application;
+### Production
+For the production, do not forget to recompile the assets:
 
 `RAILS_ENV=production bundle exec rake assets:precompile`
 
-## Баги и некоторые особенности
-Особенности:
-* [TG] Если есть заголовок, но отсутствует текст поста, то заголовок не отправляется;
-* [TG] При удалении поста с какого-либо канала, удаляются все комментарии, в т.ч. и привязанные к другим постам. Это связано с тем, что комментарии привязаны к посту, а не к платформе, иначе при просмотре поста пришлось бы показывать разные версии текста (для каждого канала) с разными комментариями. А подразумевается, что пост один (одинаковый), просто на нескольких каналах;
-* [ANY] Если удалить канал, а затем удалить пост, то пост из платформ не удалится (нет токенов - нет удаления, вроде логично);
+## Bugs and some features
+Features:
+* [TG] If there is a title, but there is no post text, then the title is not sent;
+* [TG] When you delete a post from any channel, all comments are deleted, incl. and tied to other posts. This is due to the fact that comments are tied to the post, not to the platform, otherwise, when viewing the post, you would have to show different versions of the text (for each channel) with different comments. And it is understood that the post is one (the same), just on several channels;
+* [ANY] If you delete a channel and then delete a post, then the post will not be deleted from the platforms (no tokens - no deletion, it seems logical);
 
-Баги:
+Bugs:
 
-Блок = сообщение длиной максимум 4096 символов (актуально для телеги);
+Block = message with a maximum length of 4096 characters (relevant for a cart);
 
-* [TG] При редактировании существующего поста если блоков поста два и больше, то в сообщении не указывается название (title) поста;
-* [TG] Если каналов для поста в telegram два и больше то:
-  * Если нет изменений во всех блоках, то текст не изменится;
-  * Если есть изменения, то появилтся лишний блок сообщения;
-* [TG] Если у поста в telegram был текст и аттачменты, и при редактировании убрать все аттачменты, то пост удалится;
-* [TG] Если у аттачмента убрать весь текст, то вне зависимости от заголовка, текст не изменится;
-* [TG] При редактировании аттачментов в комментариях (добавление нового и удаление старого) сбивается порядок и при повторном редактировании удаляется не та картинка;
-* [TG][TEMP] При добавлении канала нужно вручную перезапускать poller, а то и rails приложение, иначе он не сможет найти бота и создать пост;
+* [TG] When editing an existing post, if there are two or more post blocks, then the post title is not indicated in the message;
+* [TG] If there are two or more channels for posting in telegram then:
+  * If there are no changes in all blocks, then the text will not change;
+  * If there are changes, an extra message block will appear;
+* [TG] If a post in telegram had text and attachments, and when editing, remove all attachments, then the post will be deleted;
+* [TG] If you remove all the text from the attachment, then regardless of the title, the text will not change;
+* [TG] When editing attachments in comments (adding a new one and deleting an old one), the order gets lost and when you edit it again, the wrong picture is deleted;
+* [TG] [TEMP] When adding a channel, you must manually restart the poller, or even the rails application, otherwise it will not be able to find the bot and create a post;
 
-Мне лень их фиксить, кто захочет (было бы очень круто), то с радостью приму Pull Request;
+I'm too lazy to fix them, whoever wants (it would be very cool), then I will gladly accept the Pull Request; 
 
-## Вопрос к безопасности
+## Security question
 
-Сейчас получается так, что, если у пользователя есть несколько каналов, то даже имея несколько токенов авторизации, для предзагрузки картинок используется какой-то один (самый первый указанный).
+Now it turns out that if a user has several channels, then even having several authorization tokens, only one (the very first specified) is used to preload pictures.
 
-Но допустим такую ситуацию: у пользователя есть 2 канала (2 тонена соответственно), и есть второй человек, который знает первый токен, но не знает второй. Тогда исходя из логики, что все аттачменты загружаются во временный канал от первого токена, он может просто перехватить информацию которая предназначалась для второго токена.
+But let's say this situation: the user has 2 channels (2 tones, respectively), and there is a second person who knows the first token, but does not know the second. Then, proceeding from the logic that all attachments are loaded into a temporary channel from the first token, he can simply intercept the information that was intended for the second token.
 
-Только вот информация с первого токена идентична информации со второго токена (ведь контент заливается на разные каналы один и тот же!), поэтому даже перехватив эту информацию условный злоумышленник в результате получит то же самое.
+Only the information from the first token is identical to the information from the second token (after all, the content is uploaded to different channels the same!), So even by intercepting this information, a conditional attacker will receive the same result.
 
-Поэтому серъёной угрозы это вроде не несёт. Но на всякий случай предупредил, чтобы не было вопросов.
-## Схемы и скриншоты
-Общая схема:
+Therefore, this does not seem to carry a serious threat. But just in case, he warned that there were no questions. 
+## Schemas and screenshots
+General scheme:
 <img src="https://i.imgur.com/ffeGQGF.png"></img>
-Схема моделей (v. 0.65):
+Model scheme (v. 0.65):
 <img src="https://i.imgur.com/91dyP9L.png"></img>
-Главная страница:
+Main page:
 <img src="https://i.imgur.com/cVz0Quv.png"></img>
-Личный кабинет:
+Profile page:
 <img src="https://i.imgur.com/XDwP5n0.png"></img>
-Управление каналами:
+Manage channels:
 <img src="https://i.imgur.com/ojERlTd.png"></img>
-Инвайт-коды:
+Invite codes:
 <img src="https://i.imgur.com/FvAlzzT.png"></img>
-Статистика:
+Statistics:
 <img src="https://i.imgur.com/gc9MnqT.png"></img>
-Создание статьи (Default theme):
+Article creation (Default theme):
 <img src="https://i.imgur.com/3QStroz.png"></img>
-Список статей:
+List of articles:
 <img src="https://i.imgur.com/364Ytof.png"></img>
-Конкретная статья:
+Specific article:
 <img src="https://i.imgur.com/9F0W2Nr.png"></img>
-## Контрибьюшен
+## Contribution
 
-  1) Форкни проект;
-  2) Сделай изменения в форкнутом проекте;
-  3) На странице этого репозитория, тыкни Pull Requests и сделай Pull Request, выбрав свой форк в правом списке;
+  1) Fork tis project;
+  2) Make changes to the forked project;
+  3) On the page of this repository, poke Pull Requests and make a Pull Request by selecting your fork in the right list; 
   
-## Связь
-Если у вас есть какие-то идеи или собственные наработки, или же просто вопросы по поводу работоспособности кода, то вы всегда можете обратиться ко мне по следующим адресам:
+## Contact
+If you have any ideas or your own developments, or just questions about the performance of the code, then you can always contact me at the following addresses: 
 
 - [Matrix](https://matrix.to/#/@whiletruedoend:matrix.org)
 - Jabber: whiletruedoend@gensokyo.tk
