@@ -9,15 +9,14 @@ class Platform::UpdateTelegramPosts
     @params = params
     @post = post
 
-    @title = post.title
-    @content = params[:post][:content]
-    @attachments = @params[:post][:attachments]
-    @deleted_attachments = @params[:deleted_attachments]
-    @text = "<b>#{@title}</b>\n\n#{@content}"
-    @length = @text.length
+    # @title = post.title
+    # @content = params[:post][:content]
 
-    @only_one_post = true
-    @next_post = false
+    @platform_posts = @post.platform_posts.where(platform: Platform.where(title: 'telegram'))
+    @deleted_attachments = @params[:deleted_attachments].to_unsafe_h.select { |_k, v| v == '0' }.keys
+    # need sort @deleted_attachments in the order of their posting platforms (grouping of pictures)
+    @attachments = @post.content_attachments.map { |att| att.blob.signed_id }
+    @deleted_attachments = @attachments.select { |att| att.in?(@deleted_attachments) }
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
                                                                  disable_indented_code_blocks: true, autolink: false,
@@ -25,14 +24,111 @@ class Platform::UpdateTelegramPosts
   end
 
   def call
-    has_attachments = @attachments.present? || @deleted_attachments.present?
-    platform_posts = @post.platform_posts.where(platform: Platform.where(title: 'telegram'))
+    # has_attachments = @attachments.present? || @deleted_attachments.present?
 
-    make_checks(@post.platform_posts.joins(:content).where(contents: { has_attachments: false },
-                                                           platform: Platform.where(title: 'telegram')))
-    make_caption_fixes(platform_posts)
-    make_checks_attachments(platform_posts) if has_attachments
-    make_fixes(platform_posts) if has_attachments
+    # make_checks(@post.platform_posts.joins(:content).where(contents: { has_attachments: false },
+    #                                                       platform: Platform.where(title: 'telegram')))
+    # make_caption_fixes(platform_posts)
+    # make_checks_attachments(platform_posts) if has_attachments
+    # make_fixes(platform_posts) if has_attachments
+
+    delete_attachments if @deleted_attachments.any?
+  end
+
+  def delete_attachments
+    @platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+      bot = get_tg_bot(platform_post)
+
+      deleted_indexes = []
+
+      @deleted_attachments.each do |del_att|
+        attachment = platform_post[:identifier].select { |att| att['blob_signed_id'] == del_att }
+        i = platform_post[:identifier].index { |x| attachment.include?(x) }
+        deleted_indexes.append(i)
+      end
+
+      caption_identifier = platform_post.identifier.each_with_index.filter_map { |x, i| i if x.dig('options', 'caption') }
+
+      if caption_identifier.present? && deleted_indexes.include?(caption_identifier[0])
+        new_caption_identifier = move_caption(bot, platform_post, deleted_indexes)
+      end
+
+      deleted_indexes.each do |i|
+        bot.delete_message({ chat_id: platform_post[:identifier][i]['chat_id'],
+                             message_id: platform_post[:identifier][i]['message_id'] })
+      end
+
+      new_identifier = platform_post[:identifier].reject.with_index { |_e, i| deleted_indexes.include? i }
+
+      if new_caption_identifier.present?
+        new_caption_identifier['options'] =
+          new_caption_identifier['options'].merge(caption: true)
+      end
+      new_identifier.empty? ? platform_post.delete : platform_post.update!(identifier: new_identifier)
+    end
+
+    return if @deleted_attachments.blank?
+
+    @deleted_attachments.each do |attachment|
+      @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
+    end
+  end
+
+  def move_caption(bot, platform_post, deleted_indexes)
+    all_indexes = *(0..(platform_post.identifier.count - 1))
+    return if all_indexes == deleted_indexes
+
+    caption_identifier =
+      platform_post.identifier.each_with_index.filter_map do |x, i|
+        { i => x['type'] } if x.dig('options', 'caption')
+      end
+
+    available_identifiers =
+      platform_post.identifier.each_with_index.filter_map do |x, i|
+        { i => x['type'] } if (all_indexes - deleted_indexes).include?(i)
+      end
+
+    a = (available_identifiers + caption_identifier).sort_by { |e| e.keys.first } # idk how to name it
+    index_caption_identifier_in_a = a.each_index.find { |index| a[index] == caption_identifier[0] }
+
+    future_identifier_index =
+      if index_caption_identifier_in_a == 0
+        a[1].keys.first
+      # if caption element is last, move in previous
+      elsif index_caption_identifier_in_a == a.count
+        a[a.count - 2].keys.first
+      # if previous element has type is the same as caption, move caption in him
+      elsif a[index_caption_identifier_in_a - 1][0] == caption_identifier[0][1]
+        a[index_caption_identifier_in_a - 1].keys.first
+      # if next element has type is the same as caption, move caption in him
+      elsif a[index_caption_identifier_in_a + 1][0] == caption_identifier[0][1]
+        a[index_caption_identifier_in_a + 1].keys.first
+      end
+    future_identifier = platform_post.identifier[future_identifier_index]
+
+    text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{@post.text}" : @post.text.to_s
+    markdown_text = @markdown.render(text)
+    markdown_text = markdown_text.html_to_tg_markdown
+
+    edit_media_caption(bot, future_identifier, markdown_text)
+    future_identifier
+  end
+
+  def edit_media_caption(bot, identifier, text)
+    media = { type: identifier['type'], media: identifier['file_id'], caption: text, parse_mode: 'html' } # photo type ???
+    bot.edit_message_media({ chat_id: identifier['chat_id'],
+                             message_id: identifier['message_id'],
+                             media: media })
+  # По-хорошему если нет аттачментов нужно преобразовать media сообщение в text, но так нельзя
+  # поэтому caption удаляется если нет аттачментов
+  rescue StandardError
+    Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}")
+  end
+
+  def get_tg_bot(platform_post)
+    bots_from_config = Telegram.bots_config.select { |_k, v| v == platform_post.channel.token }
+    bots_hash = Telegram.bots.select { |k, _v| k == bots_from_config.first[0] }
+    bots_hash.first[1]
   end
 
   def make_caption_fixes(platform_posts)
@@ -77,17 +173,6 @@ class Platform::UpdateTelegramPosts
       next_content = Content.find_by(id: platform_post.content.id + 1)
       edit_media_caption(bot, platform_post[:identifier][0], next_content) if next_content&.text&.present?
     end
-  end
-
-  def edit_media_caption(bot, first_identifier, content)
-    media = { type: 'photo', media: first_identifier['file_id'], caption: content.text, parse_mode: 'html' } # photo type ???
-    bot.edit_message_media({ chat_id: first_identifier['chat_id'],
-                             message_id: first_identifier['message_id'],
-                             media: media })
-  # По-хорошему если нет аттачментов нужно преобразовать media сообщение в text, но так нельзя
-  # поэтому caption удаляется если нет аттачментов
-  rescue StandardError
-    Rails.logger.error("Failed edit caption (BUT IT'S ALMOST NORMAL) for telegram message at #{Time.now.utc.iso8601}")
   end
 
   def make_checks_attachments(platform_posts)

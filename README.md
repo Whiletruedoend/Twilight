@@ -161,6 +161,7 @@ For the production, do not forget to recompile the assets:
 Features:
 * [TG] If there is a title, but there is no post text, then the title is not sent;
 * [TG] When you delete a post from any channel, all comments are deleted, incl. and tied to other posts. This is due to the fact that comments are tied to the post, not to the platform, otherwise, when viewing the post, you would have to show different versions of the text (for each channel) with different comments. And it is understood that the post is one (the same), just on several channels;
+* [TG] If you send several attachments of different types and use a caption, the attachments will be grouped into groups, the first group will be of the same type as the first attachment, and the caption will be attached to it;
 * [ANY] If you delete a channel and then delete a post, then the post will not be deleted from the platforms (no tokens - no deletion, it seems logical);
 
 Bugs:

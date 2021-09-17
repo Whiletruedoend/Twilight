@@ -86,7 +86,8 @@ class Platform::SendPostToTelegram
     bot = get_tg_bot(channel)
 
     full_text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{@post.text}" : @post.text.to_s
-    has_caption = ((full_text.length < 1024) && !full_text.empty?) && @post.contents[0][:has_attachments] && options[:caption]
+    has_caption = ((full_text.length < 1024) && !full_text.empty?) &&
+                  @post.contents[0][:has_attachments] && @options["caption_#{channel[:id]}"]
 
     @post.contents.each_with_index do |content, index|
       has_attachments = content[:has_attachments]
@@ -129,12 +130,14 @@ class Platform::SendPostToTelegram
         (types.include?('audio') || types.include?('document'))) || (types.include?('audio') && types.include?('document'))
         # дробим контент и шлём по сообщениям
         m = media.group_by { |x| x[:type] }
-        m[m.keys.last.to_s].last.merge!(caption: text, parse_mode: 'html') if m.present? && text.present?
+        # если сообщения идут группой то caption будет у первой группы в последнем аттачменте
+        m[m.keys.first.to_s].last.merge!(caption: text, parse_mode: 'html') if m.present? && text.present?
         m.each do |_k, v|
           msg = bot.send_media_group({ chat_id: channel[:room],
                                        media: v,
                                        disable_notification: !options[:enable_notifications] })
           v.count.times do |i|
+            options = options.merge(caption: v[i].key?(:caption))
             msg_ids.append({ chat_id: msg['result'][0]['chat']['id'],
                              message_id: msg['result'][0]['message_id'] + i,
                              file_id: v[i][:media],
@@ -149,6 +152,7 @@ class Platform::SendPostToTelegram
                                      media: media,
                                      disable_notification: !options[:enable_notifications] })
         media.count.times do |i|
+          options = options.merge(caption: media[i].key?(:caption))
           msg_ids.append({ chat_id: msg['result'][0]['chat']['id'],
                            message_id: msg['result'][0]['message_id'] + i,
                            file_id: media[i][:media],
@@ -190,7 +194,8 @@ class Platform::SendPostToTelegram
   def channel_options(channel)
     notification = @options["enable_notifications_#{channel[:id]}"] || false
     onlylink = @options["onlylink_#{channel[:id]}"] || false
-    caption = @options["caption_#{channel[:id]}"] || false
+    # caption будет только у того сообщения, где реально есть подпись
+    caption = false
     { enable_notifications: notification, onlylink: onlylink, caption: caption }
   end
 
