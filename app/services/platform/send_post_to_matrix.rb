@@ -42,18 +42,13 @@ class Platform::SendPostToMatrix
     unless @post.text.present? || (@post.text.blank? && @post.content_attachments.present?) # Content not created!
       content_text = params[:post][:content]
 
-      if @attachments.present?
-        attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true)
-        @attachments.each { |att| attachment_content.attachments.attach(att) }
-      end
-      if content_text.present?
-        Content.create!(user: @post.user, post: @post, text: content_text,
-                        has_attachments: false)
-      end
+      attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true) if @attachments.present?
+      @attachments.each { |att| attachment_content.attachments.attach(att) } if attachment_content.present?
+      text_content = Content.create!(user: @post.user, post: @post, text: content_text, has_attachments: false) if content_text.present?
     end
 
     # No content - no post :\
-    Content.where(post: @post).each do |content|
+    Content.where(post: @post).order(:id).each do |content|
       title = @post.title
 
       if content.text.present?

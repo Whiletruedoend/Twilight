@@ -29,7 +29,7 @@ class Platform::UpdateMatrixPosts
       need_delete_attachments = true if del_att.any?
 
       platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
-        next if platform_post.identifier.dig('options', 'onlylink')
+        next if platform_post.identifier[0].dig('options', 'onlylink') # array
 
         matrix_token = platform_post.channel.token
         server = platform_post.channel.options['server']
@@ -75,7 +75,7 @@ class Platform::UpdateMatrixPosts
     text = text.replace_html_to_mx_markdown if text.present?
 
     platform_posts.joins(:content).where(contents: { has_attachments: false }).each do |platform_post|
-      next if platform_post.identifier.dig('options', 'onlylink')
+      next if platform_post.identifier.dig('options', 'onlylink') # not array
 
       matrix_token = platform_post.channel.token
       server = platform_post.channel.options['server']
@@ -135,7 +135,8 @@ class Platform::UpdateMatrixPosts
     end
 
     @deleted_attachments.each do |attachment|
-      @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge if attachment[1] == '0'
+      blob_id = ActiveStorage::Blob.find_signed(attachment[0])&.id # may deleted in tg update
+      @post.content_attachments.find_by(blob_id: blob_id).purge if blob_id.present? && attachment[1] == '0'
     end
   end
 end
