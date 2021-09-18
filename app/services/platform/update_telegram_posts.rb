@@ -271,7 +271,8 @@ class Platform::UpdateTelegramPosts
   def post_options(post)
     # Get last platform post options if exists
     platform_post = post.platform_posts.select { |p| p.platform == @platform }&.last
-    platform_options = platform_post&.identifier&.dig('options')
+    platform_identifier = platform_post&.identifier.is_a?(Array) ? platform_post&.identifier&.first : platform_post&.identifier
+    platform_options = platform_identifier&.dig('options')
 
     notification = platform_options&.dig('enable_notifications') || false
     onlylink = platform_options&.dig('onlylink') || false

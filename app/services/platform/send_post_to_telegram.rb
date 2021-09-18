@@ -94,7 +94,7 @@ class Platform::SendPostToTelegram
     has_caption = ((full_text.length < 1024) && !full_text.empty?) &&
                   @post.contents[0][:has_attachments] && @options["caption_#{channel[:id]}"]
 
-    @post.contents.each_with_index do |content, index|
+    @post.contents.order(:id).each_with_index do |content, index|
       has_attachments = content[:has_attachments]
       first_message = @post.contents[0][:has_attachments] ? (index == 1) : (index == 0)
 
