@@ -26,7 +26,7 @@ class Platform::UpdateTelegramPosts
   end
 
   def call
-    delete_attachments if @deleted_attachments.present? # if @deleted_attachments.any?
+    delete_attachments if @deleted_attachments.present?
 
     old_text = @post.text.to_s
 
@@ -36,9 +36,15 @@ class Platform::UpdateTelegramPosts
     old_post_text_blocks = text_blocks(old_text, old_max_first_post_length)
     new_post_text_blocks = text_blocks(@new_text, new_max_first_post_length)
 
+    check_onlylink
     return if new_post_text_blocks.nil? && old_post_text_blocks.nil?
 
     if new_post_text_blocks.nil?
+      options = post_options(@post)
+      if options[:onlylink]
+        @post.contents.where(has_attachments: false).delete_all
+        return
+      end
       degree_index = 0
       old_post_text_blocks.each_with_index do |_old_block, i|
         remove_content(i - degree_index)
@@ -58,6 +64,7 @@ class Platform::UpdateTelegramPosts
       old_post_text_blocks.each_with_index do |old_block, i|
         degree_index += 1
         next if (old_block == new_post_text_blocks[i]) && (@new_title == @post.title)
+
         degree_index -= i if degree_index == i
 
         update_content(new_post_text_blocks[i], i) if new_post_text_blocks[i].present?
@@ -82,7 +89,6 @@ class Platform::UpdateTelegramPosts
     content = Content.create!(user: @post.user, post: @post, text: new_block)
 
     options = post_options(@post)
-
     return if options[:onlylink]
 
     @post.published_channels.where(platform: @platform).each do |channel|
@@ -114,6 +120,9 @@ class Platform::UpdateTelegramPosts
     content = @post.contents.where(has_attachments: false).order(:id)[index]
     content.update!(text: new_text)
 
+    options = post_options(@post)
+    return if options[:onlylink]
+
     @post.platform_posts.where(content: content).each do |platform_post|
       bot = get_tg_bot(platform_post)
 
@@ -128,6 +137,34 @@ class Platform::UpdateTelegramPosts
                               text: new_text,
                               parse_mode: 'html' })
     end
+  end
+
+  def check_onlylink
+    options = post_options(@post)
+    return false unless options[:onlylink]
+
+    # Подразумевается что у опции onlylink не будет 2+ поста или 4096+ символвов -
+    # и не будет лишних платформ постов соответственно;
+    if @new_title != @post.title
+      platform_posts = PlatformPost.where(post: @post, platform: @platform)
+      platform_posts.each do |platform_post|
+        bot = get_tg_bot(platform_post)
+        update_onlylink(bot, platform_post)
+      end
+    end
+
+    options[:onlylink]
+  end
+
+  def update_onlylink(bot, platform_post)
+    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
+    onlylink_text = @new_title.present? ? "<b>#{@new_title}</b>\n\n#{full_post_link}" : full_post_link
+
+    bot.edit_message_text({ chat_id: platform_post.identifier['chat_id'],
+                            message_id: platform_post.identifier['message_id'],
+                            text: onlylink_text,
+                            parse_mode: 'html' })
   end
 
   def remove_content(index)
