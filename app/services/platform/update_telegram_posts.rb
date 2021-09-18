@@ -54,8 +54,11 @@ class Platform::UpdateTelegramPosts
         add_content(new_block, i) if old_post_text_blocks[i].nil?
       end
     elsif new_post_text_blocks.count < old_post_text_blocks.count
+      degree_index = 0
       old_post_text_blocks.each_with_index do |old_block, i|
+        degree_index += 1
         next if (old_block == new_post_text_blocks[i]) && (@new_title == @post.title)
+        degree_index -= i if degree_index == i
 
         update_content(new_post_text_blocks[i], i) if new_post_text_blocks[i].present?
         remove_content(i - degree_index) if new_post_text_blocks[i].nil?
