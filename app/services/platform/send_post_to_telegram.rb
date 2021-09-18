@@ -8,6 +8,9 @@ class Platform::SendPostToTelegram
   def initialize(post, params, channel_ids)
     @params = params
     @post = post
+
+    @platform = Platform.find_by(title: 'telegram')
+
     @channels =
       Channel.where(id: channel_ids).map do |channel|
         { id: channel.id,
@@ -51,16 +54,7 @@ class Platform::SendPostToTelegram
     # (title в посте отдельное поле). Но при рассчёте длины сообщения в телеге мы учитываем длину с заголовком.
     max_first_post_length = title.present? ? (4096 - "<b>#{title}</b>\n\n".length) : 4096
 
-    first_text_block =
-      ([text.chars.each_slice(max_first_post_length).to_a[0][0..max_first_post_length].join] if text.present?)
-    other_text_blocks = text[max_first_post_length..text.length]&.chars&.each_slice(4096)&.map(&:join)
-
-    post_text_blocks =
-      if first_text_block.present?
-        other_text_blocks.present? ? first_text_block + other_text_blocks : first_text_block
-      else
-        other_text_blocks
-      end
+    post_text_blocks = text_blocks(text, max_first_post_length)
 
     if @attachments.present? # Create first attachment post
       attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true)
@@ -79,6 +73,18 @@ class Platform::SendPostToTelegram
       end
 
       send_telegram_content(channel, options) if @post.contents.any?
+    end
+  end
+
+  def text_blocks(text, length)
+    first_text_block =
+      ([text.chars.each_slice(length).to_a[0][0..length].join] if text.present?)
+    other_text_blocks = text[length..text.length]&.chars&.each_slice(4096)&.map(&:join)
+
+    if first_text_block.present?
+      other_text_blocks.present? ? first_text_block + other_text_blocks : first_text_block
+    else
+      other_text_blocks
     end
   end
 
@@ -109,7 +115,7 @@ class Platform::SendPostToTelegram
 
         PlatformPost.create!(identifier: { chat_id: @msg['result']['chat']['id'],
                                            message_id: @msg['result']['message_id'],
-                                           options: options }, platform: Platform.find_by(title: 'telegram'),
+                                           options: options }, platform: @platform,
                              post: @post, content: content, channel_id: channel[:id])
       end
     end
@@ -161,7 +167,7 @@ class Platform::SendPostToTelegram
                            options: options })
         end
       end
-      PlatformPost.create!(identifier: msg_ids, platform: Platform.find_by(title: 'telegram'), post: @post,
+      PlatformPost.create!(identifier: msg_ids, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
     rescue StandardError
       Rails.logger.error("Failed create telegram message (attachment) for chat #{channel[:room]} at #{Time.now.utc.iso8601}")
@@ -221,7 +227,7 @@ class Platform::SendPostToTelegram
       identifier: { chat_id: msg['result']['chat']['id'],
                     message_id: msg['result']['message_id'],
                     options: options },
-      platform: Platform.find_by(title: 'telegram'),
+      platform: @platform,
       post: @post,
       content: @post.contents.first, channel_id: channel[:id]
     )

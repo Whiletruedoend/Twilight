@@ -49,7 +49,7 @@ class PostsController < ApplicationController
       return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
     end
 
-    if @post.update(title: posts_params[:post][:title], privacy: (posts_params[:post][:privacy] || 2))
+    if @post.update(privacy: (posts_params[:post][:privacy] || 2))
 
       tags = params[:tags].to_unsafe_h || {}
 
@@ -93,6 +93,7 @@ class PostsController < ApplicationController
       end
 
       UpdatePostMessages.call(@post, params) # TODO: optimize it?
+      @post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to @post
     else

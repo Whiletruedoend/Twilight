@@ -161,19 +161,13 @@ For the production, do not forget to recompile the assets:
 Features:
 * [TG] If there is a title, but there is no post text, then the title is not sent;
 * [TG] When you delete a post from any channel, all comments are deleted, incl. and tied to other posts. This is due to the fact that comments are tied to the post, not to the platform, otherwise, when viewing the post, you would have to show different versions of the text (for each channel) with different comments. And it is understood that the post is one (the same), just on several channels;
+* [TG] If a post in telegram had text and attachments, and when editing, remove all attachments, then the post will be completely deleted. This is a feature of the cart, I cannot turn the capture into text, I need to create a new nost;
 * [TG] If you send several attachments of different types and use a caption, the attachments will be grouped into groups, the first group will be of the same type as the first attachment, and the caption will be attached to it;
+* [TG] If a post was created with <= 4096 characters and when the post is updated its length will exceed 4096 characters, then a new message will be created, which may be at a far distance from the first one (for example, if there were more posts, it will go after them). I cannot move the message up, so I advise you to use the onlylink option in such cases; 
 * [ANY] If you delete a channel and then delete a post, then the post will not be deleted from the platforms (no tokens - no deletion, it seems logical);
 
 Bugs:
 
-Block = message with a maximum length of 4096 characters (relevant for a cart);
-
-* [TG] When editing an existing post, if there are two or more post blocks, then the post title is not indicated in the message;
-* [TG] If there are two or more channels for posting in telegram then:
-  * If there are no changes in all blocks, then the text will not change;
-  * If there are changes, an extra message block will appear;
-* [TG] If a post in telegram had text and attachments, and when editing, remove all attachments, then the post will be deleted;
-* [TG] If you remove all the text from the attachment, then regardless of the title, the text will not change;
 * [TG] When editing attachments in comments (adding a new one and deleting an old one), the order gets lost and when you edit it again, the wrong picture is deleted;
 * [TG] [TEMP] When adding a channel, you must manually restart the poller, or even the rails application, otherwise it will not be able to find the bot and create a post;
 

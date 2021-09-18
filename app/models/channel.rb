@@ -6,4 +6,8 @@ class Channel < ApplicationRecord
   has_many :platform_posts
 
   has_one_attached :avatar
+
+  def platform_posts_for_post(post)
+    platform_posts.where(post: post)
+  end
 end
