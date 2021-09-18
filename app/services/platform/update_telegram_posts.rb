@@ -14,7 +14,6 @@ class Platform::UpdateTelegramPosts
     @new_title = params[:post][:title]
     @new_text = params[:post][:content]
 
-    @platform_posts = @post.platform_posts.where(platform: Platform.where(title: 'telegram'))
     @deleted_attachments = @params[:deleted_attachments]&.to_unsafe_h&.select { |_k, v| v == '0' }&.keys
     # need sort @deleted_attachments in the order of their posting platforms (grouping of pictures)
     @attachments = @post.content_attachments&.map { |att| att.blob.signed_id }
@@ -123,7 +122,7 @@ class Platform::UpdateTelegramPosts
     options = post_options(@post)
     return if options[:onlylink]
 
-    @post.platform_posts.where(content: content).each do |platform_post|
+    @post.platform_posts.where(content: content, platform: @platform).each do |platform_post|
       bot = get_tg_bot(platform_post)
 
       first_message = (index == 0)
@@ -170,7 +169,7 @@ class Platform::UpdateTelegramPosts
   def remove_content(index)
     content = @post.contents.where(has_attachments: false).order(:id)[index]
 
-    platform_posts = @post.platform_posts.where(content: content)
+    platform_posts = @post.platform_posts.where(content: content, platform: @platform)
 
     Platform::DeleteTelegramPosts.call(platform_posts)
     PlatformPost.where(platform: platform_posts, post: @post).delete_all
@@ -179,7 +178,8 @@ class Platform::UpdateTelegramPosts
   end
 
   def delete_attachments
-    @platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
+    @post.platform_posts.joins(:content).where(platform: @platform,
+                                               contents: { has_attachments: true }).each do |platform_post|
       bot = get_tg_bot(platform_post)
 
       deleted_indexes = []
