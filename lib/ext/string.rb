@@ -34,6 +34,7 @@ class String < Object
     # <p><a href=\"https://habr.com/ru/\">LINK</a> TEST
     # <img src=\"https://hsto.org/getpro/habr/post_images/0bd/696/a20/0bd696a200f7bb07f6813bfa3cef684c.webp\"
     # alt=\"IMAGE\"> </p>\n
+    a.gsub!(/(?:\n\r?|\r\n?)/, '<br>')
     a.gsub!('<img src', '<a href')
     a.gsub!(/ alt="([^>]+)">/) { |m| m.gsub!(/ alt="([^>]+)">/, ">#{Regexp.last_match(1)}</a>") }
     a
