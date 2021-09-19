@@ -91,12 +91,12 @@ class Platform::SendPostToTelegram
     bot = get_tg_bot(channel)
 
     full_text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{@post.text}" : @post.text.to_s
-    has_caption = ((full_text.length < 1024) && !full_text.empty?) &&
-                  @post.contents[0][:has_attachments] && @options["caption_#{channel[:id]}"]
+    has_caption = ((full_text.length < 1024) && !full_text.empty?) && @post.contents.order(:id)[0][:has_attachments] &&
+                  @options["caption_#{channel[:id]}"]
 
     @post.contents.order(:id).each_with_index do |content, index|
       has_attachments = content[:has_attachments]
-      first_message = @post.contents[0][:has_attachments] ? (index == 1) : (index == 0)
+      first_message = @post.contents.order(:id)[0][:has_attachments] ? (index == 1) : (index == 0)
 
       text = @markdown.render(content[:text]) if content[:text].present?
       text = text.html_to_tg_markdown if content[:text].present?
