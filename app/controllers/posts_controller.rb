@@ -49,7 +49,7 @@ class PostsController < ApplicationController
       return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
     end
 
-    if @post.update(title: posts_params[:post][:title], privacy: (posts_params[:post][:privacy] || 2))
+    if @post.update(privacy: (posts_params[:post][:privacy] || 2))
 
       tags = params[:tags].to_unsafe_h || {}
 
@@ -83,7 +83,7 @@ class PostsController < ApplicationController
       channels_p = params['channels']&.to_unsafe_h
       if channels_p.present?
         channels_p.each do |k, v|
-          if !v.to_i == 0 # TODO: make it? Need2fix duplicate content when creating!
+          if v.to_i == 1 # TODO: make it? Need2fix duplicate content when creating!
             # params["platforms"] = { k=>(v ? 1 : 0).to_s }
             # SendPostToPlatforms.call(@post, params)
           else
@@ -93,6 +93,7 @@ class PostsController < ApplicationController
       end
 
       UpdatePostMessages.call(@post, params) # TODO: optimize it?
+      @post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to @post
     else
@@ -329,14 +330,14 @@ class PostsController < ApplicationController
                   channels: {},
                   options: {},
                   deleted_attachments: {}, tags: {}, attachments: [],
-                  post: %i[title
-                           content
-                           category
-                           category_name
-                           category_color
-                           attachments
-                           privacy
-                           new_tags_name
-                           new_tags_enabled_by_default])
+                  post: [:title,
+                         :content,
+                         :category,
+                         :category_name,
+                         :category_color,
+                         :privacy,
+                         :new_tags_name,
+                         :new_tags_enabled_by_default,
+                         { attachments: [] }])
   end
 end

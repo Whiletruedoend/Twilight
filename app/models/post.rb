@@ -28,9 +28,13 @@ class Post < ApplicationRecord
     platforms
   end
 
+  def published_channels
+    Channel.joins(:platform_posts).select('DISTINCT ON (channels.id) channels.*').where(platform_posts: { post: self })
+  end
+
   def text
     text = ''
-    contents.each do |msg|
+    contents.order(:id).each do |msg|
       text += msg[:text] if msg[:text].present?
     end
     text
