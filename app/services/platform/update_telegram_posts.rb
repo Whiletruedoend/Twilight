@@ -186,6 +186,10 @@ class Platform::UpdateTelegramPosts
       platform_post_with_atts = PlatformPost.where(content: content_with_att,
                                                    platform: @platform)&.first
       if platform_post_with_atts.present?
+         # We may have a situation where attachments are sent with the onlylink option.
+         # Then platform_post clings to content where attachments: true.
+         # Then the platform_post identifier may not be an array. 
+        return false if platform_post_with_atts.identifier.is_a?(Hash)
         platform_post_with_atts.identifier.each do |ident|
           has_platform_post_with_caption = true if ident.dig('options', 'caption')
         end
@@ -250,6 +254,11 @@ class Platform::UpdateTelegramPosts
   def delete_attachments
     @post.platform_posts.joins(:content).where(platform: @platform,
                                                contents: { has_attachments: true }).each do |platform_post|
+                          
+      identifier = platform_post.identifier
+      onlylink = identifier.is_a?(Array) ? identifier[0].dig('options', 'onlylink') : identifier.dig('options', 'onlylink')
+      next if onlylink
+
       bot = get_tg_bot(platform_post)
 
       deleted_indexes = []
