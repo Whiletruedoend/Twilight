@@ -180,11 +180,18 @@ class Platform::UpdateTelegramPosts
 
   def check_caption
     content_with_att = @post.contents.select(&:has_attachments?)&.first
+    has_platform_post_with_caption = false
+
     if content_with_att.present?
-      platform_posts_with_atts = PlatformPost.where(content: content_with_att,
-                                                    platform: @platform)&.first
+      platform_post_with_atts = PlatformPost.where(content: content_with_att,
+                                                   platform: @platform)&.first
+      if platform_post_with_atts.present?
+        platform_post_with_atts.identifier.each do |ident|
+          has_platform_post_with_caption = true if ident.dig('options', 'caption')
+        end
+      end
     end
-    return false if content_with_att.nil? || platform_posts_with_atts.nil?
+    return false if has_platform_post_with_caption == false
 
     # Text is too long, remove caption and make contents
     if @new_title.length + @new_text.length > 1024
@@ -201,7 +208,7 @@ class Platform::UpdateTelegramPosts
 
         next unless ident_caption_index.present?
 
-        platform_post.identifier[ident_caption_index] =
+        platform_post.identifier[ident_caption_index]['options'] =
           platform_post.identifier[ident_caption_index]['options'].merge(caption: false)
         platform_post.save!
       end
@@ -213,7 +220,7 @@ class Platform::UpdateTelegramPosts
     # Length looks good
     else
       # in call() method we make return, so here we must update text content
-      #update_content(@new_text,1)
+      update_content(@new_text, 0)
 
       text = @markdown.render(@new_text) if @new_text.present?
       text = text.html_to_tg_markdown if text.present?
@@ -222,7 +229,7 @@ class Platform::UpdateTelegramPosts
       @post.platform_posts.where(content: content_with_att, platform: @platform).each do |platform_post|
         bot = get_tg_bot(platform_post)
 
-        platform_post.identifier.each_with_index do |ident, _index|
+        platform_post.identifier.each do |ident|
           edit_media_caption(bot, ident, text) if ident.dig('options', 'caption')
         end
       end
