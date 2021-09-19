@@ -50,8 +50,9 @@ class Platform::SendPostToTelegram
     title = post.title
     text = params[:post][:content]
 
-    # В первом контенте будет 4096-(длина заголовка) символов. При этом сам заголовок в контенте не хранится
-    # (title в посте отдельное поле). Но при рассчёте длины сообщения в телеге мы учитываем длину с заголовком.
+    # The first content will have (4096-(title length)) chars. At the same time, the title itself is not stored in the content.
+    # (title is a separate field in the post). But when calculating the length of the message in tg,
+    # we take into account the length with the title.
     max_first_post_length = title.present? ? (4096 - "<b>#{title}</b>\n\n".length) : 4096
 
     post_text_blocks = text_blocks(text, max_first_post_length)
