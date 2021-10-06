@@ -28,7 +28,7 @@ class UpdatePostMessages
     end
     # fix if platform was deleted, but content still exist
     @post.contents.last(@post.contents.count - 1).each(&:delete) if @post.contents.count > 1
-    @post.contents.update(text: @content, has_attachments: @post.content_attachments.present?)
+    @post.contents.update(text: params[:post][:content], has_attachments: @post.content_attachments.present?)
   end
 
   def call
