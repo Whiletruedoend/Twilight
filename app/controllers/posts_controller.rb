@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: %i[rss show export raw]
-  before_action :check_admin, except: %i[rss index show export raw]
+  before_action :authenticate_user!, except: %i[feed rss show export raw]
+  before_action :check_admin, except: %i[feed rss index show export raw]
 
   def check_admin
     redirect_to root_path unless current_user.is_admin
@@ -51,7 +51,7 @@ class PostsController < ApplicationController
 
     if @post.update(privacy: (posts_params[:post][:privacy] || 2))
 
-      tags = params[:tags].to_unsafe_h || {}
+      tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
 
       if posts_params[:post][:new_tags_name].present?
         new_tags = posts_params[:post][:new_tags_name].split(',')
@@ -136,7 +136,7 @@ class PostsController < ApplicationController
 
     @post.save!
     if @post.save
-      tags = params[:tags].to_unsafe_h || {}
+      tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
       tags.merge!(new_tags) if new_tags.any?
       tags.each { |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1].to_i) } if tags.any?
       SendPostToPlatforms.call(@post, params)
@@ -153,31 +153,68 @@ class PostsController < ApplicationController
       else
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
-    visible_posts = Rails.configuration.credentials[:rss_default_visible_posts]
-    posts_limit = current_user.present? ? current_user.options['visible_posts_count'] || visible_posts : visible_posts
-    my_posts =  current_user.present? ? Post.order('created_at desc').limit(posts_limit.to_i).where(user: current_user).ids : []
-    not_my_posts = Post.order('created_at desc').limit(posts_limit.to_i).where.not(user: current_user).where(privacy: [
-                                                                                                               0, 1
-                                                                                                             ]).ids
-    all_posts = my_posts + not_my_posts
-    if user.present?
-      item_posts =
-        ItemTag.select do |item|
-          (item.item_type == 'Post') && user.active_tags_names.include?(item.tag.name) && (item.enabled == true)
+
+    limit = user&.options&.dig('visible_posts_count') || Rails.configuration.credentials[:rss_default_visible_posts]
+    post_params = { current_user: user, limit: limit, tag: params[:tag], title: params[:title] }
+
+    @posts = PostsSearch.new(post_params).call(Post.all)
+
+    require 'rss'
+
+    rss =
+      RSS::Maker.make('atom') do |maker|
+        maker.channel.author = 'matz'
+        maker.channel.updated = Time.now.to_s
+        maker.channel.about = 'https://www.ruby-lang.org/en/feeds/news.rss'
+        maker.channel.title = 'Example Feed'
+
+        maker.items.new_item do |item|
+          item.link = 'https://www.ruby-lang.org/en/news/2010/12/25/ruby-1-9-2-p136-is-released/'
+          item.title = 'Ruby 1.9.2-p136 is released'
+          item.updated = Time.now.to_s
         end
-      item_posts.map!(&:item_id).reject(&:nil?)
-      if item_posts.any?
-        post_without_tags = Post.where(id: all_posts).without_active_tags.map(&:id)
-        @posts = Post.where(id: (all_posts.reject do |post|
-                                   item_posts.exclude?(post)
-                                 end + post_without_tags)).order(created_at: :desc)
-      else
-        @posts = Post.where(id: all_posts).order(created_at: :desc)
       end
-    elsif Rails.configuration.credentials[:fail2ban][:enabled] && params.key?(:rss_token)
-      ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
-      Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
-    end
+
+    render inline: rss, layout: false, locals: { rss: rss }
+  end
+
+  def feed
+    user =
+      if current_user.present?
+        current_user
+      else
+        (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
+      end
+
+    post_params = { current_user: user, tag: params[:tag], title: params[:title] }
+
+    @posts = PostsSearch.new(post_params).call(Post.all)
+    @posts = @posts.order(created_at: 'desc').group_by { |p| p.created_at.to_date }
+
+    # my_posts =  current_user.present? ? Post.order('created_at desc').limit(posts_limit.to_i).where(user: current_user).ids : []
+    # not_my_posts = Post.order('created_at desc').limit(posts_limit.to_i).where.not(user: current_user).where(privacy: [
+    #                                                                                                           0, 1
+    #                                                                                                         ]).ids
+    # posts = my_posts + not_my_posts
+    #  if user.present?
+    #    item_posts =
+    #      ItemTag.select do |item|
+    #        (item.item_type == 'Post') && user.active_tags_names.include?(item.tag.name) && (item.enabled == true)
+    #      end
+    #    item_posts.map!(&:item_id).reject(&:nil?)
+    #    if item_posts.any?
+    #      post_without_tags = Post.where(id: all_posts).without_active_tags.map(&:id)
+    #      @posts = Post.where(id: (all_posts.reject do |post|
+    #                                 item_posts.exclude?(post)
+    #                               end + post_without_tags)).order(created_at: :desc)
+    #    else
+    #      @posts = Post.where(id: all_posts).order(created_at: :desc)
+    #    end
+    #  elsif Rails.configuration.credentials[:fail2ban][:enabled] && params.key?(:rss_token)
+    #    ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
+    #    Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
+    #  end
+    render 'posts/feed', layout: 'clear'
   end
 
   def export

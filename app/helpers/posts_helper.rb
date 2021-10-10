@@ -114,11 +114,40 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
+        content += image_tag url_for(att.variant(resize_to_limit: [size, size])), id: 'zoom-bg'.to_s
       elsif att.video?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
+                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed), id: 'zoom-bg'}</a>"
+      elsif att.audio?
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+                     #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+      end
+    end
+    content.html_safe
+  end
+
+  # TODO: group attachments by type, better front-end
+  def display_feed_attachments(post)
+    content = ''
+
+    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    if documents.any?
+      documents.each do |att|
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+        #{I18n.t('posts.download')} #{truncate(att.filename.to_s, length: 100)} </a>"
+      end
+    end
+
+    post.content_attachments&.each do |att|
+      if att.image?
+        content += image_tag url_for(att), id: 'zoom-bg'.to_s
+      elsif att.video?
+        content += "<video width=\"100%\" height=\"100%\" controls>
+                      <source src=\"#{url_for(att)}\" type=\"video/mp4\">
+                      Your browser does not support the video tag.
+                    </video>"
+        # content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+        #             #{image_tag url_for(att.preview(resize_to_limit: [50, 50]).processed)}</a>"
       elsif att.audio?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
                      #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
@@ -146,5 +175,13 @@ module PostsHelper
         end
     end
     content.html_safe
+  end
+
+  def tags_with_count_list(tags)
+    tags.map do |tag|
+      item = Post.where(privacy: [0, 1])
+      item_tags = ItemTag.where(tag: tag, enabled: true, item: item)
+      { id: tag.id, name: tag.name, count: item_tags.count }
+    end
   end
 end

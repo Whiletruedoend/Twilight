@@ -1,0 +1,79 @@
+<div class="right-bar">
+
+    <%@posts.each do |date,posts|%>
+        <div class="datestamp"><div class="text-date"><%=date.strftime("%Y-%m-%d")%></div></div>
+
+        <%posts.each do |post|%>
+            <article class="feed">
+                <div class="user">
+                    <div class="icon">
+                        <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar.variant(resize_to_limit: [48,48]).processed)%> lazy="loaded">
+                    </div>
+                    <div class="name"><%=post.user.login%></div>
+                    <div class="createdAt"><%=post.created_at.strftime("%H:%M:%S")%></div>
+                </div>
+                <div class="text">
+                    <%= markdown(post.title) %>
+                    <%= markdown(post.text) %>
+                </div>
+                
+                <%if post.content_attachments&.any?%>
+                    <div class="media-list">
+                        <%=display_feed_attachments(post)%>
+                    <div>
+                    <!---<div class="media-list">
+                        <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://i.pinimg.com/originals/fe/14/d9/fe14d91b5495f24825460fd492346886.png" lazy="loaded">
+                        <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://cdni.rbth.com/rbthmedia/images/2021.06/article/60bc042485600a38cd63eb89.jpg" lazy="loaded">
+                        <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://fretnoize.neocities.org/Images/yummy.jpg" lazy="loaded">
+                        <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://www.gannett-cdn.com/presto/2019/07/01/PDTN/1fe778eb-239b-4cc0-bb77-d070591749a1-2019-0701-dg-jail0092.jpg?crop=6015,3372,x0,y0&width=3200&height=1680&fit=bounds" lazy="loaded">
+                    </div> --->
+                <%end%>
+            </article>
+        <%end%>
+    <%end%>
+
+<!---
+    <div class="datestamp"><div class="text-date">2021-06-10</div></div>
+    <article class="feed">
+        <div class="user">
+            <div class="icon">
+                <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src="https://pbs.twimg.com/profile_images/1308252112107663362/IZZcsilP_normal.jpg" lazy="loaded">
+            </div>
+            <div class="name">NoNameus 🍄 <%=@posts.count%></div>
+            <div class="createdAt">2021-06-10</div>
+        </div>
+        <div class="text">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean cursus ex in quam suscipit laoreet. Morbi luctus felis vitae ultrices fringilla. Maecenas id velit gravida, maximus nisi vel, pharetra lorem. Phasellus felis lorem, eleifend quis pulvinar sagittis, aliquam et ligula. Ut sed tincidunt eros. Vivamus elit elit, finibus vitae nunc vel, ultricies suscipit erat. Maecenas vitae pharetra magna. Etiam tincidunt nibh sit amet lorem vestibulum, ac venenatis urna laoreet. Duis id nunc ac nisi rutrum mollis. Quisque rhoncus sed mauris non gravida. Quisque at venenatis est, et laoreet mi.
+        </div>
+        <div class="media-list">
+            <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://i.pinimg.com/originals/fe/14/d9/fe14d91b5495f24825460fd492346886.png" lazy="loaded">
+            <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://cdni.rbth.com/rbthmedia/images/2021.06/article/60bc042485600a38cd63eb89.jpg" lazy="loaded">
+            <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://fretnoize.neocities.org/Images/yummy.jpg" lazy="loaded">
+            <img id="zoom-bg" alt="img" class="original medium-zoom-image" lazy-progressive="true" src="https://www.gannett-cdn.com/presto/2019/07/01/PDTN/1fe778eb-239b-4cc0-bb77-d070591749a1-2019-0701-dg-jail0092.jpg?crop=6015,3372,x0,y0&width=3200&height=1680&fit=bounds" lazy="loaded">
+        </div>
+    </article>
+
+    <div class="datestamp"><div class="text-date">Aboba</div></div>
+
+    <article class="feed">
+        <div class="user">
+            <div class="icon">
+                <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src="https://pbs.twimg.com/profile_images/1308252112107663362/IZZcsilP_normal.jpg" lazy="loaded">
+            </div>
+            <div class="name">NickName</div>
+            <div class="createdAt">2021-06-10</div>
+        </div>
+        <div class="text">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean cursus ex in quam suscipit laoreet. Morbi luctus felis vitae ultrices fringilla. Maecenas id velit gravida, maximus nisi vel, pharetra lorem. Phasellus felis lorem, eleifend quis pulvinar sagittis, aliquam et ligula. Ut sed tincidunt eros. Vivamus elit elit, finibus vitae nunc vel, ultricies suscipit erat. Maecenas vitae pharetra magna. Etiam tincidunt nibh sit amet lorem vestibulum, ac venenatis urna laoreet. Duis id nunc ac nisi rutrum mollis. Quisque rhoncus sed mauris non gravida. Quisque at venenatis est, et laoreet mi.
+
+In hac habitasse platea dictumst. Curabitur quis imperdiet urna, sed dictum lacus. Maecenas sapien erat, dignissim eget interdum at, fringilla at tellus. Proin varius euismod est non interdum. Curabitur volutpat libero quis quam cursus, sit amet finibus nibh pretium. Sed tempus maximus convallis. Mauris sed turpis imperdiet, porta odio ut, maximus orci. Duis tempus sollicitudin porttitor. Vivamus volutpat ligula sed massa lacinia laoreet. Proin elit mi, imperdiet aliquam lacus non, mollis maximus lacus. Nam dictum est gravida leo aliquam, ut malesuada risus lacinia.
+
+Pellentesque sem mi, cursus maximus dictum a, maximus non ligula. In hendrerit mollis eros. Aenean urna sem, pellentesque non nibh ut, vehicula euismod sapien. Nulla facilisi. Morbi vehicula dui ac aliquam venenatis. Integer libero neque, dignissim at ipsum et, laoreet lacinia arcu. Cras vel scelerisque velit. Praesent elementum ipsum vitae tortor consectetur, vitae molestie elit mattis. Sed sed venenatis nunc. Aenean varius tellus sed mi consequat, laoreet eleifend tortor posuere. Sed sed ante vel est accumsan posuere ac in justo. Integer elit leo, bibendum quis convallis a, suscipit eu tellus. Nullam non augue eget lacus dignissim iaculis at at sapien. Proin felis ipsum, dapibus non ornare nec, tempus vitae dui.
+
+Praesent urna est, finibus ac euismod a, pharetra vel tellus. Sed non leo metus. Nam tempor eleifend aliquam. Ut nec mi nunc. Phasellus a finibus est. Vestibulum a enim et mauris blandit pulvinar. Etiam in egestas arcu. Morbi efficitur imperdiet diam eu ultricies. Nullam cursus arcu nec diam pellentesque, eu fermentum ipsum vulputate. Donec sed ex quis justo placerat varius et non arcu. In quis sem quis ligula pellentesque mollis consectetur in nisl.
+
+In gravida odio efficitur faucibus malesuada. Curabitur dapibus libero id leo lacinia, id feugiat tellus lobortis. Fusce pulvinar, diam vitae fringilla ultrices, dui nibh lobortis enim, fringilla posuere enim nulla ac ex. Nullam auctor, libero a molestie auctor, nulla turpis dapibus mi, gravida ornare tortor mi et eros. Curabitur viverra tempor risus in porttitor. In hac habitasse platea dictumst. Mauris at auctor neque, non tempus dui. Nulla facilisi. Etiam sodales purus arcu, non semper risus vulputate vel. Sed id erat efficitur, iaculis lectus fringilla, commodo metus. 
+        </div>
+    </article>
+--->
+</div>

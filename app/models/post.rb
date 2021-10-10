@@ -8,10 +8,9 @@ class Post < ApplicationRecord
   has_many :contents
   has_many :comments
   has_many :platform_posts
-  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
-                                 dependent: :delete_all
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
+  # scope :with_active_tags, ->(tag_id) { select { |post| post.active_tags.include?(tag_id) } }
   scope :without_active_tags, -> { select { |post| post.active_tags.empty? } }
 
   self.per_page = 15

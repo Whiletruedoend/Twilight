@@ -1,0 +1,50 @@
+<div class="left-bar"> 
+    <form class="filters-group">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-pencil"></span> 
+        </div>
+        <input type="text" class="form-control" placeholder="Title" />
+        <div class="filters-group-btn">
+            <div class="btn-group" role="group">
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="filters-group">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-sort"></span> 
+        </div>
+        <select class="form-control browser-default custom-select">
+            <option value="asc" selected>Creation date ASC</option>
+            <option value="desc">Creation date DESC</option>
+        </select>
+    </div>
+
+    <div class="filters-group date">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span> 
+        </div>
+        <input type="text" class="form-control" />
+    </div>
+
+    <form action="/feed">
+        <button class="btn-danger"><span class="glyphicon glyphicon-refresh"></span><%=I18n.t("posts.reset_filters")%></button>
+    </form>
+
+    <h4>Search by tags</h4>
+
+    <ul class="list-group">
+        <% if !Tag.exists? %>
+            <span class="list-group-item list-group-item-action" data-toggle="list">Tags not found!</span>
+        <% else %>
+        <% tags_list = tags_with_count_list(Tag.all).sort_by{ |k| k[:count] }.reverse %>
+            <% tags_list.each do |tag| %>
+            <%next if tag[:count].zero?%>
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="?tag=<%=tag[:id]%>"><%=tag[:name]%>
+                <span class="badge badge-primary badge-pill"><%=tag[:count]%></span>
+            </a>
+            <% end %>
+        <% end %>
+    </ul>
+</div>

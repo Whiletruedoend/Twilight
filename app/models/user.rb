@@ -31,6 +31,7 @@ class User < ApplicationRecord
   end
 
   before_create :generate_rss
+  before_create :default_options
 
   def active_tags_names
     active_tags.map { |s| s.tag.name }
@@ -38,6 +39,11 @@ class User < ApplicationRecord
 
   def generate_rss
     self.rss_token = SecureRandom.hex(16)
+  end
+
+  def default_options
+    self.options = { visible_posts_count: Rails.configuration.credentials[:rss_default_visible_posts].to_s,
+                     theme: 'default_theme' }
   end
 
   def will_save_change_to_email?
