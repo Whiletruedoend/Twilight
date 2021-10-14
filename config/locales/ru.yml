@@ -190,6 +190,8 @@ ru:
     add: Добавить комментарий
     edit: Редактировать
     delete: Удалить
+  feeds:
+    no_results: Поиск не дал результатов.
   devise:
     registrations:
       user:

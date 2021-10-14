@@ -1,5 +1,9 @@
 <div class="right-bar">
-
+    <%if @posts.count == 0%>
+        <article class="feed">
+            <center><p><%=I18n.t('feeds.no_results')%></p></center>
+        </article>
+    <%end%>
     <%@posts.each do |date,posts|%>
         <div class="datestamp"><div class="text-date"><%=date.strftime("%Y-%m-%d")%></div></div>
 
@@ -7,10 +11,11 @@
             <article class="feed">
                 <div class="user">
                     <div class="icon">
-                        <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar.variant(resize_to_limit: [48,48]).processed)%> lazy="loaded">
+                        <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar.variant(resize_to_limit: [48,48])&.processed)%> lazy="loaded">
                     </div>
                     <div class="name"><%=post.user.login%></div>
                     <div class="createdAt"><%=post.created_at.strftime("%H:%M:%S")%></div>
+                    <%= render "privacy-icons", object: post %>
                 </div>
                 <div class="text">
                     <%= markdown(post.title) %>

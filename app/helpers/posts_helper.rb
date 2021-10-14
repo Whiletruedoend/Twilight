@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module PostsHelper
+  def host_link
+    "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}"
+  end
+
   def get_post_tags(post)
     tags = post.active_tags_names.join(' ')
     tags.presence || 'no tags'
@@ -23,7 +27,7 @@ module PostsHelper
   end
 
   def get_full_attachment_link(att)
-    "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}#{url_for(att)}"
+    "#{host_link}#{url_for(att)}"
   end
 
   def table_link_columns

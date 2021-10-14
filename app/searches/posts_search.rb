@@ -6,15 +6,20 @@ class PostsSearch < ApplicationSearch
   option :current_user
   # option :user_tags, optional: true
   option :limit, optional: true
-  option :tag, optional: true
+  option :tags, optional: true
   option :title, optional: true
+  option :text, optional: true
+  option :date, optional: true
 
   def call(posts)
     @query = posts
     @query = reduce_by_privacy
     # @query = reduce_by_user_tags #if user_tags
-    @query = reduce_by_tags if tag
+    @query = reduce_by_tags if tags
     @query = reduce_by_title if title
+    @query = reduce_by_date if date
+    @query = reduce_by_title_or_text if text
+    #@query = reduce_by_text if text
     @query = reduce_by_limit if limit
     @query
   end
@@ -22,7 +27,7 @@ class PostsSearch < ApplicationSearch
   private
 
   def reduce_by_tags
-    @query.joins(:active_tags).where(active_tags: { tag_id: tag })
+    @query.joins(:active_tags).where(active_tags: { tag: tags })
   end
 
   def reduce_by_privacy
@@ -35,6 +40,18 @@ class PostsSearch < ApplicationSearch
 
   def reduce_by_title
     @query.where('title LIKE :like', like: "%#{title}%")
+  end
+
+  def reduce_by_text
+    @query.joins(:contents).where('contents.text LIKE :like', like: "%#{text}%")
+  end
+
+  def reduce_by_title_or_text
+    @query.joins(:contents).where('contents.text LIKE :like OR title LIKE :like', like: "%#{text}%")
+  end
+
+  def reduce_by_date
+    @query.where("DATE(created_at) <= DATE(?)", (date&.to_date || Date.today))
   end
 
   def reduce_by_limit

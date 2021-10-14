@@ -6,6 +6,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :rememberable, :validatable, authentication_keys: [:login]
 
   has_many :posts
+  has_many :contents
   has_many :channels
   has_many :comments
   has_many :invite_codes

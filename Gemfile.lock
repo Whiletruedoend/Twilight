@@ -80,6 +80,7 @@ GEM
     autoprefixer-rails (10.3.3.0)
       execjs (~> 2)
     bcrypt (3.1.16)
+    betterlorem (0.1.2)
     bindex (0.8.1)
     bootsnap (1.9.1)
       msgpack (~> 1.0)
@@ -291,8 +292,6 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.2)
-    rss (0.2.9)
-      rexml
     rubocop (1.22.1)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
@@ -404,6 +403,7 @@ DEPENDENCIES
   actionpack (>= 6.1.4.1)
   activerecord (>= 6.1.2.1)
   addressable (>= 2.8.0)
+  betterlorem
   bootsnap (>= 1.4.4)
   bootstrap-sass
   byebug
@@ -439,7 +439,6 @@ DEPENDENCIES
   rollbar
   rspec
   rspec-rails
-  rss
   rubocop
   rubocop-rails
   rubocop-rspec

@@ -190,6 +190,8 @@ en:
     add: Add new comment
     edit: Edit
     delete: Delete comment
+  feeds:
+    no_results: No results found.
   devise:
     registrations:
       user:

@@ -154,28 +154,19 @@ class PostsController < ApplicationController
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
 
+    tags = user&.active_tags&.ids
     limit = user&.options&.dig('visible_posts_count') || Rails.configuration.credentials[:rss_default_visible_posts]
-    post_params = { current_user: user, limit: limit, tag: params[:tag], title: params[:title] }
+    post_params = { current_user: user, limit: limit, tags: tags, title: params[:title] }
 
     @posts = PostsSearch.new(post_params).call(Post.all)
 
-    require 'rss'
-
-    rss =
-      RSS::Maker.make('atom') do |maker|
-        maker.channel.author = 'matz'
-        maker.channel.updated = Time.now.to_s
-        maker.channel.about = 'https://www.ruby-lang.org/en/feeds/news.rss'
-        maker.channel.title = 'Example Feed'
-
-        maker.items.new_item do |item|
-          item.link = 'https://www.ruby-lang.org/en/news/2010/12/25/ruby-1-9-2-p136-is-released/'
-          item.title = 'Ruby 1.9.2-p136 is released'
-          item.updated = Time.now.to_s
-        end
-      end
-
-    render inline: rss, layout: false, locals: { rss: rss }
+    @markdown = Redcarpet::Markdown.new(CustomRender.new({ hard_wrap: true,
+                                                           no_intra_emphasis: true,
+                                                           fenced_code_blocks: true,
+                                                           disable_indented_code_blocks: true,
+                                                           tables: true,
+                                                           underline: true,
+                                                           highlight: true }), autolink: true)
   end
 
   def feed
@@ -186,34 +177,16 @@ class PostsController < ApplicationController
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
 
-    post_params = { current_user: user, tag: params[:tag], title: params[:title] }
+    post_params = { current_user: user, tags: params[:tag], text: params[:text], date: params[:to] }
 
     @posts = PostsSearch.new(post_params).call(Post.all)
-    @posts = @posts.order(created_at: 'desc').group_by { |p| p.created_at.to_date }
+    @posts = @posts.order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc')).group_by { |p| p.created_at.to_date }
 
-    # my_posts =  current_user.present? ? Post.order('created_at desc').limit(posts_limit.to_i).where(user: current_user).ids : []
-    # not_my_posts = Post.order('created_at desc').limit(posts_limit.to_i).where.not(user: current_user).where(privacy: [
-    #                                                                                                           0, 1
-    #                                                                                                         ]).ids
-    # posts = my_posts + not_my_posts
-    #  if user.present?
-    #    item_posts =
-    #      ItemTag.select do |item|
-    #        (item.item_type == 'Post') && user.active_tags_names.include?(item.tag.name) && (item.enabled == true)
-    #      end
-    #    item_posts.map!(&:item_id).reject(&:nil?)
-    #    if item_posts.any?
-    #      post_without_tags = Post.where(id: all_posts).without_active_tags.map(&:id)
-    #      @posts = Post.where(id: (all_posts.reject do |post|
-    #                                 item_posts.exclude?(post)
-    #                               end + post_without_tags)).order(created_at: :desc)
-    #    else
-    #      @posts = Post.where(id: all_posts).order(created_at: :desc)
-    #    end
-    #  elsif Rails.configuration.credentials[:fail2ban][:enabled] && params.key?(:rss_token)
-    #    ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
-    #    Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
-    #  end
+    if Rails.configuration.credentials[:fail2ban][:enabled] && user.nil? && params.key?(:rss_token)
+      ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
+      Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
+    end
+
     render 'posts/feed', layout: 'clear'
   end
 
