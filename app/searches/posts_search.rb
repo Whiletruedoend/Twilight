@@ -42,9 +42,9 @@ class PostsSearch < ApplicationSearch
 
   def reduce_by_privacy
     if current_user.present?
-      @query.where('user_id=? OR privacy IN (0,1)', current_user.id)
+      @query.where('posts.user_id=? OR posts.privacy IN (0,1)', current_user.id)
     else
-      @query.where('privacy=0')
+      @query.where('posts.privacy=0')
     end
   end
 
@@ -57,7 +57,7 @@ class PostsSearch < ApplicationSearch
   end
 
   def reduce_by_title_or_text
-    @query.joins(:contents).where('contents.text LIKE :like OR title LIKE :like', like: "%#{text}%")
+    @query.joins(:contents).where('(contents.text LIKE :like) OR (posts.title LIKE :like)', like: "%#{text}%")
   end
 
   def reduce_by_date
