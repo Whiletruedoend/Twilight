@@ -42,11 +42,18 @@
             <center><span class="list-group-item list-group-item-action" data-toggle="list">Tags not found!</span></center>
         <% else %>
         <% tags_list = tags_with_count_list(Tag.all).sort_by{ |k| k[:count] }.reverse %>
+            <%c = 0%>
             <% tags_list.each do |tag| %>
-            <%next if tag[:count].zero?%>
-            <a class="list-group-item list-group-item-action" data-toggle="list" href="?tag=<%=tag[:id]%>"><%=tag[:name]%>
+              <% if tag[:count].zero? %>
+                <%c += 1%>
+                <% next %>
+              <% end %>
+              <a class="list-group-item list-group-item-action" data-toggle="list" href="?tag=<%=tag[:id]%>"><%=tag[:name]%>
                 <span class="badge badge-primary badge-pill"><%=tag[:count]%></span>
-            </a>
+              </a>
+            <% end %>
+            <% if c == tags_list.count %>
+                <center><span class="list-group-item list-group-item-action" data-toggle="list">Tags not found!</span></center>
             <% end %>
         <% end %>
     </ul>

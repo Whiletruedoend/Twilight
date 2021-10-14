@@ -154,7 +154,7 @@ class PostsController < ApplicationController
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
 
-    tags = user&.active_tags&.any? ? user&.active_tags&.map{ |i| i.tag.id }: Tag.all.ids
+    tags = user&.active_tags&.any? ? user&.active_tags&.map { |i| i.tag.id } : Tag.all.ids
     limit = user&.options&.dig('visible_posts_count') || Rails.configuration.credentials[:rss_default_visible_posts]
     post_params = { current_user: user, limit: limit, tags: tags, title: params[:title] }
 

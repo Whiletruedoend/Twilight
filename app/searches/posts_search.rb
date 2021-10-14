@@ -21,7 +21,7 @@ class PostsSearch < ApplicationSearch
     @query = reduce_by_title if title
     @query = reduce_by_date if date
     @query = reduce_by_title_or_text if text
-    #@query = reduce_by_text if text
+    # @query = reduce_by_text if text
     @query = reduce_by_limit if limit
     @query
   end
@@ -35,9 +35,9 @@ class PostsSearch < ApplicationSearch
 
   # Includes posts without any tags, for RSS
   def reduce_by_tags
-    without_tags_ids = @query.without_active_tags.map{ |p| p.id }
+    without_tags_ids = @query.without_active_tags.map(&:id)
     with_tags_ids = @query.joins(:active_tags).where(active_tags: { tag: tags }).ids
-    @query.where(id: (without_tags_ids+with_tags_ids).uniq)
+    @query.where(id: (without_tags_ids + with_tags_ids).uniq)
   end
 
   def reduce_by_privacy
@@ -61,7 +61,7 @@ class PostsSearch < ApplicationSearch
   end
 
   def reduce_by_date
-    @query.where("DATE(created_at) <= DATE(?)", (date&.to_date || Date.today))
+    @query.where('DATE(created_at) <= DATE(?)', (date&.to_date || Date.today))
   end
 
   def reduce_by_limit
