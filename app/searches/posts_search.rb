@@ -27,7 +27,9 @@ class PostsSearch < ApplicationSearch
   private
 
   def reduce_by_tags
-    @query.joins(:active_tags).where(active_tags: { tag: tags })
+    without_tags_ids = @query.without_active_tags.map{ |p| p.id }
+    with_tags_ids = @query.joins(:active_tags).where(active_tags: { tag: tags })
+    @query.where(id: (without_tags_ids+with_tags_ids).uniq)
   end
 
   def reduce_by_privacy

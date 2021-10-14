@@ -8,6 +8,7 @@ class Post < ApplicationRecord
   has_many :contents
   has_many :comments
   has_many :platform_posts
+  has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id'
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
   # scope :with_active_tags, ->(tag_id) { select { |post| post.active_tags.include?(tag_id) } }
