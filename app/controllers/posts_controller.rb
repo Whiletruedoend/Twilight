@@ -2,11 +2,6 @@
 
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: %i[feed rss show export raw]
-  before_action :check_admin, except: %i[feed rss index show export raw]
-
-  def check_admin
-    redirect_to root_path unless current_user.is_admin
-  end
 
   def index
     user_post = Post.get_posts(params, current_user)
@@ -16,40 +11,21 @@ class PostsController < ApplicationController
     elsif user_post.present? && params.key?(:category)
       user_post = user_post.where(category_id: params[:category])
     end
-    @post = user_post.order(created_at: :desc).paginate(page: params[:page])
+    @posts = user_post.order(created_at: :desc).paginate(page: params[:page])
   end
 
   def show
-    @post = Post.find_by(id: params[:id])
-    if @post.present?
-      unless @post.check_privacy(current_user)
-        render file: "#{Rails.root}/public/404.html", layout: false,
-               status: :not_found
-      end
-    else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_post
   end
 
   def edit
-    @post = Post.find_by(id: params[:id])
-    if @post.present?
-      if !@post.check_privacy(current_user) || (@post.user != current_user)
-        render file: "#{Rails.root}/public/404.html", layout: false,
-               status: :not_found
-      end
-    else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_post, to: :update?
   end
 
   def update
-    @post = Post.find_by(id: params[:id])
-    if (@post.present? && (!@post.check_privacy(current_user) || (@post.user != current_user))) || @post.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_post
 
-    if @post.update(privacy: (posts_params[:post][:privacy] || 2))
+    if current_post.update(privacy: (posts_params[:post][:privacy] || 2))
 
       tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
 
@@ -66,18 +42,20 @@ class PostsController < ApplicationController
         end
       end
 
-      tags.each { |tag| ItemTag.where(item: @post, tag_id: tag[0]).update(enabled: tag[1].to_i) } if tags.any?
+      tags.each { |tag| ItemTag.where(item: current_post, tag_id: tag[0]).update(enabled: tag[1].to_i) } if tags.any?
 
       if posts_params[:post][:category_name].present?
         cat = current_user.categories.find_by(name: posts_params[:post][:category_name])
-        @post.update(category: (cat.presence || Category.create!(user: current_user,
-                                                                 name: posts_params[:post][:category_name],
-                                                                 color: posts_params[:post][:category_color])))
+        current_post.update(category: (cat.presence || Category.create!(user: current_user,
+                                                                        name: posts_params[:post][:category_name],
+                                                                        color: posts_params[:post][:category_color])))
       # We need category owned by user checking?
       elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present?
-        @post.update(category_id: posts_params[:post][:category]) if @post.category_id != posts_params[:post][:category]
+        if current_post.category_id != posts_params[:post][:category]
+          current_postupdate(category_id: posts_params[:post][:category])
+        end
       elsif posts_params[:post][:category_name].empty? && posts_params[:post][:category].blank?
-        @post.update(category_id: nil) unless @post.category_id.nil?
+        current_post.update(category_id: nil) unless current_post.category_id.nil?
       end
 
       channels_p = params['channels']&.to_unsafe_h
@@ -87,25 +65,29 @@ class PostsController < ApplicationController
             # params["platforms"] = { k=>(v ? 1 : 0).to_s }
             # SendPostToPlatforms.call(@post, params)
           else
-            DeletePostMessages.call(@post, k)
+            DeletePostMessages.call(current_post, k)
           end
         end
       end
 
-      UpdatePostMessages.call(@post, params) # TODO: optimize it?
-      @post.update(title: posts_params[:post][:title]) # ?
+      UpdatePostMessages.call(current_post, params) # TODO: optimize it?
+      current_post.update(title: posts_params[:post][:title]) # ?
 
-      redirect_to @post
+      redirect_to current_post
     else
       render 'edit'
     end
   end
 
   def new
+    authorize! current_user, to: :create_posts?
+
     @post = Post.new
   end
 
   def create
+    authorize! current_user, to: :create_posts?
+
     @post = Post.new(title: posts_params[:post][:title])
     @post.user = current_user
     @post.privacy = posts_params.dig(:post, :privacy) || 2
@@ -191,30 +173,27 @@ class PostsController < ApplicationController
   end
 
   def export
-    @post = Post.find_by(id: params[:id])
-    if (@post.present? && (@post.user != current_user)) || @post.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false,
-                    status: :not_found
-    end
+    authorize! current_post, to: :export?
 
     FileUtils.rm_rf('tmp/export/') # clear old files
 
-    file = ExportFiles.call(@post).result
+    file = ExportFiles.call(current_post).result
 
     send_file(file[:path], filename: file[:filename], type: file[:type])
   end
 
   def raw
-    @post = Post.find_by(id: params[:id])
-    if (@post.present? && !@post.check_privacy(current_user)) || @post.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false,
-                    status: :not_found
-    end
+    authorize! current_post, to: :show?
 
+    @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
+                                                                 disable_indented_code_blocks: true, autolink: false,
+                                                                 tables: false, underline: false, highlight: false)
     render 'posts/raw', layout: 'clear'
   end
 
   def import
+    authorize! current_user, to: :create_posts?
+
     return if params[:file].blank?
 
     file_blob = ActiveStorage::Blob.find_signed!(params[:file])
@@ -310,22 +289,18 @@ class PostsController < ApplicationController
   end
 
   def destroy
-    @post = Post.find_by(id: params[:id])
-    if (@post.present? && !@post.check_privacy(current_user)) || @post.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false,
-                    status: :not_found
-    end
+    authorize! current_post, to: :update?
 
-    if @post.user == current_user
-      DeletePostMessages.call(@post)
-      ItemTag.where(item: @post).delete_all
-      PlatformPost.where(post: @post).delete_all
-      comment_ids = Comment.where(post: @post).ids
+    if current_post.user == current_user
+      DeletePostMessages.call(current_post)
+      ItemTag.where(item: current_post).delete_all
+      PlatformPost.where(post: current_post).delete_all
+      comment_ids = Comment.where(post: current_post).ids
       ActiveStorage::Attachment.where(record_type: 'Comment', record: comment_ids).delete_all
-      Comment.where(post: @post).delete_all
-      @post.content_attachments&.delete_all
-      Content.where(post: @post).delete_all
-      @post.delete
+      Comment.where(post: current_post).delete_all
+      current_post.content_attachments&.delete_all
+      Content.where(post: current_post).delete_all
+      current_post.delete
     end
     redirect_to posts_path
   end

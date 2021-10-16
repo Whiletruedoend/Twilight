@@ -52,13 +52,13 @@
         <%= I18n.t("main.logged_as") %>:
         <%if current_user.present? %>
           <a href="edit"><%=current_user.login%></a> |
-          <%= link_to I18n.t("main.log_out"), "sign_out"%>
+          <%= link_to I18n.t("main.log_out"), "sign_out"%> |
         <% else %>
           <%= I18n.t("main.guest") %> |
           <%= link_to I18n.t("main.log_in"), "sign_in"%> |
           <%= link_to I18n.t("main.register"), "sign_up"%>
         <% end %>
-        <% if current_user.present? && current_user.is_admin %>
+        <% if current_user&.is_admin? %>
           <br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)
         <% elsif current_user.present? %>
           <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)

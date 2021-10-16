@@ -3,7 +3,7 @@
 
     <h2><%= I18n.t("channels.new_channel") %></h2>
     <div class="form-row">
-      <%= form_with(model: @channel) do |f| %>
+      <%= form_with(model: @current_channel) do |f| %>
 
         <% if flash.any? %>
           <div class="alert alert-danger" id="error_explanation">

@@ -1,9 +1,9 @@
 <br>
-<% if @post.comments.any? %>
+<% if @current_post.comments.any? %>
   <div class="comments-container comments-width">
     <center><%= render "comments/add" if current_user.present? %></center>
     <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
-    <% comments = @post.comments.order("created_at DESC").group_by{ |item| item.send("user").present? } %>
+    <% comments = @current_post.comments.order("created_at DESC").group_by{ |item| item.send("user").present? } %>
     <% if comments[true].present? %>
       <%= I18n.t("comments.blog") %>: <br>
       <% comments[true].each do |comment|%>

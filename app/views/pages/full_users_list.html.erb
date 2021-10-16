@@ -1,10 +1,6 @@
 <body id="bg">
-  <% if current_user.present? && current_user.is_admin? %>
-    <div class="comments-container">
-      <%= render "users/registrations/stats/user_list" %><br>
-      <center><%= link_to I18n.t("posts.back"), edit_user_path %> | <%= link_to I18n.t("posts.main_page"), root_path %></center>
-    </div>
-  <% else %>
-    <center><%=I18n.t("stats.stats_admins_only")%></center>
-  <% end %>
+  <div class="comments-container">
+    <%= render "users/registrations/stats/user_list" %><br>
+    <center><%= link_to I18n.t("posts.back"), edit_user_path %> | <%= link_to I18n.t("posts.main_page"), root_path %></center>
+  </div>
 </body>

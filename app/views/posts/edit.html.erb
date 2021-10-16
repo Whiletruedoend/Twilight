@@ -8,18 +8,18 @@
       <li><a data-toggle="tab" href="#other"><%= I18n.t("posts.other") %></a></li>
     </ul>
 
-    <%= form_with(model: @post, local: true) do |f| %>
-      <%= render 'shared/errors', object: @post %>
-      <% platforms = @post.platforms %>
-      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @post }) %>
+    <%= form_with(model: @current_post, local: true) do |f| %>
+      <%= render 'shared/errors', object: @current_post %>
+      <% platforms = @current_post.platforms %>
+      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }) %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
-          <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @post.title }) %>
+          <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @current_post.title }) %>
           <div class="markdown-editor">
-            <%= f.text_area :content, placeholder: "#{I18n.t("posts.text_placeholder")}", value: @post.text %>
+            <%= f.text_area :content, placeholder: "#{I18n.t("posts.text_placeholder")}", value: @current_post.text %>
             <div id="preview" class="preview"></div>
           </div>
-          <p id="chars" class="chars"><%=@post.text.length%> chars</p>
+          <p id="chars" class="chars"><%=@current_post.text.length%> chars</p>
         </div>
         <div id="attachments" class="tab-pane">
           <h3><%= I18n.t("posts.current_attachments") %>:</h3>
@@ -32,7 +32,7 @@
               </div>
             </div>
           <% end %>
-          <% attachments = @post.content_attachments %>
+          <% attachments = @current_post.content_attachments %>
           <% if attachments.present? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>
@@ -77,8 +77,8 @@
               <% if @current_user.categories.any? %>
                   <% categories = Category.order(:sort).all.collect{ |cat| [cat.name, cat.id] } %>
                   <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
-                <% if @post.category.present? %>
-                  <%= f.select(:category, categories, :selected=>[@post.category.name, @post.category.id]) %>
+                <% if @current_post.category.present? %>
+                  <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
                 <% else %>
                   <%= f.select(:category, categories) %>
                 <% end %>
@@ -98,10 +98,10 @@
           </div>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>
-            <% tags = ItemTag.where(item: @post) %>
+            <% tags = ItemTag.where(item: @current_post) %>
             <% if tags.present? %>
               <div class="colorful-tags">
-                <% ItemTag.where(item: @post).each do |item_tag| %>
+                <% ItemTag.where(item: @current_post).each do |item_tag| %>
                   <%=check_box("tags", item_tag.tag.id, { :class=>"form-check-input colorful-checkbox", :checked => item_tag.enabled, :style => "margin: auto 2px auto 2px;" })%>
                   <%=label_tag "tags_#{item_tag.tag.id}", "##{item_tag.tag.name}"%>
                 <% end %>

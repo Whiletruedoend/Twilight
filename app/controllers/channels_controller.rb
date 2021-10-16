@@ -2,32 +2,15 @@
 
 class ChannelsController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_admin
-
-  def check_admin
-    redirect_to root_path unless current_user.is_admin
-  end
 
   def edit
-    @channel = Channel.find_by(id: params[:id])
-    if @channel.present?
-      if @channel.user != current_user
-        render file: "#{Rails.root}/public/404.html", layout: false,
-               status: :not_found
-      end
-    else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_channel, to: :update?
   end
 
   def update
-    @channel = Channel.find_by(id: params[:id])
-    if (@channel.present? && (@channel.user != current_user)) || @channel.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false,
-                    status: :not_found
-    end
+    authorize! current_channel
 
-    command = CheckChannel.call(@channel, channels_params)
+    command = CheckChannel.call(current_channel, channels_params)
     unless command.success?
       redirect_to edit_channel_path, alert: command.errors.full_messages
       return
@@ -37,7 +20,7 @@ class ChannelsController < ApplicationController
     room = channels_params[:channel][:room]
     enabled = channels_params[:channel][:enabled]
 
-    if @channel.update(token: token, room: room, enabled: enabled)
+    if current_channel.update(token: token, room: room, enabled: enabled)
       redirect_to edit_user_path
     else
       render :edit
@@ -45,25 +28,29 @@ class ChannelsController < ApplicationController
   end
 
   def new
-    @channel = Channel.new
+    authorize! current_user, to: :create_channels?
+
+    @current_channel = Channel.new
   end
 
   def create
-    @channel = Channel.new
+    authorize! current_user, to: :create_channels?
 
-    command = CheckChannel.call(@channel, channels_params)
+    @current_channel = Channel.new
+
+    command = CheckChannel.call(@current_channel, channels_params)
     unless command.success?
       redirect_to new_channel_path, alert: command.errors.full_messages
       return
     end
 
-    @channel.user = current_user
-    @channel.platform = Platform.find_by(title: channels_params[:channel][:platform])
-    @channel.token = channels_params[:channel][:token]
-    @channel.room = channels_params[:channel][:room]
-    @channel.enabled = true
+    @current_channel.user = current_user
+    @current_channel.platform = Platform.find_by(title: channels_params[:channel][:platform])
+    @current_channel.token = channels_params[:channel][:token]
+    @current_channel.room = channels_params[:channel][:room]
+    @current_channel.enabled = true
 
-    if @channel.save
+    if @current_channel.save
       redirect_to edit_user_path
     else
       render :new
@@ -71,11 +58,11 @@ class ChannelsController < ApplicationController
   end
 
   def destroy
-    @channel = Channel.find(params[:id])
-    if @channel.user == current_user
-      # @channel.avatar.destroy!
-      @channel.delete
-    end
+    authorize! current_channel
+
+    # current_channel.avatar.destroy!
+    current_channel.delete
+
     redirect_to edit_user_path
   end
 

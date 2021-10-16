@@ -7,16 +7,16 @@
     <li><a data-toggle="tab" href="#attachments"><%= I18n.t("posts.attachments") %></a></li>
   </ul>
 
-  <%= form_with(model: @comment, local: true) do |f| %>
-    <%= render 'shared/errors', object: @comment %>
+  <%= form_with(model: @current_comment, local: true) do |f| %>
+    <%= render 'shared/errors', object: @current_comment %>
 
     <div class="tab-content">
       <div id="markdown" class="tab-pane in active title">
         <div class="markdown-editor">
-          <%= f.text_area :content, { id: "post_content", placeholder: "#{I18n.t("posts.text_placeholder")}", value: @comment.text } %>
+          <%= f.text_area :content, { id: "post_content", placeholder: "#{I18n.t("posts.text_placeholder")}", value: @current_comment.text } %>
           <div id="preview" class="preview"></div>
         </div>
-        <p id="chars" class="chars"><%=@comment.text.length%> chars</p>
+        <p id="chars" class="chars"><%=@current_comment.text.length%> chars</p>
       </div>
       <div id="attachments" class="tab-pane title">
         Not yet! D:

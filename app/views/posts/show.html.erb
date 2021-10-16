@@ -4,58 +4,58 @@
       <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
       <%= link_to I18n.t("posts.main_page"), root_path%>
       <%= link_to "| #{I18n.t("posts.all_posts")}", posts_url%>
-      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user.present? && current_user.is_admin%>
-      <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user.present? && current_user.is_admin%>
+      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user&.is_admin?%>
+      <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user&.is_admin?%>
     </center>
     <article>
       <header>
         <h1>
-          <i class="fa fa-commenting-o right-small comments"> <%= @post.comments.count %></i>
+          <i class="fa fa-commenting-o right-small comments"> <%= @current_post.comments.count %></i>
           <% if Rails.configuration.credentials[:enable_categories] %>
-            <div class="category" style="<%="border-left: 5px solid #{@post.category.color};" if @post.category.present? %>">
-              <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
-              <%= render "privacy-icons", object: @post %>
-              <% if @post.content_attachments.present? && @post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <div class="category" style="<%="border-left: 5px solid #{@current_post.category.color};" if @current_post.category.present? %>">
+              <a href="/posts/<%= @current_post.id %>"><%= @current_post.title.present? ? @current_post.title : "##{@current_post.id}" %> </a>
+              <%= render "privacy-icons", object: @current_post %>
+              <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
                 <a><i class="fa fa-file right-small"></i></a>
               <% end %>
             </div>
           <% else %>
-            <a href="/posts/<%= @post.id %>"><%= @post.title.present? ? @post.title : "##{@post.id}" %> </a>
-            <%= render "privacy-icons", object: @post %>
-            <% if @post.content_attachments.present? && @post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+            <a href="/posts/<%= @current_post.id %>"><%= @current_post.title.present? ? @current_post.title : "##{@current_post.id}" %> </a>
+            <%= render "privacy-icons", object: @current_post %>
+            <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <a><i class="fa fa-file right-small"></i></a>
             <% end %>
           <% end %>
           <h1 class="dashed-line"></h1>
         </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
+        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @current_post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
-          <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="/posts?user=<%=@post.user.login%>"><%= @post.user.login %></a>
-            <% if current_user == @post.user %>
-              | <a href="<%=@post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
-              | <a href="/posts/delete/<%=@post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
+          <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="/posts?user=<%=@current_post.user.login%>"><%= @current_post.user.login %></a>
+            <% if current_user == @current_post.user %>
+              | <a href="<%=@current_post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
+              | <a href="/posts/delete/<%=@current_post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
             <% end %>
           </i>
         </p>
         <p class="metadata">
-          <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=@post.id%>"><%= I18n.t("posts.raw") %></a>
-            <% if current_user == @post.user %>
-              | <a href="/posts/export/<%=@post.id%>"><%= I18n.t("posts.export") %></a>
+          <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=@current_post.id%>"><%= I18n.t("posts.raw") %></a>
+            <% if current_user == @current_post.user %>
+              | <a href="/posts/export/<%=@current_post.id%>"><%= I18n.t("posts.export") %></a>
             <% end %>
           </i>
         </p>
         <% if Rails.configuration.credentials[:enable_categories] %>
-          <% if @post.category&.name.present? %>
-            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=@post.category.id%>"><%= @post.category.name %></a></i></p>
+          <% if @current_post.category&.name.present? %>
+            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=@current_post.category.id%>"><%= @current_post.category.name %></a></i></p>
           <% else %>
             <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
           <% end %>
         <% end %>
       </header>
-      <%= display_attachments(@post) if @post.content_attachments.present? %>
-      <div class="posts-content"><%= markdown(@post.text) %></div>
+      <%= display_attachments(@current_post) if @current_post.content_attachments.present? %>
+      <div class="posts-content"><%= markdown(@current_post.text) %></div>
       <hr style="border-top: dashed 2px;" />
-      <% item_tags = @post.active_tags %>
+      <% item_tags = @current_post.active_tags %>
       <% if item_tags.any? %>
         <ul class="tags" itemprop="keywords">
           <% item_tags.each do |item_tag| %>
