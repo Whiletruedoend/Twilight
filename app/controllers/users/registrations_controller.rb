@@ -13,8 +13,8 @@ module Users
 
     # POST /resource
     def create
-      return redirect_to(sign_up_url, alert: ['Invalid captcha!']) unless valid_captcha?(params[:user][:captcha])
-      return redirect_to(sign_up_url, alert: ['Invalid invite code!']) unless validate_code(params[:user][:code])
+      return redirect_to(sign_up_url, alert: ['Invalid captcha!']) unless valid_captcha?(users_params[:user][:captcha])
+      return redirect_to(sign_up_url, alert: ['Invalid invite code!']) unless validate_code(users_params[:user][:code])
 
       super
 
@@ -22,7 +22,7 @@ module Users
 
       if Rails.configuration.credentials[:invite_codes_register_only]
         options = current_user.options
-        options[:invite_code] = params[:user][:code]
+        options[:invite_code] = users_params[:user][:code]
         current_user.update!(options: options)
       end
       Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
@@ -62,20 +62,30 @@ module Users
 
     # PUT /resource
     def update
-      if params.key?(:tags)
-        params[:tags].each do |tag|
+      if users_params.key?(:tags)
+        users_params[:tags].each do |tag|
           item_tag = ItemTag.where(item: current_user, tag_id: tag[0]).first
           item_tag.update(enabled: tag[1]) if item_tag.present?
         end
+        return redirect_to edit_user_path
       end
-      if params.dig(:user, :options).present? && current_user.present?
+
+      if users_params.dig(:user, :options).present? && current_user.present?
         options = current_user.options
-        new_options = params[:user][:options]
+        new_options = users_params[resource_name][:options]
         new_options.each { |k, v| options.merge!(k => v) if v != options[k] }
         current_user.options = options
-        current_user.save! if current_user.valid?
       end
-      super
+
+      if resource.update_with_password(users_params[resource_name])
+        set_flash_message :notice, :updated
+        bypass_sign_in resource
+      else
+        set_flash_message :alert, :wrong_validations
+        clean_up_passwords(resource)
+      end
+
+      redirect_to edit_user_path
     end
 
     # DELETE /resource
@@ -105,15 +115,22 @@ module Users
 
     protected
 
-    # If you have extra params to permit, append them to the sanitizer.
-    #  def configure_sign_up_params
-    #   devise_parameter_sanitizer.permit(:sign_up, keys: [:captcha])
-    # end
-
-    def configure_permitted_parameters
-      attributes = [:avatar, { options: {} }]
-      devise_parameter_sanitizer.permit(:sign_up, keys: attributes)
-      devise_parameter_sanitizer.permit(:account_update, keys: attributes)
+    def users_params
+      params.permit(:_method,
+                    :id,
+                    :authenticity_token,
+                    :commit,
+                    { tags: {} },
+                    user: [:login,
+                           :name,
+                           :password,
+                           :password_confirmation,
+                           :encrypted_password,
+                           :code,
+                           :captcha,
+                           :remember_me,
+                           :avatar,
+                           { options: {} }])
     end
 
     # If you have extra params to permit, append them to the sanitizer.

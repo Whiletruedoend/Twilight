@@ -35,7 +35,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
         xml.description @markdown.render(full_text)
         # xml.creator post.user.login
-        xml.author post.user.login
+        xml.author display_name(post.user)
         xml.category post.category.name if post.category.present?
 
         xml.pubDate(post.created_at.rfc2822)

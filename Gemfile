@@ -71,6 +71,7 @@ gem 'rubocop'
 gem 'rubocop-rails'
 
 gem 'action_policy'
+gem 'active_storage_validations'
 gem 'addressable', '>= 2.8.0'
 gem 'betterlorem'
 gem 'devise'

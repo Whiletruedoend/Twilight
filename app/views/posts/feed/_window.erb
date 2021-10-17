@@ -13,7 +13,7 @@
                     <div class="icon">
                         <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar.variant(resize_to_limit: [48,48])&.processed)%> lazy="loaded">
                     </div>
-                    <div class="name"><%=post.user.login%></div>
+                    <div class="name"><%=display_name(post.user)%></div>
                     <div class="createdAt"><%=post.created_at.strftime("%H:%M:%S")%></div>
                     <%= render "privacy-icons", object: post %>
                 </div>

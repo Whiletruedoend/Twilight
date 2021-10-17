@@ -10,7 +10,7 @@
         <% user = comment.user %>
           <div class="comment">
           <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
-          <% name = user.login %>
+          <% name = display_name(user) %>
             <div class="comment-metadata"><%= name %> <i class="comment-small">- <%= comment.created_at.strftime("%Y-%m-%d %H:%M") %> <% if comment.is_edited %> <i class="fa fa-pencil-square-o "></i> <% end %><% if current_user.present? && (current_user == user)%> | <a href="/comments/<%=comment.id%>/edit"><%= I18n.t("comments.edit") %></a><% end %></i><% if current_user.present? && (current_user.is_admin? || (current_user == user)) %><i class="comment-small right"><a href = "/comments/delete/<%=comment.id%>"><%= I18n.t("comments.delete") %></a></i><% end %></div>
           <%= markdown(comment.text) %>
           <% if comment.has_attachments %>

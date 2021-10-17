@@ -44,25 +44,10 @@ class Post < ApplicationRecord
     Content.where(post: self).select { |c| c.attachments.any? }.map(&:attachments)[0]
   end
 
-  def check_privacy(current_user)
-    return false if nil?
-
-    case privacy
-    when 0
-      true
-    when 1
-      current_user.present?
-    when 2
-      user == current_user
-    else
-      false
-    end
-  end
-
   def self.get_posts(params, current_user)
     if params.key?(:user)
-      privacy = (current_user.present? && (User.find_by(login: params[:user]) == current_user) ? [0, 1, 2] : [0, 1])
-      posts = Post.where(privacy: privacy, user: User.find_by(login: params[:user]))
+      privacy = (current_user.present? && (User.find_by(id: params[:user]) == current_user) ? [0, 1, 2] : [0, 1])
+      posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]))
     else
       my_posts = current_user.present? ? Post.where(user: current_user).ids : []
       not_my_posts = Post.where.not(user: current_user).where(privacy: [0, 1]).ids

@@ -59,9 +59,9 @@
           <%= link_to I18n.t("main.register"), "sign_up"%>
         <% end %>
         <% if current_user&.is_admin? %>
-          <br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)
+          <br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.id%>"><%=current_user.posts.count%></a>)
         <% elsif current_user.present? %>
-          <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)
+          <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.id%>"><%=current_user.posts.count%></a>)
         <% end %>
       </div>
       <div class="block"> <%= I18n.t("main.links") %>:

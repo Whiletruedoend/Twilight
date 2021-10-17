@@ -90,6 +90,7 @@ en:
     token: Token
     max: max
     rss_visible_posts: Displayed posts count
+    rss_tags_description: Used when fetching RSS posts.
     theme: Theme
     token_not_generated: Token not generated!
     password_confirmation: Password confirmation
@@ -107,6 +108,7 @@ en:
     update: Update
     password: Password
     login: Login
+    name: Display name
     tags: Tags
     copy: Copy
     main_information: Main Information
@@ -178,6 +180,7 @@ en:
     user_list: User list
     all_users_list: All users list
     list_login: Login
+    list_name: Display name
     list_rss_token: RSS Token
     list_created_at: Created At
     list_invite_code: Invite code (if used)
@@ -195,6 +198,7 @@ en:
   devise:
     registrations:
       user:
+        wrong_validations: Wrong validations
         destroyed: Your account has been deleted!
         updated: Your account has been updated!
         signed_up: You have successfully registered!
