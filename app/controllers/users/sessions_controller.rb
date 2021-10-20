@@ -8,11 +8,23 @@ module Users
 
     # POST /resource/sign_in
     def create
-      if valid_captcha?(params[:user][:captcha])
+      if valid_captcha?(sessions_params[:user][:captcha])
         super
       else
         redirect_to sign_in_url
       end
+    end
+
+    protected
+
+    def sessions_params
+      params.permit(:authenticity_token,
+                    :commit,
+                    user: %i[login
+                             password
+                             code
+                             captcha
+                             remember_me])
     end
 
     # DELETE /resource/sign_out

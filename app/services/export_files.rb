@@ -17,6 +17,9 @@ class ExportFiles
     content_text = ReverseMarkdown.convert(@markdown.render(@post.text), unknown_tags: :pass_through)
     text = title.present? ? "## #{title}\n\n#{content_text}" : content_text.to_s
 
+    # ![p](...%20=..x..) => ![p](... =..x..)
+    text = text.gsub(/!\[[^\>]+\]\([^\>]+(%20)=[0-9]+x[0-9]+\)/) { |m| m.gsub!("%20"," ") }
+
     post_dir = "tmp/export/#{@post.id}"
 
     metadata = <<~TW_METADATA

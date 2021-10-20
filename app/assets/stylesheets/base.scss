@@ -137,6 +137,7 @@ $color-black: #000000;
     position: static;
     width: 100%;
     text-align: center;
+    margin-top: 1.5%;
   }
 
   a{
@@ -995,9 +996,11 @@ $color-black: #000000;
       display: flex;
       align-items: center;
 
-      .icon{
-        height: 48px;
-        width: 48px;
+      .feed-icon{
+        margin: auto;
+        border: none;
+        height: 64px;
+        width: 64px;
         background: $color-feed-icon;
         border-radius: 100%;
         overflow: hidden;
