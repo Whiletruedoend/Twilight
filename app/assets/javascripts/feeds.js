@@ -1,4 +1,5 @@
 //= require jquery3
+//= require readmore-js
 
 function isScrolledIntoView(elem)
 {

@@ -1,5 +1,10 @@
 $('#right-bar').append("<%= escape_javascript(render :partial => "posts/feed/feed", :collection => @posts, :as => :post) %>");
 
+$('article.feed div.text').readmore({
+    moreLink: '<a class="readmore" href="#">Read more</a>',
+    lessLink: '<a class="readmore" href="#">Hide</a>'
+});
+
 <% if @posts.next_page %>
     $('#paginate-infinite-scrolling .pagination').replaceWith("<%= escape_javascript(will_paginate @posts)%>");
 <% else %>
