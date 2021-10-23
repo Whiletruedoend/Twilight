@@ -7,6 +7,21 @@
             </li>
         </a>
 
+        <% if current_user.present? && allowed_to?(:create_posts?, current_user) %>
+            <a href='<%=posts_new_path%>'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-pencil"></i>
+                    <span>New post</span>
+                </li>
+            </a>
+            <a href='<%=import_post_path%>'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-circle-arrow-up"></i>
+                    <span>Import</span>
+                </li>
+            </a>
+        <% end %>
+
         <a href='/'>
             <li class="list-item">
                 <i class="glyphicon glyphicon-triangle-left"></i>

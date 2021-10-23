@@ -1002,6 +1002,7 @@ $color-black: #000000;
     .user{
       display: flex;
       align-items: center;
+      padding-bottom: 5px;
 
       .feed-icon{
         margin: auto;
@@ -1034,11 +1035,16 @@ $color-black: #000000;
     }
 
     .text{
-      max-height: 11.7em; /* readmore.js */
+      font: 16px/1.5 sans-serif;
+      max-height: 22em; /* readmore.js */
       word-break: break-word;
-    /*  white-space: pre-wrap; */
+      /* white-space: pre-wrap; */
       font-weight: 500;
       overflow: hidden; /* readmore.js */
+    }
+
+    p:first-child{
+      margin-top: 0;
     }
 
     p{
