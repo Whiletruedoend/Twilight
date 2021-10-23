@@ -181,11 +181,11 @@ module PostsHelper
     content.html_safe
   end
 
-  def tags_with_count_list(tags)
-    tags.map do |tag|
-      item = Post.where(privacy: [0, 1])
-      item_tags = ItemTag.where(tag: tag, enabled: true, item: item)
-      { id: tag.id, name: tag.name, count: item_tags.count }
+  def tags_with_count_list(tags, tags_ids)
+    tags_list = tags.map do |tag|
+      count = tags_ids.count(tag.id)
+      {id: tag.id, name: tag.name, count: count }
     end
+    tags_list
   end
 end

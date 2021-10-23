@@ -58,6 +58,7 @@ Recently I thought about the implementation of blogs in different platforms, and
   * Create Delete tags, the ability of the user to select the desired tags (the result is displayed in RSS);
   * Ability to add comments to the article;
   * View statistics of registered users (only for administrators); 
+  * Twitter-style feed;
   
   
   For future options, see the github board in the `projects` tab;
