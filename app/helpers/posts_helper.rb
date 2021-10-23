@@ -181,11 +181,21 @@ module PostsHelper
     content.html_safe
   end
 
-  def tags_with_count_list(tags, tags_ids)
-    tags_list = tags.map do |tag|
-      count = tags_ids.count(tag.id)
-      {id: tag.id, name: tag.name, count: count }
+  def tags_with_count_list(tags)
+    if current_user.present?
+      users_item = Post.where(privacy: 2, user: current_user)
+      privacy = [0,1]
+    else
+      users_item = []
+      privacy = [0]
     end
-    tags_list
+
+    item = Post.where(privacy: privacy)
+    item += users_item if users_item.present?
+
+    tags.map do |tag|
+      item_tags = ItemTag.where(tag: tag, enabled: true, item: item)
+      { id: tag.id, name: tag.name, count: item_tags.count }
+    end
   end
 end

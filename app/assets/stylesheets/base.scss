@@ -975,13 +975,13 @@ $color-black: #000000;
     overflow-y: scroll;
     background: $color-feed-bg2;
     width: 50%;
-  }
 
-  code{
-    color: $color-feed-link;
-    background-color: $color-feed-bg;
+    code{
+      color: $color-feed-link;
+      background-color: $color-feed-bg;
+    }  
   }
-
+  
   .datestamp{
     margin-top: 14px;
     display: flex;
