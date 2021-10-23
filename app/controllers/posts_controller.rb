@@ -140,7 +140,7 @@ class PostsController < ApplicationController
     limit = user&.options&.dig('visible_posts_count') || Rails.configuration.credentials[:rss_default_visible_posts]
     post_params = { current_user: user, limit: limit, tags: tags, title: params[:title] }
 
-    @posts = PostsSearch.new(post_params).call(Post.all)
+    @posts = PostsSearch.new(post_params).call(Post.all).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
 
     @markdown = Redcarpet::Markdown.new(CustomRender.new({ hard_wrap: true,
                                                            no_intra_emphasis: true,

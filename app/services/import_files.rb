@@ -19,11 +19,13 @@ class ImportFiles
 
     # Parse post title
     title = text.match("## ([^\n]+)")
-    title_offset = title.offset(0)
-    # +3 - "## ", -3 - "\n\r\n" (or something like that)
-    # check if '## Test' is not start of file
-    content_title = (title_offset.include?(0) ? text[title_offset[0] + 3, title_offset[1] - 3] : nil)
-    content_title = nil if content_title.present? && !content_title.match?(/[^\s]+/) # only spaces or special chars
+    if title.present?
+      title_offset = title.offset(0)
+      # +3 - "## ", -3 - "\n\r\n" (or something like that)
+      # check if '## Test' is not start of file
+      content_title = (title_offset.include?(0) ? text[title_offset[0] + 3, title_offset[1] - 3] : nil)
+      content_title = nil if content_title.present? && !content_title.match?(/[^\s]+/) # only spaces or special chars
+    end
     text = text[title_offset[1] + 1..(text.length)] if content_title.present?
 
     # Parse post date

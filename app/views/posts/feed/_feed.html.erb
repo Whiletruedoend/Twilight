@@ -16,7 +16,7 @@
   </div>
     
   <div id="<%=post.id%>" class="text">
-    <%= markdown(post.title) %>
+    <%= markdown(post.title) if post.title.present?%>
     <%= markdown(post.text) %>
   </div>
                 

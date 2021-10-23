@@ -84,7 +84,7 @@ $color-black: #000000;
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
-        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border){
+        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -977,6 +977,11 @@ $color-black: #000000;
     width: 50%;
   }
 
+  code{
+    color: $color-feed-link;
+    background-color: $color-feed-bg;
+  }
+
   .datestamp{
     margin-top: 14px;
     display: flex;
@@ -1031,12 +1036,23 @@ $color-black: #000000;
 
     .readmore{
       padding-top: 15px;
+      color: $color-feed-link;
+      background-color: $color-feed-bg;
+    }
+
+    a, a:hover{
       color: $color-feed-date;
+      background-color: $color-feed-bg;
+    }
+
+    a:focus{ 
+      color: $color-link-light;
+      background-color: $color-feed-bg;
     }
 
     .text{
       font: 16px/1.5 sans-serif;
-      max-height: 22em; /* readmore.js */
+      max-height: 26em; /* readmore.js */
       word-break: break-word;
       /* white-space: pre-wrap; */
       font-weight: 500;
