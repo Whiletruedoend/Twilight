@@ -162,11 +162,17 @@ class PostsController < ApplicationController
     post_params = { current_user: user, strict_tags: params[:tag], text: params[:text], date: params[:to] }
 
     @posts = PostsSearch.new(post_params).call(Post.all)
-    @posts = @posts.order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc')).group_by { |p| p.created_at.to_date }
+    @posts = @posts.paginate(page: params[:page], per_page: 15).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
+    @last_date = nil
 
     if Rails.configuration.credentials[:fail2ban][:enabled] && user.nil? && params.key?(:rss_token)
       ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
       Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
+    end
+
+    respond_to do |format|
+      format.html
+      format.js
     end
 
     render 'posts/feed', layout: 'clear'
@@ -195,7 +201,7 @@ class PostsController < ApplicationController
     authorize! current_user, to: :create_posts?
 
     return if params[:file].blank?
-    
+
     post = ImportFiles.call(current_user, params[:file]).result
     if post.nil?
       redirect_to import_post_path

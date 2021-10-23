@@ -18,7 +18,7 @@ class ExportFiles
     text = title.present? ? "## #{title}\n\n#{content_text}" : content_text.to_s
 
     # ![p](...%20=..x..) => ![p](... =..x..)
-    text = text.gsub(/!\[[^\>]+\]\([^\>]+(%20)=[0-9]+x[0-9]+\)/) { |m| m.gsub!("%20"," ") }
+    text = text.gsub(/!\[[^>]+\]\([^>]+(%20)=[0-9]+x[0-9]+\)/) { |m| m.gsub!('%20', ' ') }
 
     post_dir = "tmp/export/#{@post.id}"
 

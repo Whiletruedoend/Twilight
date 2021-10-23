@@ -95,6 +95,7 @@ gem 'telegram-bot'
 gem 'sidekiq'
 
 gem 'bootstrap-sass'
+gem 'bootstrap-will_paginate', '~> 0.0.10'
 gem 'font-awesome-rails'
 gem 'font-awesome-sass', '~> 5.15.1'
 gem 'jquery-rails'

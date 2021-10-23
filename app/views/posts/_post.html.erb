@@ -1,0 +1,28 @@
+<% date = post.created_at.strftime("%Y-%m-%d") %>
+
+<%if date != @last_date %>
+  <div class="datestamp"><div class="text-date"><%=date%></div></div>
+  <% @last_date = date %>
+<%end%>
+
+<article id="<%=post.id%>" class="feed">
+  <div class="user">
+    <div class="user-avatar feed-icon">
+      <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar)%> lazy="loaded">
+    </div>
+    <div class="name"><%=display_name(post.user)%></div>
+    <div class="createdAt"><%=post.created_at.strftime("%H:%M:%S")%></div>
+    <%= render "privacy-icons", object: post %>
+  </div>
+    
+  <div class="text">
+    <%= markdown(post.title) %>
+    <%= markdown(post.text) %>
+  </div>
+                
+  <%if post.content_attachments&.any?%>
+    <div class="media-list">
+      <%=display_feed_attachments(post)%>
+    <div>
+  <%end%>
+</article>

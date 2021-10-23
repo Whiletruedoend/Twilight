@@ -3,8 +3,7 @@
 class ImportFiles
   prepend SimpleCommand
 
-  attr_accessor :current_user
-  attr_accessor :file
+  attr_accessor :current_user, :file
 
   def initialize(current_user, file)
     @current_user = current_user
