@@ -31,7 +31,7 @@
         <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @current_post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
         <p class="metadata">
           <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="/posts?user=<%=@current_post.user.id%>"><%= display_name(@current_post.user) %></a>
-            <% if current_user == @current_post.user %>
+            <% if allowed_to?(:update?, @current_post) %>
               | <a href="<%=@current_post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
               | <a href="/posts/delete/<%=@current_post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
             <% end %>
@@ -39,7 +39,7 @@
         </p>
         <p class="metadata">
           <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=@current_post.id%>"><%= I18n.t("posts.raw") %></a>
-            <% if current_user == @current_post.user %>
+            <% if allowed_to?(:export?, @current_post) %>
               | <a href="/posts/export/<%=@current_post.id%>"><%= I18n.t("posts.export") %></a>
             <% end %>
           </i>

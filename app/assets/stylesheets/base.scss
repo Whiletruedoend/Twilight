@@ -960,6 +960,13 @@ $color-black: #000000;
       border-radius: 0;
       border-color: #d9534f;
     }
+    .pagination{
+      margin: 0 0;
+    
+      .previous_page, .next_page {
+        display: none;
+      }
+    }
   }
 
   /* feeds/right-bar */

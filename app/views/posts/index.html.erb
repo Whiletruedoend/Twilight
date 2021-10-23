@@ -69,7 +69,7 @@
       </div>
     </article>
     <% end %>
-    <center> <%= will_paginate @posts %> </center>
+    <center> <%= will_paginate(@posts, renderer: WillPaginate::ActionView::LinkRenderer) %> </center>
   </section>
 
   </div>

@@ -4,5 +4,5 @@
             <center><p><%=I18n.t('feeds.no_results')%></p></center>
         </article>
     <%end%>
-    <%=render @posts%>
+    <%= render :partial => "posts/feed/feed", :collection => @posts, :as => :post %>
 </div>

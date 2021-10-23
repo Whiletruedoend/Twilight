@@ -73,7 +73,7 @@
           </tr>
           <tr>
             <td><i class="fa fa-rss"></i></td>
-            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS #{I18n.t("main.please_log_in")}"%></a></td>
+            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>>RSS</a></td>
           </tr>
             <tr>
             <th class="icon"></th>

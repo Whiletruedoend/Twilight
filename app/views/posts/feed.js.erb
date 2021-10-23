@@ -1,4 +1,4 @@
-$('#right-bar').append("<%= escape_javascript(render @posts ) %>");
+$('#right-bar').append("<%= escape_javascript(render :partial => "posts/feed/feed", :collection => @posts, :as => :post) %>");
 
 <% if @posts.next_page %>
     $('#paginate-infinite-scrolling .pagination').replaceWith("<%= escape_javascript(will_paginate @posts)%>");
