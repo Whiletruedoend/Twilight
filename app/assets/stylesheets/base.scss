@@ -1028,10 +1028,17 @@ $color-black: #000000;
       }
     }
 
+    .readmore{
+      padding-top: 15px;
+      color: $color-feed-date;
+    }
+
     .text{
+      max-height: 11.7em; /* readmore.js */
       word-break: break-word;
     /*  white-space: pre-wrap; */
       font-weight: 500;
+      overflow: hidden; /* readmore.js */
     }
 
     p{

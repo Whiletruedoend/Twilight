@@ -15,7 +15,7 @@
     <%= render "privacy-icons", object: post %>
   </div>
     
-  <div class="text">
+  <div id="<%=post.id%>" class="text">
     <%= markdown(post.title) %>
     <%= markdown(post.text) %>
   </div>

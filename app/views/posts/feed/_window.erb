@@ -1,8 +1,10 @@
 <div id='right-bar' class="right-bar">
     <%if @posts.count == 0%>
-        <article class="feed">
+        <div class="feed">
             <center><p><%=I18n.t('feeds.no_results')%></p></center>
-        </article>
+        </div>
     <%end%>
     <%= render :partial => "posts/feed/feed", :collection => @posts, :as => :post %>
 </div>
+
+<%= javascript_include_tag 'readmore.js' %>
