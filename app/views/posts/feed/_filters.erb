@@ -23,6 +23,13 @@
         </select>
     </div>
 
+    <%if params[:id].present?%>
+        <input type="hidden" id="id" name="id" value="<%=params[:id]%>" />
+    <%end%>
+    <%if params[:user].present?%>
+        <input type="hidden" id="user" name="user" value="<%=params[:user]%>" />
+    <%end%>
+
     <div name="date" class="filters-group date">
         <div class="input-group-addon">
             <span class="glyphicon glyphicon-th"></span> 

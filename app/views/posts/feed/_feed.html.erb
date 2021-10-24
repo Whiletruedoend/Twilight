@@ -10,8 +10,8 @@
     <div class="user-avatar feed-icon">
       <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar)%> lazy="loaded">
     </div>
-    <div class="name"><%=display_name(post.user)%></div>
-    <div class="createdAt"><%=post.created_at.strftime("%H:%M:%S")%></div>
+    <div class="name"><a href="?user=<%=post.user.id%>"><%=display_name(post.user)%></a></div>
+    <div class="createdAt"><a href="?id=<%=post.id%>"><%=post.created_at.strftime("%H:%M:%S")%></a></div>
     <%= render "privacy-icons", object: post %>
   </div>
     

@@ -198,4 +198,12 @@ module PostsHelper
       { id: tag.id, name: tag.name, count: item_tags.count }
     end
   end
+
+  def render_title(post)
+    post.title.present? ? link_markdown(post.title).html_safe : "##{post.id}"
+  end
+
+  def link_markdown(title)
+    title.gsub(/\[(.*?)\]\((.*?)\)/){ |m| "<a href=\"#{Regexp.last_match(2)}\">#{Regexp.last_match(1)}</a>" }
+  end
 end

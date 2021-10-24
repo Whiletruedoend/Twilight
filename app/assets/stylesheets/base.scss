@@ -1026,11 +1026,21 @@ $color-black: #000000;
         font-size: 16px;
         padding-left: 1rem;
         line-height: 1.5;
-      }
 
+        a, a:hover{
+          color: $color-feed-font;
+          background-color: $color-feed-bg;
+        }
+      }
+      
       .createdAt{
         color: $color-feed-time;
         margin-right: 5px;
+
+        a, a:hover{
+          color: $color-feed-time;
+          background-color: $color-feed-bg;
+        }
       }
     }
 

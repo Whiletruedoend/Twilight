@@ -5,6 +5,8 @@ require 'dry-initializer'
 class PostsSearch < ApplicationSearch
   option :current_user
   # option :user_tags, optional: true
+  option :id, optional: true
+  option :user_id, optional: true
   option :limit, optional: true
   option :strict_tags, optional: true
   option :tags, optional: true
@@ -15,12 +17,14 @@ class PostsSearch < ApplicationSearch
   def call(posts)
     @query = posts
     @query = reduce_by_privacy
+    @query = reduce_by_id if id.present?
+    @query = reduce_by_user if user_id.present?
     # @query = reduce_by_user_tags #if user_tags
-    @query = reduce_by_strict_tags if strict_tags
+    @query = reduce_by_strict_tags if strict_tags.present?
     @query = reduce_by_tags if tags
     @query = reduce_by_title if title
-    @query = reduce_by_date if date
-    @query = reduce_by_title_or_text if text
+    @query = reduce_by_date if date.present?
+    @query = reduce_by_title_or_text if text.present?
     # @query = reduce_by_text if text
     @query = reduce_by_limit if limit
     @query
@@ -42,10 +46,19 @@ class PostsSearch < ApplicationSearch
 
   def reduce_by_privacy
     if current_user.present?
+      # return @query if current_user.is_admin?
       @query.where('posts.user_id=? OR posts.privacy IN (0,1)', current_user.id)
     else
       @query.where('posts.privacy=0')
     end
+  end
+
+  def reduce_by_id
+    @query.where('posts.id=?', id)
+  end
+
+  def reduce_by_user
+    @query.where('posts.user_id=?', user_id)
   end
 
   def reduce_by_title

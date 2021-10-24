@@ -159,7 +159,7 @@ class PostsController < ApplicationController
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
 
-    post_params = { current_user: user, strict_tags: params[:tag], text: params[:text], date: params[:to] }
+    post_params = {current_user: user, id: params[:id], user_id: params[:user], strict_tags: params[:tag], text: params[:text], date: params[:to] }
 
     @posts = PostsSearch.new(post_params).call(Post.all)
     @posts = @posts.paginate(page: params[:page], per_page: 15).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))

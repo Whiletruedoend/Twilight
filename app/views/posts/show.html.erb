@@ -13,14 +13,14 @@
           <i class="fa fa-commenting-o right-small comments"> <%= @current_post.comments.count %></i>
           <% if Rails.configuration.credentials[:enable_categories] %>
             <div class="category" style="<%="border-left: 5px solid #{@current_post.category.color};" if @current_post.category.present? %>">
-              <a href="/posts/<%= @current_post.id %>"><%= @current_post.title.present? ? @current_post.title : "##{@current_post.id}" %> </a>
+              <a href="/posts/<%= @current_post.id %>"><%= render_title(@current_post) %> </a>
               <%= render "privacy-icons", object: @current_post %>
               <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
                 <a><i class="fa fa-file right-small"></i></a>
               <% end %>
             </div>
           <% else %>
-            <a href="/posts/<%= @current_post.id %>"><%= @current_post.title.present? ? @current_post.title : "##{@current_post.id}" %> </a>
+            <a href="/posts/<%= @current_post.id %>"><%= render_title(@current_post) %> </a>
             <%= render "privacy-icons", object: @current_post %>
             <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
               <a><i class="fa fa-file right-small"></i></a>

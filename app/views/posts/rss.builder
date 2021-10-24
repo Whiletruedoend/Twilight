@@ -13,7 +13,11 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
     @posts.each do |post|
       xml.item do
-        xml.title post.title
+        if post.title.present?
+          xml.title @markdown.render(post.title)
+        else
+          xml.title "##{post.id}"
+        end
 
         text = post.text
 
