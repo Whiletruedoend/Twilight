@@ -1,12 +1,11 @@
-<% @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false, disable_indented_code_blocks: true, autolink: false, tables: false, underline: false, highlight: false)  %>
 <body id="bg-clear">
 <pre>
-<%= @post.title %>
+<%= @current_post.title %>
 
-<% if @post.content_attachments.present? %>
-<% att = display_attachments(@post) %>
+<% if @current_post.content_attachments.present? %>
+<% att = display_attachments(@current_post) %>
 <%= ReverseMarkdown.convert(@markdown.render(att), unknown_tags: :pass_through) %>
 <% end %>
-<%= ReverseMarkdown.convert(@markdown.render(@post.text), unknown_tags: :pass_through) %>
+<%= ReverseMarkdown.convert(@markdown.render(@current_post.text), unknown_tags: :pass_through) %>
 </pre>
 </body>

@@ -1,0 +1,72 @@
+<div class="left-bar"> 
+
+<form id="search" method="get">
+    <div class="filters-group" method="get">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-pencil"></span> 
+        </div>
+        <input name="text" type="text" class="form-control" placeholder="Text" value="<%=params[:text] if params[:text].present?%>" />
+        <div class="filters-group-btn">
+            <div class="btn-group" role="group">
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="filters-group">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-sort"></span> 
+        </div>
+        <select id="sort" name="sort" form="search" class="form-control" onchange="this.form.submit()">
+            <option name="desc" value="desc" <%="selected" if params[:sort] == "desc"%>>Newer DESC</option>
+            <option name="asc" value="asc" <%="selected" if params[:sort] == "asc"%>>Newer ASC</option>
+        </select>
+    </div>
+
+    <%if params[:id].present?%>
+        <input type="hidden" id="id" name="id" value="<%=params[:id]%>" />
+    <%end%>
+    <%if params[:user].present?%>
+        <input type="hidden" id="user" name="user" value="<%=params[:user]%>" />
+    <%end%>
+
+    <div name="date" class="filters-group date">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span> 
+        </div>
+        <input id="datepicker" name="to" type="text" class="form-control" value="<%=params[:to] if params[:to].present?%>" />
+    </div>
+</form>
+
+    <center><form action="/feed">
+        <button class="btn-danger"><span class="glyphicon glyphicon-refresh"></span> <%=I18n.t("posts.reset_filters")%></button>
+    </form></center>
+
+    <h4>Search by tags</h4>
+
+    <ul class="list-group">
+        <% if !Tag.exists? %>
+            <center><span class="list-group-item list-group-item-action" data-toggle="list">Tags not found!</span></center>
+        <% else %>
+        <% tags_list = tags_with_count_list(Tag.all).sort_by{ |k| k[:count] }.reverse %>
+            <%c = 0%>
+            <% tags_list.each do |tag| %>
+              <% if tag[:count].zero? %>
+                <%c += 1%>
+                <% next %>
+              <% end %>
+              <a class="list-group-item list-group-item-action" data-toggle="list" href="?tag=<%=tag[:id]%>"><%=tag[:name]%>
+                <span class="badge badge-primary badge-pill"><%=tag[:count]%></span>
+              </a>
+            <% end %>
+            <% if c == tags_list.count %>
+                <center><span class="list-group-item list-group-item-action" data-toggle="list">Tags not found!</span></center>
+            <% end %>
+        <% end %>
+    </ul>
+
+    <h4>Pages</h4>
+    <div id='paginate-infinite-scrolling'>
+        <%=will_paginate%>
+    </div>
+</div>

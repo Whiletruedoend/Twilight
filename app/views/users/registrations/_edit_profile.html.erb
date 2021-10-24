@@ -44,13 +44,15 @@
 
           <div class="form-group col-sm-4">
             <%= f.label I18n.t("edit.login") %>
-            <%= f.text_field :login, class: "form-control", autofocus: true, autocomplete: "login" %>
+            <%= f.text_field :login, maxlength: 256, class: "form-control", autofocus: true, autocomplete: "login" %>
           </div>
           <div class="form-group col-sm-6">
-            <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i>
-            <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password" %>
+            <%= f.label I18n.t("edit.name") %>
+            <%= f.text_field :name, maxlength: 64, class: "form-control", autofocus: true, autocomplete: "name" %>
           </div>
         </div>
+
+        <%= f.hidden_field :encrypted_password, class: "form-control", value: "#{current_user.encrypted_password}" %>
 
         <div class="form-row">
           <div class="form-group col-sm-4">
@@ -80,10 +82,7 @@
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
     <h3><%= I18n.t("edit.personal_tags") %></h3>
 
-    <div class="form-group">
-      <%= f.label I18n.t("edit.current_password") %> <i><%= I18n.t("edit.password_confirm") %></i>
-      <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password", value: resource.current_password %>
-    </div>
+    <p><%= I18n.t("edit.rss_tags_description") %></p>
 
     <div class="field">
         <%= f.label I18n.t("edit.tags") %><br />

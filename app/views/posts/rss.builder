@@ -1,18 +1,5 @@
 # frozen_string_literal: true
 
-unless current_user.present? ||
-       (params.key?(:rss_token) && User.find_by(rss_token: params[:rss_token].to_s).present?)
-  return xml.title 'Access denied! Please, use rss_token from account settings :/'
-end
-
-@markdown = Redcarpet::Markdown.new(CustomRender.new({ hard_wrap: true,
-                                                       no_intra_emphasis: true,
-                                                       fenced_code_blocks: true,
-                                                       disable_indented_code_blocks: true,
-                                                       tables: true,
-                                                       underline: true,
-                                                       highlight: true }), autolink: true)
-
 xml.instruct! :xml, version: '1.0'
 xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
   xml.channel do
@@ -21,12 +8,16 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
     xml.link root_url
     xml.language 'ru'
     xml.tag! 'atom:link', rel: 'self', type: 'application/rss+xml',
-                          href: "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/rss?rss_token=#{params.key?(:rss_token) && User.find_by(rss_token: params[:rss_token].to_s).present? ? params[:rss_token] : (current_user&.rss_token || 'none')}"
+                          href: "#{host_link}/rss?rss_token=#{params.key?(:rss_token) && User.find_by(rss_token: params[:rss_token].to_s).present? ? params[:rss_token] : (current_user&.rss_token || 'none')}"
     xml.ttl '60'
 
     @posts.each do |post|
       xml.item do
-        xml.title post.title
+        if post.title.present?
+          xml.title @markdown.render(post.title)
+        else
+          xml.title "##{post.id}"
+        end
 
         text = post.text
 
@@ -48,7 +39,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
         xml.description @markdown.render(full_text)
         # xml.creator post.user.login
-        xml.author post.user.login
+        xml.author display_name(post.user)
         xml.category post.category.name if post.category.present?
 
         xml.pubDate(post.created_at.rfc2822)

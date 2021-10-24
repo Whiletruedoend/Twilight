@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module PostsHelper
+  def host_link
+    "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}"
+  end
+
   def get_post_tags(post)
     tags = post.active_tags_names.join(' ')
     tags.presence || 'no tags'
@@ -23,7 +27,7 @@ module PostsHelper
   end
 
   def get_full_attachment_link(att)
-    "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}#{url_for(att)}"
+    "#{host_link}#{url_for(att)}"
   end
 
   def table_link_columns
@@ -114,11 +118,40 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.variant(resize_to_limit: [size, size]))}</a>"
+        content += image_tag url_for(att.variant(resize_to_limit: [size, size])), id: 'zoom-bg'.to_s
       elsif att.video?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed)}</a>"
+                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed), id: 'zoom-bg'}</a>"
+      elsif att.audio?
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+                     #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+      end
+    end
+    content.html_safe
+  end
+
+  # TODO: group attachments by type, better front-end
+  def display_feed_attachments(post)
+    content = ''
+
+    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    if documents.any?
+      documents.each do |att|
+        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+        #{I18n.t('posts.download')} #{truncate(att.filename.to_s, length: 100)} </a>"
+      end
+    end
+
+    post.content_attachments&.each do |att|
+      if att.image?
+        content += image_tag url_for(att), id: 'zoom-bg'.to_s
+      elsif att.video?
+        content += "<video width=\"100%\" height=\"100%\" controls>
+                      <source src=\"#{url_for(att)}\" type=\"video/mp4\">
+                      Your browser does not support the video tag.
+                    </video>"
+        # content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+        #             #{image_tag url_for(att.preview(resize_to_limit: [50, 50]).processed)}</a>"
       elsif att.audio?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
                      #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
@@ -146,5 +179,31 @@ module PostsHelper
         end
     end
     content.html_safe
+  end
+
+  def tags_with_count_list(tags)
+    if current_user.present?
+      users_item = Post.where(privacy: 2, user: current_user)
+      privacy = [0, 1]
+    else
+      users_item = []
+      privacy = [0]
+    end
+
+    item = Post.where(privacy: privacy)
+    item += users_item if users_item.present?
+
+    tags.map do |tag|
+      item_tags = ItemTag.where(tag: tag, enabled: true, item: item)
+      { id: tag.id, name: tag.name, count: item_tags.count }
+    end
+  end
+
+  def render_title(post)
+    post.title.present? ? link_markdown(post.title).html_safe : "##{post.id}"
+  end
+
+  def link_markdown(title)
+    title.gsub(/\[(.*?)\]\((.*?)\)/) { |_m| "<a href=\"#{Regexp.last_match(2)}\">#{Regexp.last_match(1)}</a>" }
   end
 end

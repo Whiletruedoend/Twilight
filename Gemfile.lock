@@ -13,6 +13,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    action_policy (0.6.0)
+      ruby-next-core (>= 0.11.0)
     actioncable (6.1.4.1)
       actionpack (= 6.1.4.1)
       activesupport (= 6.1.4.1)
@@ -51,6 +53,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_storage_validations (0.9.5)
+      rails (>= 5.2.0)
     activejob (6.1.4.1)
       activesupport (= 6.1.4.1)
       globalid (>= 0.3.6)
@@ -78,12 +82,15 @@ GEM
     autoprefixer-rails (10.3.3.0)
       execjs (~> 2)
     bcrypt (3.1.16)
+    betterlorem (0.1.2)
     bindex (0.8.1)
-    bootsnap (1.8.1)
+    bootsnap (1.9.1)
       msgpack (~> 1.0)
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
+    bootstrap-will_paginate (0.0.11)
+      will_paginate
     brakeman (5.1.1)
     builder (3.2.4)
     byebug (11.1.3)
@@ -119,6 +126,10 @@ GEM
     dry-core (0.7.1)
       concurrent-ruby (~> 1.0)
     dry-inflector (0.2.1)
+    dry-initializer (3.0.4)
+    dry-initializer-rails (3.1.1)
+      dry-initializer (>= 2.4, < 4)
+      rails (> 3.0)
     dry-logic (1.2.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.5, >= 0.5)
@@ -146,7 +157,7 @@ GEM
       sassc (>= 1.11)
     globalid (0.5.2)
       activesupport (>= 5.0)
-    grape (1.5.3)
+    grape (1.6.0)
       activesupport
       builder
       dry-types (>= 1.1)
@@ -168,7 +179,6 @@ GEM
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
     libv8 (3.16.14.19)
-    libv8 (3.16.14.19-x86_64-linux)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -177,7 +187,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    marcel (1.0.1)
+    marcel (1.0.2)
     method_source (1.0.0)
     mini_magick (4.11.0)
     mini_mime (1.1.1)
@@ -189,10 +199,10 @@ GEM
     mustermann-grape (1.0.1)
       mustermann (>= 1.0.0)
     nio4r (2.5.8)
-    nokogiri (1.12.4)
+    nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
-    nokogiri (1.12.4-x86_64-linux)
+    nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     open-uri (0.1.0)
     orm_adapter (0.5.0)
@@ -203,12 +213,12 @@ GEM
       rubocop-rails (~> 2.5)
       rubocop-rake (~> 0.5)
       rubocop-rspec (~> 2.0)
-    parallel (1.20.1)
+    parallel (1.21.0)
     parser (3.0.2.0)
       ast (~> 2.4.1)
     pg (1.2.3)
     public_suffix (4.0.6)
-    puma (5.4.0)
+    puma (5.5.0)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -285,29 +295,29 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.2)
-    rubocop (1.20.0)
+    rubocop (1.22.1)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.9.1, < 2.0)
+      rubocop-ast (>= 1.12.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.11.0)
+    rubocop-ast (1.12.0)
       parser (>= 3.0.1.1)
     rubocop-performance (1.11.5)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rails (2.12.2)
+    rubocop-rails (2.12.3)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.7.0, < 2.0)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (2.4.0)
-      rubocop (~> 1.0)
-      rubocop-ast (>= 1.1.0)
+    rubocop-rspec (2.5.0)
+      rubocop (~> 1.19)
+    ruby-next-core (0.13.1)
     ruby-progressbar (1.11.0)
     ruby-vips (2.1.3)
       ffi (~> 1.12)
@@ -361,7 +371,7 @@ GEM
     turbolinks-source (5.2.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (2.0.0)
+    unicode-display_width (2.1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.1.0)
@@ -373,7 +383,7 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (>= 3.0, < 4.0)
-    webpacker (5.4.2)
+    webpacker (5.4.3)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
@@ -392,16 +402,21 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  action_policy
   actionpack (>= 6.1.4.1)
+  active_storage_validations
   activerecord (>= 6.1.2.1)
   addressable (>= 2.8.0)
+  betterlorem
   bootsnap (>= 1.4.4)
   bootstrap-sass
+  bootstrap-will_paginate (~> 0.0.10)
   byebug
   capybara (>= 3.26)
   code-scanning-rubocop
   colorize
   devise
+  dry-initializer-rails
   easy_captcha!
   enumerize
   factory_bot_rails
@@ -421,7 +436,7 @@ DEPENDENCIES
   pg
   puma (>= 5.0)
   rack-mini-profiler (~> 2.0)
-  rails (>= 6.1.2)
+  rails (>= 6.1.4)
   rails_sortable
   redcarpet
   reverse_markdown

@@ -7,10 +7,10 @@ class CustomRender < Redcarpet::Render::HTML
   def image(link, title, alt_text)
     wxh = link.match(/\ =([^>]+)\D([^\D]+)/)
     if wxh.present?
-      "<img src='#{link.gsub(wxh[0],
-                             '')}' title='#{title}' alt='#{alt_text}' width='#{wxh[1]}' height='#{wxh[2]}'></img>"
+      "<img id='zoom-bg' src='#{link.gsub(wxh[0],
+                                          '')}' title='#{title}' alt='#{alt_text}' width='#{wxh[1]}' height='#{wxh[2]}'></img>"
     else
-      "<img src='#{link}' title='#{title}' alt='#{alt_text}'></img>"
+      "<img id='zoom-bg' src='#{link}' title='#{title}' alt='#{alt_text}'></img>"
       # image_tag(link, { :title => title, :alt => alt_text })
     end
   end

@@ -90,6 +90,7 @@ ru:
     token: Токен
     max: макс
     rss_visible_posts: Количество отображаемых постов
+    rss_tags_description: Используются при выборке RSS постов.
     theme: Тема
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
@@ -107,6 +108,7 @@ ru:
     update: Обновить
     password: Пароль
     login: Логин
+    name: Отображаемое имя 
     tags: Тэги
     copy: Скопировать
     main_information: Основная Информация
@@ -178,6 +180,7 @@ ru:
     user_list: Список пользователей
     all_users_list: Список всех пользователей
     list_login: Логин
+    list_name: Отображаемое имя
     list_rss_token: RSS Токен
     list_created_at: Дата регистрации
     list_invite_code: Инвайт код (если использовался)
@@ -190,9 +193,12 @@ ru:
     add: Добавить комментарий
     edit: Редактировать
     delete: Удалить
+  feeds:
+    no_results: Поиск не дал результатов.
   devise:
     registrations:
       user:
+        wrong_validations: Неверные параметры
         destroyed: Ваш аккаунт был удалён!
         updated: Ваш профиль был обновлён!
         signed_up: Вы успешно зарегистрировались!

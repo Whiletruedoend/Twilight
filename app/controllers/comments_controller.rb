@@ -4,61 +4,37 @@ class CommentsController < ApplicationController
   def create
     return redirect_to sign_in_path if current_user.nil? # No anonymous comments, sorry!
 
-    post = Post.find_by(id: params[:comment][:post])
-    if post.present?
-      unless post.check_privacy(current_user)
-        return render file: "#{Rails.root}/public/404.html", layout: false,
-                      status: :not_found
-      end
-    else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    current_post = Post.find(params[:comment][:post])
+    authorize! current_post, to: :create_comments?
 
-    @comment = Comment.create!(text: params[:comment][:content], user: current_user, post: post)
+    current_comment = Comment.create!(text: params[:comment][:content], user: current_user, post: current_post)
 
-    if @comment.save
-      redirect_to post_path(@comment.post)
+    if current_comment.save
+      redirect_to post_path(current_comment.post)
     else
       render :new
     end
   end
 
   def edit
-    @comment = Comment.find_by(id: params[:id])
-    if @comment.present?
-      if @comment.user != current_user
-        render file: "#{Rails.root}/public/404.html", layout: false,
-               status: :not_found
-      end
-    else
-      render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_comment, to: :update?
   end
 
   def update
-    @comment = Comment.find_by(id: params[:id])
-    if (@comment.present? && (@comment.user != current_user)) || @comment.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false,
-                    status: :not_found
-    end
+    authorize! current_comment
 
-    if @comment.update(text: params[:comment][:content], is_edited: true)
-      redirect_to post_path(@comment.post)
+    if current_comment.update(text: params[:comment][:content], is_edited: true)
+      redirect_to post_path(current_comment.post)
     else
       render :edit
     end
   end
 
   def destroy
-    @comment = Comment.find_by(id: params[:id])
-    if (@comment.present? &&
-       ((@comment.user.nil? || current_user.nil?) ||
-       ((@comment.user != current_user) && !current_user.is_admin?))) || @comment.blank?
-      return render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found
-    end
+    authorize! current_comment
 
-    post = @comment.post
-    @comment.delete if (@comment.user == current_user) || (current_user.present? && current_user.is_admin?)
+    post = current_comment.post
+    current_comment.delete
     redirect_to post_path(post)
   end
 end

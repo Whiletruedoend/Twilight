@@ -18,7 +18,8 @@ Rails.application.routes.draw do
 
   get '/sign_up', to: 'users#new', as: :sign_up
   get '/sign_in', to: 'sessions#new', as: :sign_in
-  get '/rss', to: 'posts#rss', format: 'rss'
+  get '/feed', to: 'posts#feed', as: :feed
+  get '/rss', to: 'posts#rss', as: :rss, format: 'rss'
 
   post '/posts/new', to: 'posts#new'
   get 'posts/delete/:id', to: 'posts#destroy', as: :post_path

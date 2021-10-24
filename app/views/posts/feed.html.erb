@@ -1,0 +1,17 @@
+<body id="bg-feed">
+    <div class="feeds-container">
+        <%= render "posts/feed/menu" %>
+        <%= render "posts/feed/filters" %>
+        <%= render "posts/feed/window" %>
+    </div>
+</body>
+
+<%= javascript_include_tag 'application.js' %>
+
+<script type="text/javascript">
+    $('.filters-group.date').datepicker().on('changeDate', function (ev) {
+        $('#search').submit();
+    });
+</script>
+
+<%= javascript_include_tag 'feeds.js' %>

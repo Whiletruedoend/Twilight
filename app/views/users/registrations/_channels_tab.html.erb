@@ -1,5 +1,5 @@
 <% if current_user.channels.empty? %>
-  <div class="comments-container"><center><%=I18n.t("channels.channels_not_found")%> <% if current_user.present? && current_user.is_admin? %><%= link_to I18n.t("channels.add_new_channel"), new_channel_path %><% end %></center></div>
+  <div class="comments-container"><center><%=I18n.t("channels.channels_not_found")%> <% if allowed_to?(:create_channels?, current_user) %><%= link_to I18n.t("channels.add_new_channel"), new_channel_path %><% end %></center></div>
 <% else %>
   <div class="comments-container">
     <div class="comment-header"><%=I18n.t("channels.channels")%>:</div>
@@ -15,7 +15,7 @@
       <br> <!-- May delete (reply?) -->
     <% end %>
 
-    <% if current_user.present? && current_user.is_admin? %>
+    <% if allowed_to?(:create_channels?, current_user) %>
     <center><%=I18n.t("channels.need_more_channels")%> <%= link_to I18n.t("channels.add_new_channel"), new_channel_path %></center>
     <% end %>
   </div>

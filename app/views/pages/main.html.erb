@@ -52,16 +52,16 @@
         <%= I18n.t("main.logged_as") %>:
         <%if current_user.present? %>
           <a href="edit"><%=current_user.login%></a> |
-          <%= link_to I18n.t("main.log_out"), "sign_out"%>
+          <%= link_to I18n.t("main.log_out"), "sign_out"%> |
         <% else %>
           <%= I18n.t("main.guest") %> |
           <%= link_to I18n.t("main.log_in"), "sign_in"%> |
           <%= link_to I18n.t("main.register"), "sign_up"%>
         <% end %>
-        <% if current_user.present? && current_user.is_admin %>
-          <br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)
+        <% if current_user&.is_admin? %>
+          <br><a target="_blank" href="posts/new"><%=I18n.t("main.new_post")%></a> | <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.id%>"><%=current_user.posts.count%></a>)
         <% elsif current_user.present? %>
-          <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.login%>"><%=current_user.posts.count%></a>)
+          <a href="posts"><%=I18n.t("main.all_posts")%></a> (<a href="posts?user=<%=current_user.id%>"><%=current_user.posts.count%></a>)
         <% end %>
       </div>
       <div class="block"> <%= I18n.t("main.links") %>:
@@ -73,7 +73,15 @@
           </tr>
           <tr>
             <td><i class="fa fa-rss"></i></td>
-            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>><%= current_user.present? ? "RSS" : "RSS #{I18n.t("main.please_log_in")}"%></a></td>
+            <td><a target="_blank" href=<%=current_user.present? ? "/rss?rss_token=#{current_user[:rss_token]}" : "/rss" %>>RSS</a></td>
+          </tr>
+            <tr>
+            <th class="icon"></th>
+            <th></th>
+          </tr>
+          <tr>
+            <td><i class="fa fa-bookmark-o"></i></td>
+            <td><a href="/feed">Feed</a></td>
           </tr>
           <%= table_link_columns %>
           </tbody>

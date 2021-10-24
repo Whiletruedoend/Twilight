@@ -6,6 +6,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :rememberable, :validatable, authentication_keys: [:login]
 
   has_many :posts
+  has_many :contents
   has_many :channels
   has_many :comments
   has_many :invite_codes
@@ -16,7 +17,9 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
 
-  validates :login, presence: true, uniqueness: true
+  validates :avatar, content_type: %r{\Aimage/.*\z}, size: { less_than: 10.megabytes, message: 'is not given between size' }
+  validates :login, presence: true, uniqueness: true, length: { maximum: 256 }
+  validates :name, allow_nil: true, length: { maximum: 64 }
 
   validate do |u|
     rss_default_posts = Rails.configuration.credentials[:rss_default_visible_posts]
@@ -27,10 +30,13 @@ class User < ApplicationRecord
       u.errors.add(:base,
                    'Bad RSS displayed posts count value!')
     end
-    # numericality: { only_integer: true, greater_than: 0 }
+
+    user_theme = u.options['theme']
+    u.errors.add(:base, 'Bad Theme!') if user_theme.present? && Twilight::Application::THEMES.exclude?(user_theme)
   end
 
   before_create :generate_rss
+  before_create :default_options
 
   def active_tags_names
     active_tags.map { |s| s.tag.name }
@@ -38,6 +44,11 @@ class User < ApplicationRecord
 
   def generate_rss
     self.rss_token = SecureRandom.hex(16)
+  end
+
+  def default_options
+    self.options = { visible_posts_count: Rails.configuration.credentials[:rss_default_visible_posts].to_s,
+                     theme: 'default_theme' }
   end
 
   def will_save_change_to_email?
@@ -50,5 +61,48 @@ class User < ApplicationRecord
 
   def email_changed?
     false
+  end
+
+  # 'Disable' current password validation
+
+  def update_with_password(params = {})
+    if params[:password].blank?
+      params.delete(:encrypted_password)
+      update_without_password(params)
+    else
+      verify_password_and_update(params)
+    end
+  end
+
+  # https://github.com/plataformatec/devise/blob/master/lib/devise/models/database_authenticatable.rb
+  def update_without_password(params = {})
+    params.delete(:password)
+    params.delete(:password_confirmation)
+    result = update(params)
+    clean_up_passwords
+    result
+  end
+
+  def verify_password_and_update(params)
+    encrypted_password = params.delete(:encrypted_password)
+
+    if params[:password].blank?
+      params.delete(:password)
+      params.delete(:password_confirmation) if params[:password_confirmation].blank?
+    end
+
+    u = User.find_by(encrypted_password: encrypted_password)
+    result =
+      if u.present? && (params[:login] == u.login) # valid_password?(current_password)
+        update(params)
+      else
+        assign_attributes(params)
+        valid?
+        errors.add(:current_password, encrypted_password.blank? ? :blank : :invalid)
+        false
+      end
+
+    clean_up_passwords
+    result
   end
 end

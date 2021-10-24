@@ -22,16 +22,16 @@
     <li><a data-toggle="tab" href="#global"><%= I18n.t("channels.global") %></a></li>
   </ul>
 
-  <%= form_with(model: @channel, local: true) do |f| %>
-    <%= render 'shared/errors', object: @channel %>
+  <%= form_with(model: @current_channel, local: true) do |f| %>
+    <%= render 'shared/errors', object: @current_channel %>
     <div class="tab-content">
       <div id="local" class="tab-pane in active title">
-        <%= hidden_field(:channel, :platform, {value: @channel.platform.title}) %>
+        <%= hidden_field(:channel, :platform, {value: @current_channel.platform.title}) %>
         <h3><%= I18n.t("channels.main") %></h3>
-        <% if @channel.platform.title == "telegram" %>
+        <% if @current_channel.platform.title == "telegram" %>
           <div class="row">
             <div class="col-xs-8 col-sm-4 col-md-9">
-              <%= f.check_box :enabled, { checked: @channel.enabled } %>
+              <%= f.check_box :enabled, { checked: @current_channel.enabled } %>
               <%= f.label I18n.t("channels.enable") %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
@@ -44,29 +44,29 @@
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
               <%= f.label I18n.t("channels.channel_identifier_for_att") %>
-              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @channel.options["room_attachments"] } %>
+              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options["room_attachments"] } %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
               <%= f.label I18n.t("channels.author_identifier") %>
-              <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @channel.options["author"] } %>
+              <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @current_channel.options["author"] } %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
-              <%= f.check_box :enable_comments, { checked: @channel.options["comments_enabled"] } %>
+              <%= f.check_box :enable_comments, { checked: @current_channel.options["comments_enabled"] } %>
               <%= f.label I18n.t("channels.enable_comments") %>
             </div>
           </div>
           <h3><%= I18n.t("channels.options") %></h3>
           <div class="row">
             <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
-              <%= f.check_box :enable_notifications, { checked: @channel.options["notifications_enabled"] } %>
+              <%= f.check_box :enable_notifications, { checked: @current_channel.options["notifications_enabled"] } %>
               <%= f.label I18n.t("channels.option_enable_notifications") %>
             </div>
             <center><%= f.submit I18n.t("channels.update"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>
           </div>
-        <% elsif @channel.platform.title == "matrix"%>
+        <% elsif @current_channel.platform.title == "matrix"%>
           <div class="row">
             <div class="col-xs-8 col-sm-4 col-md-9">
-              <%= f.check_box :enabled, { checked: @channel.enabled } %>
+              <%= f.check_box :enabled, { checked: @current_channel.enabled } %>
               <%= f.label I18n.t("channels.enable") %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
@@ -79,7 +79,7 @@
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
               <%= f.label I18n.t("channels.api_server_address") %>
-              <%= f.text_field :server, { class: "form-control", placeholder: "https://matrix.org/_matrix/", value: @channel.options["server"] } %>
+              <%= f.text_field :server, { class: "form-control", placeholder: "https://matrix.org/_matrix/", value: @current_channel.options["server"] } %>
             </div>
           </div>
           <div class="row">

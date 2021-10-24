@@ -3,6 +3,7 @@
   <tr>
     <th>#</th>
     <th><%= I18n.t("stats.list_login") %></th>
+    <th><%= I18n.t("stats.list_name") %></th>
     <th><%= I18n.t("stats.list_rss_token") %></th>
     <th><%= I18n.t("stats.list_created_at") %></th>
     <th><%= I18n.t("stats.list_invite_code") %></th>
@@ -14,6 +15,7 @@
     <tr>
       <td><%= i %></td>
       <td><%= user.login %></td>
+      <td><%= display_name(user) %></td>
       <td><%= user.rss_token %></td>
       <td><%= user.created_at %></td>
       <td><%= user.options.dig("invite_code") || "-" %></td>
