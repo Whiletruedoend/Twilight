@@ -184,7 +184,7 @@ module PostsHelper
   def tags_with_count_list(tags)
     if current_user.present?
       users_item = Post.where(privacy: 2, user: current_user)
-      privacy = [0,1]
+      privacy = [0, 1]
     else
       users_item = []
       privacy = [0]
@@ -204,6 +204,6 @@ module PostsHelper
   end
 
   def link_markdown(title)
-    title.gsub(/\[(.*?)\]\((.*?)\)/){ |m| "<a href=\"#{Regexp.last_match(2)}\">#{Regexp.last_match(1)}</a>" }
+    title.gsub(/\[(.*?)\]\((.*?)\)/) { |_m| "<a href=\"#{Regexp.last_match(2)}\">#{Regexp.last_match(1)}</a>" }
   end
 end
