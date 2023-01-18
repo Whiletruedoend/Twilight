@@ -75,10 +75,6 @@
   </div>
 </body>
 
-<%= javascript_include_tag 'application.js' %>
-
-<script>
-    $(document).on("change", ".search", function () {
-        window.location.href = "/posts?search="+$(".search").val();
-    });
-</script>
+<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
+<%= javascript_include_tag 'mediumzoom.js' %>
+<%= javascript_include_tag 'search.js', "data-turbo-track": "reload" %>

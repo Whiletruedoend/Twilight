@@ -52,7 +52,7 @@ class PostsController < ApplicationController
       # We need category owned by user checking?
       elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present?
         if current_post.category_id != posts_params[:post][:category]
-          current_postupdate(category_id: posts_params[:post][:category])
+          current_post.update(category_id: posts_params[:post][:category])
         end
       elsif posts_params[:post][:category_name].empty? && posts_params[:post][:category].blank?
         current_post.update(category_id: nil) unless current_post.category_id.nil?
@@ -70,7 +70,7 @@ class PostsController < ApplicationController
         end
       end
 
-      UpdatePostMessages.call(current_post, params) # TODO: optimize it?
+      UpdatePostMessages.call(current_post, posts_params) # TODO: optimize it?
       current_post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to current_post
@@ -112,7 +112,7 @@ class PostsController < ApplicationController
         @tag = Tag.create!(name: tag, enabled_by_default: enabled)
         User.all.each { |usr| ItemTag.create!(item: usr, tag_id: @tag.id, enabled: enabled) }
         Post.all.each { |post| ItemTag.create!(item: post, tag_id: @tag.id, enabled: false) }
-        new_tags.merge!({ "#{@tag.id}": '1' })
+        new_tags[@tag.id] = '1'
       end
     end
 

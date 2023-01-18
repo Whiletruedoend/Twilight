@@ -974,7 +974,8 @@ $color-black: #000000;
   .right-bar {
     overflow-y: scroll;
     background: $color-feed-bg2;
-    width: 50%;
+    width: 51%;
+    padding-right: 10px;
 
     code{
       color: $color-feed-link;
@@ -1046,6 +1047,7 @@ $color-black: #000000;
 
     .readmore{
       padding-top: 15px;
+      padding-bottom: 15px;
       color: $color-feed-link;
       background-color: $color-feed-bg;
     }

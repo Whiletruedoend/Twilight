@@ -1,4 +1,4 @@
-//= require jquery3
+//= require bootstrap-datepicker
 //= require readmore-js
 
 function isScrolledIntoView(elem)
@@ -26,3 +26,17 @@ function isScrolledIntoView(elem)
       }
     });
   };
+
+// Feed date picker
+
+$('.filters-group.date').datepicker({
+  format: "yyyy/mm/dd",
+  autoclose: true,
+  todayHighlight: true
+});
+
+//
+
+$('.filters-group.date').datepicker().on('changeDate', function (ev) {
+  $('#search').submit();
+});

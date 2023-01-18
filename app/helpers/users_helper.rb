@@ -2,6 +2,10 @@
 
 module UsersHelper
   def display_name(user)
-    user&.name || user&.login || 'Guest'
+    if user&.name.present?
+      user&.name
+    else
+      user&.login || 'Guest'
+    end
   end
 end

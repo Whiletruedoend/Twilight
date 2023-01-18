@@ -116,6 +116,7 @@ module PostsHelper
     end
     content += '<br><br>' if documents.any?
 
+    # TODO: Lazy load OR create & storage thumbs
     post.content_attachments&.each do |att|
       if att.image?
         content += image_tag url_for(att.variant(resize_to_limit: [size, size])), id: 'zoom-bg'.to_s
