@@ -16,12 +16,16 @@ gem 'puma', '>= 5.0'
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacke
 gem 'webpacker', '>= 5.4.2'
+# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
+gem "importmap-rails"
+# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
+gem "turbo-rails"
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '>= 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '>= 2.7'
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
+gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem 'actionpack', '>= 6.1.4.1'
@@ -86,7 +90,7 @@ gem 'open-uri'
 gem 'pg'
 gem 'redcarpet'
 gem 'reverse_markdown'
-gem 'rmagick'
+gem 'rmagick', '~> 4.1.1'
 gem 'rollbar'
 gem 'rubyzip'
 gem 'simple_command'
