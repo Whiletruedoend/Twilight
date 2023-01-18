@@ -118,10 +118,10 @@ class PostsController < ApplicationController
 
     @post.save!
     if @post.save
-      tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
+      tags = (posts_params[:tags].present? ? posts_params[:tags].to_unsafe_h : {})
       tags.merge!(new_tags) if new_tags.any?
       tags.each { |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1].to_i) } if tags.any?
-      SendPostToPlatforms.call(@post, params)
+      SendPostToPlatforms.call(@post, posts_params)
       redirect_to @post
     else
       render :new
