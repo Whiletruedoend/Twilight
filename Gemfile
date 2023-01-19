@@ -53,7 +53,6 @@ group :development do
   gem 'listen', '~> 3.3'
   gem 'rack-mini-profiler', '~> 2.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'colorize'
   gem 'spring'
 end
 
@@ -67,6 +66,8 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+
+gem 'colorize'
 
 # rubocop
 gem 'code-scanning-rubocop'
@@ -105,5 +106,5 @@ gem 'font-awesome-sass', '~> 5.15.1'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'rails_sortable'
-gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', '~> 0.12.0', platforms: :ruby
 gem 'will_paginate', '~> 3.3.1'
