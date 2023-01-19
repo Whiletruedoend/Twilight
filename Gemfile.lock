@@ -506,7 +506,7 @@ DEPENDENCIES
   spring
   sqlite3 (>= 1.4)
   telegram-bot
-  therubyracer
+  therubyracer (~> 0.12.0)
   turbo-rails
   turbolinks (>= 5)
   tzinfo-data
