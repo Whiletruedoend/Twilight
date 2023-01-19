@@ -11,6 +11,14 @@ module Users
     # super
     # end
 
+    def after_sign_in_path_for(resource)
+      edit_user_path
+    end    
+
+    def after_sign_up_path_for(resource)
+      edit_user_path
+    end    
+
     # POST /resource
     def create
       return redirect_to(sign_up_url, alert: ['Invalid captcha!']) unless valid_captcha?(users_params[:user][:captcha])
@@ -88,7 +96,7 @@ module Users
       redirect_to edit_user_path
     end
 
-    # DELETE /resource
+    # DELETE /resource # WTF???
     def destroy
       posts = Post.where(user: current_user)
       ItemTag.where(item: posts).delete_all
@@ -136,11 +144,6 @@ module Users
     # If you have extra params to permit, append them to the sanitizer.
     # def configure_account_update_params
     #  devise_parameter_sanitizer.permit(:account_update, keys: [:captcha])
-    # end
-
-    # The path used after sign up.
-    # def after_sign_up_path_for(resource)
-    #   super(resource)
     # end
 
     # The path used after sign up for inactive accounts.

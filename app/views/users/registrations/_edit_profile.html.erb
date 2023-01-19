@@ -18,6 +18,9 @@
       <br><br>
       <%= field.label "#{I18n.t("edit.theme")}:" %>
       <%= field.select :theme, Twilight::Application::THEMES.map{ |s| [s.split('_theme')[0].capitalize, s] }.sort, :selected => (current_user.options.dig("theme") || "default_theme") %>
+      <br><br>
+      <%= field.label "#{I18n.t("edit.locale")}:" %>
+      <%= field.select :locale, [['English', 'en'], ['Russian', 'ru']], :selected => (current_user.options.dig("locale") || "Default locale")%>
     <% end %>
   </div>
 

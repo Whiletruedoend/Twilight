@@ -92,6 +92,7 @@ en:
     rss_visible_posts: Displayed posts count
     rss_tags_description: Used when fetching RSS posts.
     theme: Theme
+    locale: Locale
     token_not_generated: Token not generated!
     password_confirmation: Password confirmation
     current_password: Current password

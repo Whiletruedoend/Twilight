@@ -92,6 +92,7 @@ ru:
     rss_visible_posts: Количество отображаемых постов
     rss_tags_description: Используются при выборке RSS постов.
     theme: Тема
+    locale: Язык
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль
