@@ -106,5 +106,5 @@ gem 'font-awesome-sass', '~> 5.15.1'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'rails_sortable'
-gem 'therubyracer', '~> 0.12.0', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 gem 'will_paginate', '~> 3.3.1'
