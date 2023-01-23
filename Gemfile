@@ -5,13 +5,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.7.0'
 
-gem 'activerecord', '>= 6.1.2.1'
+gem 'activerecord', '>= 6.1.7.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 6.1.4'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '>= 1.4'
 # Use Puma as the app server
-gem 'puma', '>= 5.0'
+gem 'puma', '>= 5.6.4'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacke
@@ -84,7 +84,7 @@ gem 'dry-initializer-rails'
 gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'enumerize'
 gem 'grape'
-gem 'image_processing'
+gem 'image_processing', ">= 1.12.2"
 gem 'mini_magick'
 gem 'nokogiri', '>= 1.11.0.rc4'
 gem 'open-uri'
