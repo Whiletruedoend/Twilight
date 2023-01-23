@@ -96,15 +96,15 @@ module PostsHelper
     size =
       case attachments_count
       when 1
-        300
+        :thumb_300
       when 2
-        250
+        :thumb_250
       when 3
-        200
+        :thumb_200
       when 4, 5
-        150
+        :thumb_150
       else
-        100
+        :thumb_100
       end
 
     documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
@@ -119,10 +119,10 @@ module PostsHelper
     # TODO: Lazy load OR create & storage thumbs
     post.content_attachments&.each do |att|
       if att.image?
-        content += image_tag url_for(att.variant(resize_to_limit: [size, size])), id: 'zoom-bg'.to_s
+        content += image_tag url_for(att.variant(size)), id: 'zoom-bg'.to_s
       elsif att.video?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed), id: 'zoom-bg'}</a>"
+                     #{image_tag url_for(att.preview(size).processed), id: 'zoom-bg'}</a>"
       elsif att.audio?
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
                      #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
@@ -167,10 +167,10 @@ module PostsHelper
       content +=
         if att.image?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.variant(resize_to_limit: [100, 100]))}</a>"
+          #{image_tag url_for(att.variant(:thumb_100))}</a>"
         elsif att.video?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.preview(resize_to_limit: [100, 100]).processed)}</a>"
+          #{image_tag url_for(att.preview(:thumb_100).processed)}</a>"
         elsif att.audio?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
           #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"

@@ -39,9 +39,9 @@
                 <div class="attachment"> <!-- TODO? -->
                 <%  case %>
                 <%  when att.image? %>
-                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(:thumb_150)) %></a>
                 <%  when att.video? %>
-                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(resize_to_limit: [150,150]).processed) %></a>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(:thumb_150).processed) %></a>
                 <%  when att.audio? %>
                     <a target="_blank" href="<%=url_for(att)%>"><%= audio_tag(url_for(att), autoplay: false, controls: true) %></a>
                 <%  else %>
