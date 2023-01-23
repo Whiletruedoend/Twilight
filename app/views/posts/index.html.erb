@@ -2,15 +2,8 @@
   <div class="posts-container">
 
   <section>
-
-    <div class="block-header">
-      <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
-      <%= link_to I18n.t("posts.main_page"), root_path%>
-      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user&.is_admin?%>
-      <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user&.is_admin?%>
-      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user) || params.has_key?(:search) || params.has_key?(:category)%>
-        <input type="text" class="search" placeholder="Search..." />
-    </div><br>
+      <%= render partial: "posts/links_header", locals: { current_post: nil } %>
+    <br>
 
     <% if params[:search].present? && (@posts.count == 0) %>
       <article>

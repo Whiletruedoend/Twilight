@@ -7,6 +7,22 @@
             </li>
         </a>
 
+        <% if current_user.present? %>
+            <a href='<%=edit_user_path%>'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-user"></i>
+                    <span>Profile</span>
+                </li>
+            </a>
+        <% else %>
+            <a href='<%=sign_in_path%>'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-user"></i>
+                    <span>Login</span>
+                </li>
+            </a>
+        <% end %>
+
         <% if current_user.present? && allowed_to?(:create_posts?, current_user) %>
             <a href='<%=posts_new_path%>'>
                 <li class="list-item">
@@ -22,12 +38,21 @@
             </a>
         <% end %>
 
-        <a href='/'>
-            <li class="list-item">
-                <i class="glyphicon glyphicon-triangle-left"></i>
-                <span>Back</span>
-            </li>
-        </a>
+        <% if Rails.configuration.credentials[:root_page] != 2 %>
+            <a href='/'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-triangle-left"></i>
+                    <span>Back</span>
+                </li>
+            </a>
+        <% else %>
+        <a href='<%=posts_path%>'>
+                <li class="list-item">
+                    <i class="glyphicon glyphicon-triangle-left"></i>
+                    <span>Classic Design</span>
+                </li>
+            </a>
+        <% end %>
 
         <!-- <a href='/about'>
             <li class="list-item">

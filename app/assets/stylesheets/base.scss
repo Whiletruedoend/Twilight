@@ -310,10 +310,14 @@ $color-black: #000000;
     opacity: 85%;
   }
 
-  .block-header{
+  .links-header{
     text-align: center;
     line-height: 1.5;
-    margin-left: 4%;
+  }
+
+  .links-header-posts{
+    margin-left: 10%;
+    
     input{
       line-height: 1.0;
       float: right;
