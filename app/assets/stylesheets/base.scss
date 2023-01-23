@@ -362,6 +362,14 @@ $color-black: #000000;
       }
     }
 
+    article header h1{
+      margin-bottom: 0;
+    }
+
+    article img{
+      padding-right: 10px;
+    }
+
     .right-small{
       float: right;
       font-size: 65%;
@@ -369,10 +377,6 @@ $color-black: #000000;
 
     .comments{
       margin-left: 1%;
-    }
-
-    article header h1{
-        margin-bottom: 0;
     }
 
     .tags{
@@ -528,6 +532,7 @@ $color-black: #000000;
   .medium-zoom-image{
     cursor: zoom-in;
     transition: transform .3s cubic-bezier(.2,0,.2,1) !important;
+    padding-right: 5px;
   }
 
   /* WTF */
@@ -1078,11 +1083,11 @@ $color-black: #000000;
     p{
       margin: revert;
     }
-    
+
     .media-list{
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-
+  
       img{
         width: 100%;
         object-fit: cover;

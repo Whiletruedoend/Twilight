@@ -116,16 +116,13 @@ module PostsHelper
     end
     content += '<br><br>' if documents.any?
 
-    # TODO: Lazy load OR create & storage thumbs
     post.content_attachments&.each do |att|
       if att.image?
-        content += image_tag url_for(att.variant(size)), id: 'zoom-bg'.to_s
+        content += link_to image_tag(url_for(att.variant(size))), url_for(att), target: "_blank".to_s
       elsif att.video?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.preview(size).processed), id: 'zoom-bg'}</a>"
+        content += video_tag(url_for(att), controls: true, preload: 'none', poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
       elsif att.audio?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+        content += link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: "_blank".to_s
       end
     end
     content.html_safe
@@ -166,14 +163,12 @@ module PostsHelper
     comment.attachments.each do |att|
       content +=
         if att.image?
-          "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.variant(:thumb_100))}</a>"
+          link_to image_tag(url_for(att.variant(:thumb_100))), url_for(att), target: "_blank".to_s
         elsif att.video?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
           #{image_tag url_for(att.preview(:thumb_100).processed)}</a>"
         elsif att.audio?
-          "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+          link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: "_blank".to_s
         else
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
           #{image_tag('/assets/file.png', height: 100, width: 100)}</a>"
