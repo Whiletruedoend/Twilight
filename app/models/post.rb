@@ -5,10 +5,10 @@ class Post < ApplicationRecord
   belongs_to :user
   belongs_to :category, optional: true
 
-  has_many :contents
-  has_many :comments
-  has_many :platform_posts
-  has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id'
+  has_many :contents, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :platform_posts, dependent: :delete_all
+  has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id', dependent: :delete_all
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
   # scope :with_active_tags, ->(tag_id) { select { |post| post.active_tags.include?(tag_id) } }
@@ -55,5 +55,10 @@ class Post < ApplicationRecord
     end
     posts = posts.where('lower(title) LIKE ?', "%#{params[:search].downcase}%") if params.key?(:search)
     posts
+  end
+
+  def destroy
+    DeletePostMessages.call(self)
+    super
   end
 end

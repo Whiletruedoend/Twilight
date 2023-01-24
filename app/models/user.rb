@@ -5,14 +5,14 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :rememberable, :validatable, authentication_keys: [:login]
 
-  has_many :posts
-  has_many :contents
-  has_many :channels
-  has_many :comments
-  has_many :invite_codes
-  has_many :categories
+  has_many :posts, dependent: :destroy
+  has_many :contents, dependent: :destroy
+  has_many :channels, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :invite_codes, dependent: :delete_all
+  has_many :categories, dependent: :delete_all
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
-                                 dependent: :delete_all
+                                 dependent: :delete_all # Not working deletion with SQLite!
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
   has_one_attached :avatar
@@ -104,5 +104,11 @@ class User < ApplicationRecord
 
     clean_up_passwords
     result
+  end
+
+  def destroy
+    self.avatar.purge
+    ItemTag.where(item: self).delete_all
+    super
   end
 end

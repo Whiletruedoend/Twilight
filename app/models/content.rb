@@ -11,4 +11,9 @@ class Content < ApplicationRecord
     attachable.variant :thumb_250, resize_to_limit: [250, 250]
     attachable.variant :thumb_300, resize_to_limit: [300, 300]
   end
+
+  def destroy
+    self.attachments.purge
+    super
+  end
 end

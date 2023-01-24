@@ -24,4 +24,9 @@ class Comment < ApplicationRecord
     end
     { name: name.presence || '<No name>', username: username.presence || '' }
   end
+
+  def destroy
+    self.attachments.purge
+    super
+  end
 end

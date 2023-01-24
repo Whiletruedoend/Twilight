@@ -10,4 +10,9 @@ class Channel < ApplicationRecord
   def platform_posts_for_post(post)
     platform_posts.where(post: post)
   end
+
+  def destroy
+    self.avatar.purge
+    super
+  end
 end

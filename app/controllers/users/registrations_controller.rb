@@ -96,19 +96,8 @@ module Users
       redirect_to edit_user_path
     end
 
-    # DELETE /resource # WTF???
+    # DELETE /resource
     def destroy
-      posts = Post.where(user: current_user)
-      ItemTag.where(item: posts).delete_all
-      ItemTag.where(item: current_user).delete_all
-      Channel.where(user: current_user).delete_all
-      PlatformPost.where(post: posts).delete_all
-      posts.each { |post| post.content_attachments&.delete_all }
-      Comment.where(post: posts).delete_all
-      posts.delete_all
-      Content.where(post: posts).delete_all
-      Content.where(user: current_user).delete_all
-      Category.where(user: current_user).delete_all
       super
     end
 

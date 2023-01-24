@@ -224,16 +224,8 @@ class PostsController < ApplicationController
   def destroy
     authorize! current_post, to: :update?
 
-    if current_post.user == current_user
-      DeletePostMessages.call(current_post)
-      ItemTag.where(item: current_post).delete_all
-      PlatformPost.where(post: current_post).delete_all
-      comment_ids = Comment.where(post: current_post).ids
-      ActiveStorage::Attachment.where(record_type: 'Comment', record: comment_ids).delete_all
-      Comment.where(post: current_post).delete_all
-      current_post.content_attachments&.delete_all
-      Content.where(post: current_post).delete_all
-      current_post.delete
+    if current_post.user == current_user # other admin can't delete posts, lol
+      current_post.destroy
     end
     redirect_to posts_path
   end
