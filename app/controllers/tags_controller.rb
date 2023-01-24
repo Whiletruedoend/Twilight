@@ -10,7 +10,7 @@ class TagsController < ApplicationController
 
   def update
     # tags_params[:tags].each{ |tag| Tag.find(tag[0]).update(enabled_by_default: tag[1])}
-    if params[:commit] == 'Update'
+    if params[:commit] == I18n.t("tags.update")
       @tag = Tag.find(params[:tag][:id].to_i)
 
       @tag.name = params[:tag][:name] if params[:tag][:name].present?

@@ -23,7 +23,7 @@
       </div><br>
 
     </div>
-    <%= link_to "<--- #{I18n.t("posts.back")}", post_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+    <%= link_to "<--- #{I18n.t("posts.back")}", post_path(@current_comment.post), data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
     <center><%= f.submit %> </center><% end %>
 </div>
 </body>

@@ -1,51 +1,8 @@
 <body id="bg">
   <div class="posts-container">
-    <%= render partial: "posts/links_header", locals: { current_post: @current_post } %>
+    <%= render partial: "posts/links_header", locals: { post: @current_post } %>
     <article>
-      <header>
-        <h1>
-          <i class="fa fa-commenting-o right-small comments"> <%= @current_post.comments.count %></i>
-          <% if Rails.configuration.credentials[:enable_categories] %>
-            <div class="category" style="<%="border-left: 5px solid #{@current_post.category.color};" if @current_post.category.present? %>">
-              <a href="/posts/<%= @current_post.id %>"><%= render_title(@current_post) %> </a>
-              <%= render "privacy-icons", object: @current_post %>
-              <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-                <a><i class="fa fa-file right-small"></i></a>
-              <% end %>
-            </div>
-          <% else %>
-            <a href="/posts/<%= @current_post.id %>"><%= render_title(@current_post) %> </a>
-            <%= render "privacy-icons", object: @current_post %>
-            <% if @current_post.content_attachments.present? && @current_post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-              <a><i class="fa fa-file right-small"></i></a>
-            <% end %>
-          <% end %>
-          <h1 class="dashed-line"></h1>
-        </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= @current_post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
-        <p class="metadata">
-          <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="/posts?user=<%=@current_post.user.id%>"><%= display_name(@current_post.user) %></a>
-            <% if allowed_to?(:update?, @current_post) %>
-              | <a href="<%=@current_post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
-              | <a href="/posts/delete/<%=@current_post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
-            <% end %>
-          </i>
-        </p>
-        <p class="metadata">
-          <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=@current_post.id%>"><%= I18n.t("posts.raw") %></a>
-            <% if allowed_to?(:export?, @current_post) %>
-              | <a href="/posts/export/<%=@current_post.id%>"><%= I18n.t("posts.export") %></a>
-            <% end %>
-          </i>
-        </p>
-        <% if Rails.configuration.credentials[:enable_categories] %>
-          <% if @current_post.category&.name.present? %>
-            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=@current_post.category.id%>"><%= @current_post.category.name %></a></i></p>
-          <% else %>
-            <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
-          <% end %>
-        <% end %>
-      </header>
+      <%= render partial: "posts/post_header", locals: { post: @current_post } %>
       <%= display_attachments(@current_post) if @current_post.content_attachments.present? %>
       <div class="posts-content"><%= markdown(@current_post.text) %></div>
       <hr style="border-top: dashed 2px;" />
