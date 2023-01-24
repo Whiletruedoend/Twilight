@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: %i[feed rss show export raw]
+  if Rails.configuration.credentials[:need_auth]
+    except_pages = %i[rss show export raw]
+  else
+    except_pages = %i[index feed rss show export raw]
+  end
+
+  before_action :authenticate_user!, except: except_pages
 
   def index
     user_post = Post.get_posts(params, current_user)
