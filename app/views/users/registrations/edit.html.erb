@@ -26,7 +26,10 @@
 
     <div class="links">
       <div><%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %></div>
-      <div style="float: right;"><%= render "users/registrations/delete_profile" %></div>
+      <div style="float: right;">
+      <%=link_to I18n.t("main.log_out"), "sign_out" %> | 
+      <%= link_to I18n.t("edit.cancel_account_button"), registration_path(resource_name),
+      data: { confirm: I18n.t("edit.cancel_account_confirmation") }, method: :delete %></div>
     </div>
 
   </div>

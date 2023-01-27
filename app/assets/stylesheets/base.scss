@@ -464,7 +464,7 @@ $color-black: #000000;
 
     div {
       float: right;
-      width: 10em;
+      /* width: 10em;*/
       max-width: 100%;
       text-align: center;
     }
@@ -905,6 +905,11 @@ $color-black: #000000;
         opacity:.25;
         cursor:not-allowed;
         background:none!important
+      }
+
+      .list-exit{
+        position: fixed;
+        bottom: 0;
       }
       
       .list-item{

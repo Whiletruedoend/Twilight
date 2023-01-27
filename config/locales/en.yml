@@ -102,7 +102,7 @@ en:
     cancel_account: Cancel account
     cancel_account_button: Delete account
     cancel_account_desc: Wanna cancel this account?
-    cancel_account_confirmation: Are you sure? All posts will be deleted (not from platforms) and can't be recovered!
+    cancel_account_confirmation: Are you sure? All posts will be deleted (also from platforms) and can't be recovered!
     update_tags: Update tags
     sign_up: Sign up
     sign_in: Sign in

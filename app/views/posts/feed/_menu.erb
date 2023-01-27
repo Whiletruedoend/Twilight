@@ -54,6 +54,15 @@
             </a>
         <% end %>
 
+        <% if current_user.present? %>
+            <a href='<%=destroy_user_session_path%>'>
+                <li class="list-item list-exit">
+                    <i class="glyphicon glyphicon-log-out"></i>
+                    <span><%=I18n.t("main.log_out")%></span>
+                </li>
+            </a>
+        <% end %>
+
         <!-- <a href='/about'>
             <li class="list-item">
                 <i class="glyphicon glyphicon-info-sign"></i>
