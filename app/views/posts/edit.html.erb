@@ -39,7 +39,7 @@
                 <div class="attachment"> <!-- TODO? -->
                 <%  case %>
                 <%  when att.image? %>
-                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(:thumb_150)) %></a>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(:thumb150)) %></a>
                 <%  when att.video? %>
                     <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(resize_to_limit: [150, 150]).processed) %></a>
                 <%  when att.audio? %>

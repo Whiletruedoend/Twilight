@@ -16,6 +16,19 @@ class Post < ApplicationRecord
 
   self.per_page = 15
 
+  def self.get_posts(params, current_user)
+    if params.key?(:user)
+      privacy = (current_user.present? && (User.find_by(id: params[:user]) == current_user) ? [0, 1, 2] : [0, 1])
+      posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]))
+    else
+      my_posts = current_user.present? ? Post.where(user: current_user).ids : []
+      not_my_posts = Post.where.not(user: current_user).where(privacy: [0, 1]).ids
+      posts = Post.where(id: my_posts + not_my_posts)
+    end
+    posts = posts.where('lower(title) LIKE ?', "%#{params[:search].downcase}%") if params.key?(:search)
+    posts
+  end
+
   def active_tags_names
     active_tags.map { |s| s.tag.name }
   end
@@ -42,19 +55,6 @@ class Post < ApplicationRecord
 
   def content_attachments
     Content.where(post: self).select { |c| c.attachments.any? }.map(&:attachments)[0]
-  end
-
-  def self.get_posts(params, current_user)
-    if params.key?(:user)
-      privacy = (current_user.present? && (User.find_by(id: params[:user]) == current_user) ? [0, 1, 2] : [0, 1])
-      posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]))
-    else
-      my_posts = current_user.present? ? Post.where(user: current_user).ids : []
-      not_my_posts = Post.where.not(user: current_user).where(privacy: [0, 1]).ids
-      posts = Post.where(id: my_posts + not_my_posts)
-    end
-    posts = posts.where('lower(title) LIKE ?', "%#{params[:search].downcase}%") if params.key?(:search)
-    posts
   end
 
   def destroy

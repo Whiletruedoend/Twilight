@@ -11,13 +11,13 @@ module Users
     # super
     # end
 
-    def after_sign_in_path_for(resource)
+    def after_sign_in_path_for(_resource)
       edit_user_path
-    end    
+    end
 
-    def after_sign_up_path_for(resource)
+    def after_sign_up_path_for(_resource)
       edit_user_path
-    end    
+    end
 
     # POST /resource
     def create
@@ -94,11 +94,6 @@ module Users
       end
 
       redirect_to edit_user_path
-    end
-
-    # DELETE /resource
-    def destroy
-      super
     end
 
     # GET /resource/cancel

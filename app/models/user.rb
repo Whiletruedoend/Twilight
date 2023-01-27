@@ -107,7 +107,7 @@ class User < ApplicationRecord
   end
 
   def destroy
-    self.avatar.purge
+    avatar.purge
     ItemTag.where(item: self).delete_all
     super
   end

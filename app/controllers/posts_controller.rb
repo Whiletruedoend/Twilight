@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  if Rails.configuration.credentials[:need_auth]
-    except_pages = %i[rss show export raw]
-  else
-    except_pages = %i[index feed rss show export raw]
-  end
+  except_pages =
+    if Rails.configuration.credentials[:need_auth]
+      %i[rss show export raw]
+    else
+      %i[index feed rss show export raw]
+    end
 
   before_action :authenticate_user!, except: except_pages
 
@@ -224,9 +225,7 @@ class PostsController < ApplicationController
   def destroy
     authorize! current_post, to: :update?
 
-    if current_post.user == current_user # other admin can't delete posts, lol
-      current_post.destroy
-    end
+    current_post.destroy if current_post.user == current_user # other admin can't delete posts, lol
     redirect_to posts_path
   end
 

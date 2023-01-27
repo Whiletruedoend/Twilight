@@ -36,15 +36,15 @@ module PostsHelper
     size =
       case attachments_count
       when 1
-        :thumb_300
+        :thumb300
       when 2
-        :thumb_250
+        :thumb250
       when 3
-        :thumb_200
+        :thumb200
       when 4, 5
-        :thumb_150
+        :thumb150
       else
-        :thumb_100
+        :thumb100
       end
 
     documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
@@ -58,11 +58,12 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += link_to image_tag(url_for(att.variant(size))), url_for(att), target: "_blank".to_s
+        content += link_to image_tag(url_for(att.variant(size))), url_for(att), target: '_blank'.to_s
       elsif att.video?
-        content += video_tag(url_for(att), controls: true, preload: 'none', poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
+        content += video_tag(url_for(att), controls: true, preload: 'none',
+                                           poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
       elsif att.audio?
-        content += link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: "_blank".to_s
+        content += link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: '_blank'.to_s
       end
     end
     content.html_safe
@@ -103,12 +104,12 @@ module PostsHelper
     comment.attachments.each do |att|
       content +=
         if att.image?
-          link_to image_tag(url_for(att.variant(:thumb_100))), url_for(att), target: "_blank".to_s
+          link_to image_tag(url_for(att.variant(:thumb100))), url_for(att), target: '_blank'.to_s
         elsif att.video?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.preview(:thumb_100).processed)}</a>"
+          #{image_tag url_for(att.preview(:thumb100).processed)}</a>"
         elsif att.audio?
-          link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: "_blank".to_s
+          link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: '_blank'.to_s
         else
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
           #{image_tag('/assets/file.png', height: 100, width: 100)}</a>"

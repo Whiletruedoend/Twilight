@@ -9,9 +9,9 @@ class Comment < ApplicationRecord
   validate :text_or_attachments
 
   def text_or_attachments
-    if text.empty? && !has_attachments
-      errors.add(:not_found, "Text and attachments cannot be empty!")
-    end
+    return unless text.empty? && !has_attachments
+
+    errors.add(:not_found, 'Text and attachments cannot be empty!')
   end
 
   def username
@@ -26,7 +26,7 @@ class Comment < ApplicationRecord
   end
 
   def destroy
-    self.attachments.purge
+    attachments.purge
     super
   end
 end

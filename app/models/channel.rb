@@ -12,7 +12,7 @@ class Channel < ApplicationRecord
   end
 
   def destroy
-    self.avatar.purge
+    avatar.purge
     super
   end
 end
