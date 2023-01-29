@@ -16,11 +16,26 @@ class CheckChannel
   end
 
   def check_telegram
-    bot = Telegram::Bot::Client.new(params[:channel][:token])
     errs = []
     options = {}
+    token = params[:channel][:token]
 
-    return if params[:channel][:enabled].present? && params[:channel][:enabled] == '0' # when disable from settings
+    # when disable from settings
+    if params[:channel][:enabled].present? && params[:channel][:enabled] == '0'
+      # TODO: ENABLE CHECK THIS! (Or in method?)
+      # TODO: А если токен поменялся что делать? Он же вылетет? Тогда надо убить поток.
+      bot = Twilight::Application::CURRENT_TG_BOTS.dig(token.to_s, :client)
+      Platform::ManageTelegramPollers.call(bot, 'delete')
+      return
+    end
+
+    existing_bot = Twilight::Application::CURRENT_TG_BOTS.dig(token.to_s, :client)
+    bot =
+      if existing_bot.present?
+        existing_bot
+      else
+        Telegram::Bot::Client.new(token)
+      end
 
     begin
       me = bot.get_me
@@ -31,7 +46,7 @@ class CheckChannel
 
     errs << "Bot can't read group messages!" if me.dig('result', 'can_read_all_group_messages') != true
 
-    options[:id] = me['result']['id']
+    options[:bot_id] = me['result']['id']
 
     begin
       chat = bot.get_chat(chat_id: params[:channel][:room])
@@ -102,6 +117,9 @@ class CheckChannel
     end
 
     @channel.options = options
+
+    Platform::ManageTelegramPollers.call(bot, 'add') unless existing_bot.present?
+
     bot
   end
 

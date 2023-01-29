@@ -40,31 +40,7 @@ module Twilight
 
     config.after_initialize do
       THEMES = Dir.glob("#{Rails.root}/app/assets/stylesheets/*_theme.scss").map { |s| File.basename(s, '.*') }
-      if ActiveRecord::Base.connection.data_source_exists?('platforms') && ActiveRecord::Base.connection.data_source_exists?('channels')
-        Platform.find_or_initialize_by(title: 'telegram').save
-        Platform.find_or_initialize_by(title: 'matrix').save
-
-        tokens = Channel.all.where(platform: Platform.find_by(title: 'telegram')).map do |channel|
-          [channel.options['id'].to_s, channel.token]
-        end.to_h
-
-        if tokens.empty?
-          Telegram.bots_config = { default: '123456' } # avoid tg error
-        else
-          default_token =
-            tokens.each_with_object({}) do |(k, v), option|
-              option[:default] = v if k == tokens.keys.first
-            end
-          tokens.delete(tokens.keys.first)
-          tokens.merge!(default_token)
-
-          Telegram.bots_config = tokens
-
-          # RunTelegramPoller.perform_later
-        end
-      else
-        Telegram.bots_config = { default: '123456' } # avoid tg error
-      end
+      CURRENT_TG_BOTS = {}
     end
 
     # Settings in config/environments/* take precedence over those specified here.

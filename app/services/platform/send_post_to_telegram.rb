@@ -119,8 +119,8 @@ class Platform::SendPostToTelegram
                              post: @post, content: content, channel_id: channel[:id])
       end
     end
-  rescue StandardError
-    Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
+  rescue StandardError => e
+    Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}")
   end
 
   def send_telegram_attachments(bot, channel, options, content, has_caption)
@@ -169,8 +169,8 @@ class Platform::SendPostToTelegram
       end
       PlatformPost.create!(identifier: msg_ids, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
-    rescue StandardError
-      Rails.logger.error("Failed create telegram message (attachment) for chat #{channel[:room]} at #{Time.now.utc.iso8601}")
+    rescue StandardError => e
+      Rails.logger.error("Failed create tg message (attachment) for chat #{channel[:room]} at #{Time.now.utc.iso8601}:\n#{e}")
     end
   end
 
@@ -192,8 +192,8 @@ class Platform::SendPostToTelegram
         msg = bot.send_document({ chat_id: attachment_channel, document: file })
         { type: 'document', media: msg['result']['document']['file_id'], blob_signed_id: blob_signed_id }
       end
-    rescue StandardError
-      Rails.logger.error("Failed upload telegram message at #{Time.now.utc.iso8601}")
+    rescue StandardError => e
+      Rails.logger.error("Failed upload telegram message at #{Time.now.utc.iso8601}:\n#{e}")
     end
   end
 
@@ -206,9 +206,7 @@ class Platform::SendPostToTelegram
   end
 
   def get_tg_bot(channel)
-    bots_from_config = Telegram.bots_config.select { |_k, v| v == channel[:token] }
-    bots_hash = Telegram.bots.select { |k, _v| k == bots_from_config.first[0] }
-    bots_hash.first[1]
+    Twilight::Application::CURRENT_TG_BOTS.dig((channel[:token]).to_s, :client)
   end
 
   def send_tg_onlylink_post(channel, options)
@@ -231,7 +229,7 @@ class Platform::SendPostToTelegram
       post: @post,
       content: @post.contents.first, channel_id: channel[:id]
     )
-  rescue StandardError
-    Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.current.utc.iso8601}")
+  rescue StandardError => e
+    Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.current.utc.iso8601}:\n#{e}")
   end
 end

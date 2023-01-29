@@ -4,12 +4,13 @@ namespace :tg do
   desc 'Run tg poller (for debug)'
   task start: :environment do
     puts('TELEGRAM POLLER STARTED! (RAKE)'.green) if Rails.env.development?
-    threads = []
-    Telegram.bots.each_value do |bot|
-      threads << Thread.new do
+    Telegram.bots.each_value.each do |bot|
+      Thread.new do
+        execution_context = Rails.application.executor.run!
         Telegram::Bot::UpdatesPoller.add(bot, TelegramController).start
+      ensure
+        execution_context&.complete!
       end
     end
-    threads.each(&:join)
   end
 end

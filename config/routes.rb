@@ -51,7 +51,7 @@ Rails.application.routes.draw do
       root to: 'pages#main'
   end
 
-  telegram_webhook TelegramController
+  # telegram_webhook TelegramController
   # root 'index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

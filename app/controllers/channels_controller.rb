@@ -60,7 +60,9 @@ class ChannelsController < ApplicationController
   def destroy
     authorize! current_channel
 
-    # current_channel.avatar.destroy!
+    token = current_channel.token
+    bot = Twilight::Application::CURRENT_TG_BOTS&.dig(token.to_s, :client)
+    Platform::ManageTelegramPollers.call(bot, 'delete') if bot.present?
     current_channel.delete
 
     redirect_to edit_user_path

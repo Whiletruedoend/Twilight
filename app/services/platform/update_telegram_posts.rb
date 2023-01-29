@@ -362,8 +362,6 @@ class Platform::UpdateTelegramPosts
   # PlatformPost or Channel support
   def get_tg_bot(object)
     object = object.channel if object.is_a?(PlatformPost)
-    bots_from_config = Telegram.bots_config.select { |_k, v| v == object.token }
-    bots_hash = Telegram.bots.select { |k, _v| k == bots_from_config.first[0] }
-    bots_hash.first[1]
+    Twilight::Application::CURRENT_TG_BOTS&.dig(object.token.to_s, :client)
   end
 end
