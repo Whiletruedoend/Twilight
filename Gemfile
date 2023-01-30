@@ -95,8 +95,8 @@ gem 'rmagick', '~> 4.1.1'
 gem 'rollbar'
 gem 'rubyzip'
 gem 'simple_command'
+gem 'socksify', require: false # TCP through a SOCKS5 proxy
 gem 'telegram-bot'
-gem 'socksify', require: false # TCP through a SOCKS5 proxy 
 
 gem 'sidekiq'
 

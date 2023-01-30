@@ -30,6 +30,9 @@ class User < ApplicationRecord
       u.errors.add(:base,
                    'Bad RSS displayed posts count value!')
     end
+    if User.where(name: name).present?
+      u.errors.add(:base, 'User with this display name already exists!')
+    end
 
     user_theme = u.options['theme']
     u.errors.add(:base, 'Bad Theme!') if user_theme.present? && Twilight::Application::THEMES.exclude?(user_theme)

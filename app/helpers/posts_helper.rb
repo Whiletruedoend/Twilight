@@ -58,7 +58,7 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += link_to image_tag(url_for(att.variant(size))), url_for(att), target: '_blank'.to_s
+        content += link_to image_tag(url_for(att.variant(size).processed)), url_for(att), target: '_blank'.to_s
       elsif att.video?
         content += video_tag(url_for(att), controls: true, preload: 'none',
                                            poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
