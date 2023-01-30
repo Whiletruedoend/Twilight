@@ -11,6 +11,8 @@ class Platform::ManageTelegramPollers
   end
 
   def call
+    return if bot.nil?
+
     action == 'add' ? add_tg_poller : delete_tg_poller
   end
 
@@ -27,9 +29,8 @@ class Platform::ManageTelegramPollers
 
   def delete_tg_poller
     # see other channels, no channels => delete
-    # TODO: Enabled(?) check
     token = bot.token
-    return unless Channel.where(token: token).count == 1
+    return unless Channel.where(token: token, enabled: true).count == 1
 
     Twilight::Application::CURRENT_TG_BOTS.dig(token.to_s, :thread).kill
     Twilight::Application::CURRENT_TG_BOTS.delete(token)

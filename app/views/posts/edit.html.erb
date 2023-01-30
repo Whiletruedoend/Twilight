@@ -75,7 +75,7 @@
             <div class="form-group">
               <h3><%= I18n.t("posts.category") %></h3>
               <% if @current_user.categories.any? %>
-                  <% categories = Category.order(:sort).all.collect{ |cat| [cat.name, cat.id] } %>
+                  <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
                   <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
                 <% if @current_post.category.present? %>
                   <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>

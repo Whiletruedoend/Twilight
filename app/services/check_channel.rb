@@ -22,8 +22,6 @@ class CheckChannel
 
     # when disable from settings
     if params[:channel][:enabled].present? && params[:channel][:enabled] == '0'
-      # TODO: ENABLE CHECK THIS! (Or in method?)
-      # TODO: А если токен поменялся что делать? Он же вылетет? Тогда надо убить поток.
       bot = Twilight::Application::CURRENT_TG_BOTS.dig(token.to_s, :client)
       Platform::ManageTelegramPollers.call(bot, 'delete')
       return

@@ -10,6 +10,11 @@ class RunTelegramPoller < ApplicationJob
         Thread.new do
           execution_context = Rails.application.executor.run!
           Telegram::Bot::UpdatesPoller.add(bot, TelegramController).start
+        rescue Telegram::Bot::Error => e
+          Twilight::Application::CURRENT_TG_BOTS.delete(bot.token)
+          Channel.where(token: bot.token, enabled: true).update!(enabled: false)
+          Rails.logger.debug("Thread killed due telegram error: #{e}".red) if Rails.env.development?
+          thread.kill
         ensure
           execution_context&.complete!
         end
