@@ -8,8 +8,6 @@
   </ul>
 
   <%= form_with(model: @current_comment, local: true) do |f| %>
-    <%= render 'shared/errors', object: @current_comment %>
-
     <div class="tab-content">
       <div id="markdown" class="tab-pane in active title">
         <div class="markdown-editor">

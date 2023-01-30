@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
 
+  add_flash_types :custom_error # hide 'alert' on main layout with custom error forms
+
   rescue_from ActiveRecord::RecordNotFound, with: ->(exception) { render_error(404, exception) }
   rescue_from ActionController::RoutingError, with: ->(exception) { render_error(404, exception) }
   rescue_from ActionPolicy::Unauthorized, with: ->(exception) { render_error(404, exception) }

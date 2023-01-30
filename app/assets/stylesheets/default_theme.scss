@@ -58,6 +58,11 @@ $color-feed-tags-list: #ecf5ff;
 $color-feed-tags-list-item: #909399;
 $color-feed-tags-border: #e6e6e6;
 
+$color-alert-danger: #222426;
+$color-alert-danger-text: #df4655;
+$color-alert-success: #222426;
+$color-alert-success-text: #a1bfa1;
+
 $color-table-th: #22c6c6;
 $color-table-th-border: #10A0A0;
 $color-table-td: #10A0A0;
@@ -84,5 +89,6 @@ $color-black: #000000;
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
-        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border, $color-feed-link
+        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border, $color-feed-link,
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text
 );

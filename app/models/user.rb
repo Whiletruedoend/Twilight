@@ -30,7 +30,7 @@ class User < ApplicationRecord
       u.errors.add(:base,
                    'Bad RSS displayed posts count value!')
     end
-    if User.where(name: name).present?
+    if name.present? && User.where(name: name).present?
       u.errors.add(:base, 'User with this display name already exists!')
     end
 
@@ -69,7 +69,7 @@ class User < ApplicationRecord
   # 'Disable' current password validation
 
   def update_with_password(params = {})
-    if params[:password].blank?
+    if params.present? && params[:password].blank?
       params.delete(:encrypted_password)
       update_without_password(params)
     else

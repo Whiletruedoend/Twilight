@@ -12,7 +12,7 @@ class ChannelsController < ApplicationController
 
     command = CheckChannel.call(current_channel, channels_params)
     unless command.success?
-      redirect_to edit_channel_path, alert: command.errors.full_messages
+      redirect_to edit_channel_path, custom_error: command.errors.full_messages
       return
     end
 
@@ -40,7 +40,7 @@ class ChannelsController < ApplicationController
 
     command = CheckChannel.call(@current_channel, channels_params)
     unless command.success?
-      redirect_to new_channel_path, alert: command.errors.full_messages
+      redirect_to new_channel_path, custom_error: command.errors.full_messages
       return
     end
 

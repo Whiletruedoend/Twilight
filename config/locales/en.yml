@@ -220,7 +220,7 @@ en:
         size_too_big: "is too big (should be at most %{file_size})"
   errors:
     messages:
-      not_saved: "Problems:"
+      not_saved: "Found errors while saving:"
   activerecord:
     errors:
       messages:

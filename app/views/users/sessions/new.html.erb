@@ -1,7 +1,7 @@
 <div class="row">
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <%= render "users/shared/error_messages", resource: resource %>
-
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), data: { turbo: false }) do |f| %>
+  <%= render "users/shared/error_messages", resource: resource %>
+  
     <div class="col-xs-12 col-sm-4 col-md-4 col-sm-offset-3 col-md-offset-4">
       <h2><%=I18n.t("auth.sign_in_header")%></h2>
       <hr>
@@ -49,3 +49,5 @@
     <%= link_to "<--- #{I18n.t("posts.main_page")}", root_path %> | <%= link_to "#{I18n.t("edit.sign_up")}", sign_up_path %>
   </p>
 </center>
+
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>

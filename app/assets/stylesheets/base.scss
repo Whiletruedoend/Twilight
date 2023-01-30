@@ -84,7 +84,8 @@ $color-black: #000000;
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
-        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link){
+        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link,
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -494,11 +495,24 @@ $color-black: #000000;
   }
 
   .alert{
-    padding: 0px 10px 5px 10px;
+    padding: 10px;
+  }
+
+  .alert-success{
+    margin: 1% 20% auto 20%;
+    background: $color-alert-success;
+    color: $color-alert-success-text;
   }
 
   .alert-danger{
-    margin: 2% 20% auto 20%;
+    margin: 1% 20% auto 20%;
+    background: $color-alert-danger;
+    color: $color-alert-danger-text;
+  }
+
+  .alert-center{
+    text-align: center;
+    font-size: 18px;
   }
 
   .dashed-line {

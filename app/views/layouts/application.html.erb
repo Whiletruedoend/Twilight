@@ -10,19 +10,14 @@
   </head>
 
   <body>
+    <% if notice %><p class="alert alert-center alert-success" role="alert"><%= notice %></p><% end %>
+    <% if alert %><p class="alert alert-center alert-danger" role="alert"><%= alert %></p><% end %>
     <%= yield %>
   </body>
-  <p class="alert need2hide"><%= alert %></p>
-  <p class="notice need2hide"><%= notice %></p>
   <link href="/rss" rel="alternate" title="RSS feed" type="application/rss+xml">
   <footer>
     Copyright (c) 2020-2023 | by <a target="_blank" href="https://github.com/Whiletruedoend/">wtde</a> | <a target="_blank" href="https://github.com/Whiletruedoend/Twilight/blob/master/LICENSE">GNU GPL v3</a> | <a target="_blank" href="https://github.com/Whiletruedoend/Twilight/">Source</a>
   </footer>
 </html>
 
-<script>
-    var alert = document.getElementsByClassName('need2hide');
-    for (var i = 0; i < alert.length; i ++) {
-        alert[i].style.display = 'none';
-    }
-</script>
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>

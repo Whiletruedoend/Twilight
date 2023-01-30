@@ -21,8 +21,8 @@ module Users
 
     # POST /resource
     def create
-      return redirect_to(sign_up_url, alert: ['Invalid captcha!']) unless valid_captcha?(users_params[:user][:captcha])
-      return redirect_to(sign_up_url, alert: ['Invalid invite code!']) unless validate_code(users_params[:user][:code])
+      return redirect_to(sign_up_url, alert: 'Invalid captcha!') unless valid_captcha?(users_params[:user][:captcha])
+      return redirect_to(sign_up_url, alert: 'Invalid invite code!') unless validate_code(users_params[:user][:code])
 
       super
 
@@ -106,7 +106,7 @@ module Users
     # end
 
     protected
-
+    
     def users_params
       params.permit(:_method,
                     :id,

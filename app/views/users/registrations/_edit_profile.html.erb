@@ -9,7 +9,7 @@
 
 <br>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }, data: { turbo: false }) do |f| %>
   <div class="form-inline">
     <%= f.label "#{I18n.t("edit.rss_visible_posts")}:" %>
     <%= f.fields :options, model: f.object.options do |field| %>
@@ -26,7 +26,6 @@
 
   <div class="col-xs-6 col-sm-12 col-md-12">
 
-    <%= render "users/shared/error_messages", resource: resource %>
     <h3><%="#{I18n.t("edit.main_information")}"%></h3>
 
     <div class="container-fluid mt-3">
@@ -82,7 +81,7 @@
 <% end %>
 
 <div class="form-group col-xs-6 col-sm-12 col-md-12">
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }, data: { turbo: false }) do |f| %>
     <h3><%= I18n.t("edit.personal_tags") %></h3>
 
     <p><%= I18n.t("edit.rss_tags_description") %></p>
@@ -97,6 +96,7 @@
           </div>
         <% end %>
       </div>
+      <%= f.hidden_field :encrypted_password, class: "form-control", value: "#{current_user.encrypted_password}" %>
     </div><br />
       <%= f.submit I18n.t("edit.update_tags"), class: "actions btn btn-primary" %>
   <% end %>
