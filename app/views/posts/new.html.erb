@@ -9,7 +9,7 @@
     </ul>
 
     <%= form_with(model: Post.new(user: @current_user)) do |f| %>
-      <%= render 'shared/errors', object: @post %>
+      <%= render 'shared/custom_errors', flash: flash %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}" }) %>

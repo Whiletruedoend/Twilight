@@ -77,13 +77,8 @@ class PostsController < ApplicationController
         end
       end
 
-      Thread.new do
-        execution_context = Rails.application.executor.run!
-        UpdatePostMessages.call(current_post, posts_params) # TODO: optimize it?
-        current_post.update(title: posts_params[:post][:title]) # ?
-      ensure
-        execution_context&.complete!
-      end
+      UpdatePostMessages.call(current_post, posts_params)
+      current_post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to current_post
     else
@@ -134,12 +129,7 @@ class PostsController < ApplicationController
       tags.merge!(new_tags) if new_tags.any?
       tags.each { |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1].to_i) } if tags.any?
 
-      Thread.new do
-        execution_context = Rails.application.executor.run!
-        SendPostToPlatforms.call(@post, posts_params)
-      ensure
-        execution_context&.complete!
-      end
+      SendPostToPlatforms.call(@post, posts_params)
 
       redirect_to @post
     else
