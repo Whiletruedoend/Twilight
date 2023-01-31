@@ -19,7 +19,7 @@
 * [Contribution](#Contribution)
 * [Contact](#Contact)
 
- <img src="https://i.imgur.com/3QStroz.png"></img>
+ <img src="https://i.imgur.com/j6FCqsv.png"></img>
 
 
 P.S. The list of recent changes can be found <a href="https://github.com/Whiletruedoend/Twilight/blob/master/update_log.md">here</a>
@@ -178,17 +178,15 @@ Only the information from the first token is identical to the information from t
 
 Therefore, this does not seem to carry a serious threat. But just in case, he warned that there were no questions. 
 ## Schemas and screenshots
-General scheme:
-<img src="https://i.imgur.com/ffeGQGF.png"></img>
 ER-diagram:
-<img src=""></img>
+<img src="https://i.imgur.com/RQQCRpa.jpeg"></img>
 Main page (configurating):
  * Version 0 (standalone page):
 <img src="https://i.imgur.com/cVz0Quv.png"></img>
- * Version 1 (posts):
- <img src=""></img>
+ * Version 1 [default] (posts):
+ <img src="https://i.imgur.com/j6FCqsv.png"></img>
  * Version 2: (feed):
- <img src=""></img>
+ <img src="https://i.imgur.com/FJ7z6vF.png"></img>
 Profile page:
 <img src="https://i.imgur.com/XDwP5n0.png"></img>
 Manage channels:
@@ -196,11 +194,9 @@ Manage channels:
 Invite codes:
 <img src="https://i.imgur.com/FvAlzzT.png"></img>
 Statistics:
-<img src="https://i.imgur.com/gc9MnqT.png"></img>
+<img src="https://i.imgur.com/WxAdMuD.png"></img>
 Article creation (Default theme):
 <img src="https://i.imgur.com/3QStroz.png"></img>
-List of articles:
-<img src="https://i.imgur.com/364Ytof.png"></img>
 Specific article:
 <img src="https://i.imgur.com/9F0W2Nr.png"></img>
 ## Contribution

@@ -19,7 +19,7 @@ Also available EN version => [README.md](https://github.com/Whiletruedoend/Twili
 * [Contribution](#Contribution)
 * [Связь](#Связь)
 
- <img src="https://i.imgur.com/3QStroz.png"></img>
+ <img src="https://i.imgur.com/j6FCqsv.png"></img>
 
 
 P.S. Список последних изменений можно посмотреть <a href="https://github.com/Whiletruedoend/Twilight/blob/master/update_log.md">тут</a>
@@ -176,17 +176,15 @@ P.S. Список последних изменений можно посмот�
 
 Поэтому серъёной угрозы это вроде не несёт. Но на всякий случай предупредил, чтобы не было вопросов.
 ## Схемы и скриншоты
-Общая схема:
-<img src="https://i.imgur.com/ffeGQGF.png"></img>
 ER-диаграмма:
-<img src=""></img>
+<img src="https://i.imgur.com/RQQCRpa.jpeg"></img>
 Главные страницы (настраивается):
  * Вариант 0 (отдельная страница):
 <img src="https://i.imgur.com/cVz0Quv.png"></img>
- * Вариант 1 (posts):
- <img src=""></img>
+ * Вариант 1 [По-умолчанию] (posts):
+ <img src="https://i.imgur.com/j6FCqsv.png"></img>
  * Вариант 2: (feed):
- <img src=""></img>
+ <img src="https://i.imgur.com/FJ7z6vF.png"></img>
 
 Личный кабинет:
 <img src="https://i.imgur.com/XDwP5n0.png"></img>
@@ -195,11 +193,9 @@ ER-диаграмма:
 Инвайт-коды:
 <img src="https://i.imgur.com/FvAlzzT.png"></img>
 Статистика:
-<img src="https://i.imgur.com/gc9MnqT.png"></img>
+<img src="https://i.imgur.com/WxAdMuD.png"></img>
 Создание статьи (Default theme):
 <img src="https://i.imgur.com/3QStroz.png"></img>
-Список статей:
-<img src="https://i.imgur.com/364Ytof.png"></img>
 Конкретная статья:
 <img src="https://i.imgur.com/9F0W2Nr.png"></img>
 ## Contribution
