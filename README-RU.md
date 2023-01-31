@@ -61,6 +61,7 @@ P.S. Список последних изменений можно посмот�
     ```ssh
      rbenv install 2.7.7
     ```
+  * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/)   
   * Установка проекта: 
   
     ```ssh

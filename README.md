@@ -61,6 +61,7 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
     ```ssh
      rbenv install 2.7.7
     ```
+  * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/)  
   * Install project: 
   
     ```ssh
