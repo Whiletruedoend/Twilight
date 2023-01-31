@@ -3,8 +3,12 @@
     <%= render partial: "posts/links_header", locals: { post: @current_post } %>
     <article>
       <%= render partial: "posts/post_header", locals: { post: @current_post } %>
-      <%= display_attachments(@current_post) if @current_post.content_attachments.present? %>
-      <div class="posts-content"><%= markdown(@current_post.text) %></div>
+
+      <%= turbo_stream_from @current_post %>
+        <div id="<%="post_#{@current_post.id}"%>">
+          <%= render partial: "posts/post", locals: { post: @current_post } %>
+        </div>
+
       <hr style="border-top: dashed 2px;" />
       <% item_tags = @current_post.active_tags %>
       <% if item_tags.any? %>

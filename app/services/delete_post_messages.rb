@@ -28,10 +28,10 @@ class DeletePostMessages
         Platform::DeleteMatrixPosts.call(matrix_posts) if matrix_posts.any?
       end
       platform = Platform.find_by(title: title)
-      PlatformPost.where(platform: platform, post: post, channel_id: channel_id).delete_all
+      PlatformPost.where(platform: platform, post: post, channel_id: channel_id).destroy_all
       comment_ids = Comment.where(post: post).ids # Сделать привязку коммента к платформ посту
-      ActiveStorage::Attachment.where(record_type: 'Comment', record: comment_ids).delete_all
-      Comment.where(post: post).delete_all
+      ActiveStorage::Attachment.where(record_type: 'Comment', record: comment_ids).destroy_all
+      Comment.where(post: post).destroy_all
     end
   end
 end
