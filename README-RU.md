@@ -51,6 +51,10 @@ P.S. Список последних изменений можно посмот�
    * Поддержка аттачменов: картинки, видео, аудио, файлы
  
 ## Установка
+
+  Есть 2 способа установки:
+
+  ### Обычный
  
   * Установить ruby (2.7.7):
     * Для [rvm](https://rvm.io/):
@@ -61,8 +65,9 @@ P.S. Список последних изменений можно посмот�
     ```ssh
      rbenv install 2.7.7
     ```
-  * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/)   
-  * Установка проекта: 
+  * Установить yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
+  * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
+  * Загрузить проект: 
   
     ```ssh
      git clone https://github.com/Whiletruedoend/Twilight
@@ -74,7 +79,33 @@ P.S. Список последних изменений можно посмот�
      
   * Настроить: `config/credentials.yml`
   * Запустить сервер командой: `rails s`
-  
+
+  ### Docker
+
+  * Загрузить проект:
+  ```
+  git clone https://github.com/Whiletruedoend/Twilight
+  cd Twilight/
+  ```
+  * (Не обязательно) Настроить файл .env для подключения к существующей бд postgres, или изменить тип бд на sqlite3 в config/database.yml
+  * Настроить config/credentials.yml
+  * Выполнить команду:
+  ```
+    docker-compose build web
+  ```
+  * После успешной сборки образа, выполнить:
+  ```
+    docker-compose up web
+  ```
+  * (Если требуется использовать postgres из docker'a, выполнить):
+  ```
+    docker-compose up db
+  ```
+  * Чтобы сделать себя админом и в контейнере изменять credentials.yml и database.yml, нужно войти в контейнер командой:
+  ```
+    docker exec -it twilight-web-1 /bin/bash 
+  ```
+
 Теперь сайт будет доступен по адресу: `http://localhost:3080`
 
 ## Настройка

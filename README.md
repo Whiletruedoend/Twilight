@@ -51,6 +51,10 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
     * Support for attachments: pictures, video, audio, files 
  
 ## Installation
+
+  There are 2 ways of installation:
+  
+  ### Manual
  
   * Install ruby (2.7.7):
     * For [rvm](https://rvm.io/):
@@ -61,7 +65,8 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
     ```ssh
      rbenv install 2.7.7
     ```
-  * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/)  
+  * Install yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
+  * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
   * Install project: 
   
     ```ssh
@@ -74,7 +79,37 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
      
   * Setting up: `config/credentials.yml`
   * Run server with command: `rails s`
-  
+
+### Docker
+
+  * Download project:
+  ```
+  git clone https://github.com/Whiletruedoend/Twilight
+  cd Twilight/
+  ```
+  * (Optional) Configure .env for existing postgres database, or change to sqlite3 in config/database.yml
+  * Configure config/credentials.yml
+  * Run:
+  ```
+    docker-compose build web
+  ```
+  * After a successful build, run:
+  ```
+    docker-compose up web
+  ```
+  * (If you want use postgres in docker, use):
+  ```
+    docker-compose up db
+  ```
+  (You can find out the IP of the runned postgres with the command:)
+  ```
+    docker inspect twilight-db-1 | grep IPAddress
+  ```
+  * To make yourself an admin and configure (credentials.yml and database.yml) server, you need to enter the container with the command:
+  ```
+    docker exec -it twilight-web-1 /bin/bash 
+  ```
+
 The site will now be available at: `http://localhost:3080`
 
 ## Setting up

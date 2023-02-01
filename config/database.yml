@@ -2,20 +2,23 @@
 default: &default
   adapter: postgresql # sqlite3
   encoding: unicode
-  host: localhost
-  port: 5432
-  username: twilight
-  password: pass
+  host: <%= ENV['POSTGRES_HOST'] { localhost } %>
+  port: <%= ENV['POSTGRES_PORT'] { 5432 } %>
+  username: <%= ENV['POSTGRES_USER'] { twilight } %>
+  password: <%= ENV['POSTGRES_PASSWORD'] { password } %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
-  database: twilight_dev # db/development.sqlite3
+  database: <%= ENV['POSTGRES_DB'] { twilight_development } %>
+  # database: db/development.sqlite3 # For sqlite3
 
 test:
   <<: *default
-  database: twilight_test # db/test.sqlite3
+  database: <%= ENV['POSTGRES_DB'] { twilight_test } %>
+  # database: db/test.sqlite3 # For sqlite3
 
 production:
   <<: *default
-  database: twilight_production # db/production.sqlite3
+  database: <%= ENV['POSTGRES_DB'] { twilight_production } %>
+  # database: db/production.sqlite3 # For sqlite3
