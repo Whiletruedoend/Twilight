@@ -34,9 +34,14 @@ class UpdatePostMessages
   def call
     return update_only_site_posts if @post.platform_posts.empty?
 
-    posted_platforms = @post.platforms
+    Thread.new do
+      execution_context = Rails.application.executor.run!
+      posted_platforms = @post.platforms
 
-    Platform::UpdateTelegramPosts.call(@post, params) if posted_platforms['telegram']
-    Platform::UpdateMatrixPosts.call(@post, params) if posted_platforms['matrix']
+      Platform::UpdateTelegramPosts.call(@post, params) if posted_platforms['telegram']
+      Platform::UpdateMatrixPosts.call(@post, params) if posted_platforms['matrix']
+    ensure
+      execution_context&.complete!
+    end
   end
 end

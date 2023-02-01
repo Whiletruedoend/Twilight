@@ -42,9 +42,16 @@ Rails.application.routes.draw do
 
   get 'posts/raw/:id', to: 'posts#raw', as: :raw_post_path
 
-  root to: 'pages#main'
+  case Rails.configuration.credentials[:root_page]
+    when 1
+      root to: 'posts#index'
+    when 2
+      root to: 'posts#feed'
+    else
+      root to: 'pages#main'
+  end
 
-  telegram_webhook TelegramController
+  # telegram_webhook TelegramController
   # root 'index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

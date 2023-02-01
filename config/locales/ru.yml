@@ -92,6 +92,7 @@ ru:
     rss_visible_posts: Количество отображаемых постов
     rss_tags_description: Используются при выборке RSS постов.
     theme: Тема
+    locale: Язык
     token_not_generated: Токен не сгенерирован!
     password_confirmation: Подтверждение пароля
     current_password: Текущий пароль
@@ -101,7 +102,7 @@ ru:
     cancel_account: Закрыть аккаунт
     cancel_account_button: Удалить аккаунт
     cancel_account_desc: Хотите удалить аккаунт?
-    cancel_account_confirmation: Вы действительно хотите закрыть аккаунт? Все посты будут удалены (не из платформ) и не смогут быть восстановлены!
+    cancel_account_confirmation: Вы действительно хотите закрыть аккаунт? Все посты будут удалены (также из платформ) и не смогут быть восстановлены!
     update_tags: Обновить тэги
     sign_up: Зарегистрироваться
     sign_in: Авторизоваться
@@ -219,7 +220,7 @@ ru:
         size_too_big: "is too big (should be at most %{file_size})"
   errors:
     messages:
-      not_saved: "Проблемы:"
+      not_saved: "Возникли ошибки при сохранении:"
   activerecord:
     errors:
       messages:

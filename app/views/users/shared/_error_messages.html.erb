@@ -1,21 +1,18 @@
-<% if flash.any? %>
+<% if resource.errors.any? %>
   <div class="alert alert-danger" id="error_explanation">
-    <h2><%= I18n.t("errors.messages.not_saved") %></h2>
-    <% flash.each do |type, message| %>
-      <ul>
-        <li><%= type %></li>
-      </ul>
-      <% if message.is_a?(String) %>
-        <ul>
-          <li><%= message %></li>
-        </ul>
-      <% else %>
-        <% message.each do |msg| %>
-          <ul>
-            <li><%= msg %></li>
-          </ul>
-        <% end %>
+    <h2>
+      <i class="glyphicon glyphicon-exclamation-sign"></i>
+      <%= I18n.t("errors.messages.not_saved",
+                 count: resource.errors.count,
+                 resource: resource.class.model_name.human.downcase)
+       %>
+    </h2>
+    <ul>
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
       <% end %>
-    <% end %>
+    </ul>
   </div>
 <% end %>
+
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>

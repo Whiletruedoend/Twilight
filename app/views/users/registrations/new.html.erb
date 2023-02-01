@@ -1,6 +1,6 @@
 <div class="row">
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-    <%= render "users/shared/error_messages", resource: resource %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), data: { turbo: false }) do |f| %>
+  <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="col-xs-12 col-sm-4 col-md-4 col-sm-offset-3 col-md-offset-4">
       <h2><%=I18n.t("auth.sign_up_header")%></h2>
@@ -55,10 +55,4 @@
 </center>
 
 <%= javascript_include_tag 'application.js' %>
-
-<script>
-    var alert = document.getElementsByClassName('need2hide');
-    for (var i = 0; i < alert.length; i ++) {
-        alert[i].style.display = 'none';
-    }
-</script>
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>

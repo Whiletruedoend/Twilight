@@ -2,28 +2,14 @@
 <div class="container">
   <h2><%= I18n.t("channels.edit_header") %></h2>
 
-  <% if flash.any? %>
-    <div class="alert alert-danger" id="error_explanation">
-      <h2><%= I18n.t("errors.messages.not_saved") %></h2>
-      <% flash.each do |type, message| %>
-        <% message.each do |msg| %>
-          <% msg.each do |m| %>
-            <ul>
-              <li><%= m %></li>
-            </ul>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
+  <%= render 'shared/custom_errors', flash: flash %>
 
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#local"><%= I18n.t("channels.local") %></a></li>
     <li><a data-toggle="tab" href="#global"><%= I18n.t("channels.global") %></a></li>
   </ul>
 
-  <%= form_with(model: @current_channel, local: true) do |f| %>
-    <%= render 'shared/errors', object: @current_channel %>
+  <%= form_with(model: @current_channel) do |f| %>
     <div class="tab-content">
       <div id="local" class="tab-pane in active title">
         <%= hidden_field(:channel, :platform, {value: @current_channel.platform.title}) %>
@@ -97,14 +83,10 @@
 </div>
 </body>
 
-<%= javascript_include_tag 'application.js' %>
+<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>
 
 <script>
-    var alert = document.getElementsByClassName('need2hide');
-    for (var i = 0; i < alert.length; i ++) {
-        alert[i].style.display = 'none';
-    }
-
     $('select#channel_platform').bind('change', function() {
         $('.platform-field').hide();
         $('.platform-field input').attr('disabled', true);

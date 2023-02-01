@@ -1,0 +1,5 @@
+<%= display_attachments(post) if post.content_attachments.present? %>
+
+<div class="posts-content">
+  <%= markdown(post.text) %>
+</div>

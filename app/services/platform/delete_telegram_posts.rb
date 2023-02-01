@@ -11,9 +11,7 @@ class Platform::DeleteTelegramPosts
 
   def call
     @platform_posts.each do |platform_post|
-      bots_from_config = Telegram.bots_config.select { |_k, v| v == platform_post.channel.token }
-      bots_hash = Telegram.bots.select { |k, _v| k == bots_from_config.first[0] }
-      bot = bots_hash.first[1]
+      bot = Twilight::Application::CURRENT_TG_BOTS&.dig(platform_post.channel.token.to_s, :client)
       if platform_post.content.has_attachments?
         platform_post.identifier.each do |att|
           bot.delete_message({ chat_id: att['chat_id'], message_id: att['message_id'] })

@@ -53,7 +53,7 @@ class Platform::UpdateTelegramPosts
     if new_post_text_blocks.nil?
       options = post_options(@post)
       if options[:onlylink]
-        @post.contents.where(has_attachments: false).delete_all
+        @post.contents.where(has_attachments: false).destroy_all
         return
       end
       degree_index = 0
@@ -220,7 +220,7 @@ class Platform::UpdateTelegramPosts
       end
       # Remove all contents where is no platform posts (in caption case its all contents where is no attachments).
       # It eliminates next content creation errors. Not perfect solution but works.
-      @post.contents.where(has_attachments: false).delete_all
+      @post.contents.where(has_attachments: false).destroy_all
       # Make contents, just run further
       false
     # Length looks good
@@ -248,9 +248,9 @@ class Platform::UpdateTelegramPosts
     platform_posts = @post.platform_posts.where(content: content, platform: @platform)
 
     Platform::DeleteTelegramPosts.call(platform_posts)
-    PlatformPost.where(platform: platform_posts, post: @post).delete_all
+    PlatformPost.where(platform: platform_posts, post: @post).destroy_all
 
-    content.delete
+    content.destroy
   end
 
   def delete_attachments
@@ -362,8 +362,6 @@ class Platform::UpdateTelegramPosts
   # PlatformPost or Channel support
   def get_tg_bot(object)
     object = object.channel if object.is_a?(PlatformPost)
-    bots_from_config = Telegram.bots_config.select { |_k, v| v == object.token }
-    bots_hash = Telegram.bots.select { |k, _v| k == bots_from_config.first[0] }
-    bots_hash.first[1]
+    Twilight::Application::CURRENT_TG_BOTS&.dig(object.token.to_s, :client)
   end
 end

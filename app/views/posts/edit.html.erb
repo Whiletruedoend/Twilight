@@ -9,7 +9,6 @@
     </ul>
 
     <%= form_with(model: @current_post, local: true) do |f| %>
-      <%= render 'shared/errors', object: @current_post %>
       <% platforms = @current_post.platforms %>
       <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }) %>
       <div class="tab-content">
@@ -39,9 +38,9 @@
                 <div class="attachment"> <!-- TODO? -->
                 <%  case %>
                 <%  when att.image? %>
-                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(resize_to_limit: [150, 150])) %></a>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.variant(:thumb150).processed) %></a>
                 <%  when att.video? %>
-                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(resize_to_limit: [150,150]).processed) %></a>
+                    <a target="_blank" href="<%=url_for(att)%>"><%= image_tag url_for(att.preview(resize_to_limit: [150, 150]).processed) %></a>
                 <%  when att.audio? %>
                     <a target="_blank" href="<%=url_for(att)%>"><%= audio_tag(url_for(att), autoplay: false, controls: true) %></a>
                 <%  else %>
@@ -75,7 +74,7 @@
             <div class="form-group">
               <h3><%= I18n.t("posts.category") %></h3>
               <% if @current_user.categories.any? %>
-                  <% categories = Category.order(:sort).all.collect{ |cat| [cat.name, cat.id] } %>
+                  <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
                   <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
                 <% if @current_post.category.present? %>
                   <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
@@ -126,6 +125,6 @@
   </div>
 </body>
 
-<%= javascript_include_tag 'application.js' %>
+<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
 <%= javascript_include_tag 'showdown.min.js' %>
-<%= javascript_include_tag 'script.js' %>
+<%= javascript_include_tag 'run_showdown.js' %>

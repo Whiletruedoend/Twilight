@@ -1,0 +1,23 @@
+<% telegram = Rails.configuration.credentials[:links][:telegram] %>
+<% if telegram.present? %>
+  <tr>
+    <td><i class="fa fa-telegram -o fa-fw"></i></td>
+    <td><a target="_blank" href=<%="#{telegram}"%>>Telegram</a></td>
+  </tr>
+<% end %>
+
+<% matrix = Rails.configuration.credentials[:links][:matrix] %>
+<% if matrix.present? %>
+  <tr>
+    <td><i class="fa fa-commenting -o fa-fw"></i></td>
+    <td><a target="_blank" href=<%="#{matrix}"%>>Matrix</a> <--- prefer</td>
+  </tr>
+<% end %>
+
+<% jabber = Rails.configuration.credentials[:links][:jabber] %>
+<% if jabber.present? %>
+  <tr>
+    <td><i class="fa fa-commenting-o -o fa-fw"></i></td>
+    <td><a target="_blank" href=<%="#{jabber}"%>>Jabber</a></td>
+  </tr>
+<% end %>

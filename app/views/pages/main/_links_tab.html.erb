@@ -1,0 +1,23 @@
+<% github = Rails.configuration.credentials[:links][:github] %>
+<% if github.present? %>
+  <tr>
+    <td><i class="fa fa-github"></i></td>
+    <td><a target="_blank" href=<%="#{github}"%>>Github</a></td>
+  </tr>
+<% end %>
+
+<% kinopoisk = Rails.configuration.credentials[:links][:kinopoisk] %>
+<% if kinopoisk.present? %>
+  <tr>
+    <td><i class="fa fa-video-camera"></i></td>
+    <td><a target="_blank" href=<%="#{kinopoisk}"%>>Kinopoisk</a></td>
+  </tr>
+<% end %>
+
+<% mal = Rails.configuration.credentials[:links][:mal] %>
+<% if mal.present? %>
+  <tr>
+    <td><i class="fa fa-list"></i></td>
+    <td><a target="_blank" href=<%="#{mal}"%>>My Anime List</a></td>
+  </tr>
+<% end %>

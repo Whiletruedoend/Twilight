@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  web:
+    build: .
+    #command: > 
+    #    /bin/bash -c
+    #    "rm -f /tmp/server.pid
+    #    && bin/rails db:create
+    #    && rails db:migrate
+    #    && bundle exec rake assets:precompile
+    #    && bundle exec rails server -e ${ENV} -b 0.0.0.0 -p ${PORT} -P /tmp/server.pid"
+    ports:
+      - "${PORT}:${PORT}"
+    env_file: .env
+    environment:
+      - RAILS_ENV=${ENV}
+      - PORT=${PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+#      - redis
+    volumes:
+      - .:/home/app
+    tty: true
+    stdin_open: true
+
+#  redis:
+#    image: "redis:7-alpine"
+#    ports:
+#      - 6379
+#    volumes:
+#      - ./tmp/redis_data:/var/lib/redis/data
+
+  db:
+    image: postgres
+    env_file: 
+      - .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - .db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    external: false

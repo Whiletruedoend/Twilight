@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: %i[feed rss show export raw]
+  except_pages =
+    if Rails.configuration.credentials[:need_auth]
+      %i[rss show export raw]
+    else
+      %i[index feed rss show export raw]
+    end
+
+  before_action :authenticate_user!, except: except_pages
 
   def index
     user_post = Post.get_posts(params, current_user)
@@ -52,7 +59,7 @@ class PostsController < ApplicationController
       # We need category owned by user checking?
       elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present?
         if current_post.category_id != posts_params[:post][:category]
-          current_postupdate(category_id: posts_params[:post][:category])
+          current_post.update(category_id: posts_params[:post][:category])
         end
       elsif posts_params[:post][:category_name].empty? && posts_params[:post][:category].blank?
         current_post.update(category_id: nil) unless current_post.category_id.nil?
@@ -70,7 +77,7 @@ class PostsController < ApplicationController
         end
       end
 
-      UpdatePostMessages.call(current_post, params) # TODO: optimize it?
+      UpdatePostMessages.call(current_post, posts_params)
       current_post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to current_post
@@ -112,16 +119,18 @@ class PostsController < ApplicationController
         @tag = Tag.create!(name: tag, enabled_by_default: enabled)
         User.all.each { |usr| ItemTag.create!(item: usr, tag_id: @tag.id, enabled: enabled) }
         Post.all.each { |post| ItemTag.create!(item: post, tag_id: @tag.id, enabled: false) }
-        new_tags.merge!({ "#{@tag.id}": '1' })
+        new_tags[@tag.id] = '1'
       end
     end
 
     @post.save!
     if @post.save
-      tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
+      tags = (posts_params[:tags].present? ? posts_params[:tags].to_unsafe_h : {})
       tags.merge!(new_tags) if new_tags.any?
       tags.each { |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1].to_i) } if tags.any?
-      SendPostToPlatforms.call(@post, params)
+
+      SendPostToPlatforms.call(@post, posts_params)
+
       redirect_to @post
     else
       render :new
@@ -218,17 +227,7 @@ class PostsController < ApplicationController
   def destroy
     authorize! current_post, to: :update?
 
-    if current_post.user == current_user
-      DeletePostMessages.call(current_post)
-      ItemTag.where(item: current_post).delete_all
-      PlatformPost.where(post: current_post).delete_all
-      comment_ids = Comment.where(post: current_post).ids
-      ActiveStorage::Attachment.where(record_type: 'Comment', record: comment_ids).delete_all
-      Comment.where(post: current_post).delete_all
-      current_post.content_attachments&.delete_all
-      Content.where(post: current_post).delete_all
-      current_post.delete
-    end
+    current_post.destroy if current_post.user == current_user # other admin can't delete posts, lol
     redirect_to posts_path
   end
 

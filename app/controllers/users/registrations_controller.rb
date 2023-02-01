@@ -11,10 +11,18 @@ module Users
     # super
     # end
 
+    def after_sign_in_path_for(_resource)
+      edit_user_path
+    end
+
+    def after_sign_up_path_for(_resource)
+      edit_user_path
+    end
+
     # POST /resource
     def create
-      return redirect_to(sign_up_url, alert: ['Invalid captcha!']) unless valid_captcha?(users_params[:user][:captcha])
-      return redirect_to(sign_up_url, alert: ['Invalid invite code!']) unless validate_code(users_params[:user][:code])
+      return redirect_to(sign_up_url, alert: 'Invalid captcha!') unless valid_captcha?(users_params[:user][:captcha])
+      return redirect_to(sign_up_url, alert: 'Invalid invite code!') unless validate_code(users_params[:user][:code])
 
       super
 
@@ -88,22 +96,6 @@ module Users
       redirect_to edit_user_path
     end
 
-    # DELETE /resource
-    def destroy
-      posts = Post.where(user: current_user)
-      ItemTag.where(item: posts).delete_all
-      ItemTag.where(item: current_user).delete_all
-      Channel.where(user: current_user).delete_all
-      PlatformPost.where(post: posts).delete_all
-      posts.each { |post| post.content_attachments&.delete_all }
-      Comment.where(post: posts).delete_all
-      posts.delete_all
-      Content.where(post: posts).delete_all
-      Content.where(user: current_user).delete_all
-      Category.where(user: current_user).delete_all
-      super
-    end
-
     # GET /resource/cancel
     # Forces the session data which is usually expired after sign
     # in to be expired now. This is useful if the user wants to
@@ -114,7 +106,7 @@ module Users
     # end
 
     protected
-
+    
     def users_params
       params.permit(:_method,
                     :id,
@@ -136,11 +128,6 @@ module Users
     # If you have extra params to permit, append them to the sanitizer.
     # def configure_account_update_params
     #  devise_parameter_sanitizer.permit(:account_update, keys: [:captcha])
-    # end
-
-    # The path used after sign up.
-    # def after_sign_up_path_for(resource)
-    #   super(resource)
     # end
 
     # The path used after sign up for inactive accounts.

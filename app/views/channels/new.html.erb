@@ -4,21 +4,7 @@
     <h2><%= I18n.t("channels.new_channel") %></h2>
     <div class="form-row">
       <%= form_with(model: @current_channel) do |f| %>
-
-        <% if flash.any? %>
-          <div class="alert alert-danger" id="error_explanation">
-            <h2><%= I18n.t("errors.messages.not_saved") %></h2>
-            <% flash.each do |type, message| %>
-              <% message.each do |msg| %>
-                <% msg.each do |m| %>
-                  <ul>
-                    <li><%= m %></li>
-                  </ul>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-        <% end %>
+      <%= render 'shared/custom_errors', flash: flash %>
 
         <h3><%= I18n.t("channels.main") %></h3>
         <div class="form-group">
@@ -78,13 +64,9 @@
 </body>
 
 <%= javascript_include_tag 'application.js' %>
+<%= javascript_include_tag 'notifications.js', "data-turbo-track": "reload" %>
 
 <script>
-    var alert = document.getElementsByClassName('need2hide');
-    for (var i = 0; i < alert.length; i ++) {
-        alert[i].style.display = 'none';
-    }
-
     $('select#channel_platform').bind('change', function() {
         $('.platform-field').hide();
         $('.platform-field input').attr('disabled', true);

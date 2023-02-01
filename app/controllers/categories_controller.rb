@@ -10,7 +10,7 @@ class CategoriesController < ApplicationController
   def update
     return redirect_to sign_in_path if current_user.nil?
 
-    if params[:commit] == 'Update'
+    if params[:commit] == I18n.t('tags.update')
       @category = Category.find(params[:category][:id].to_i)
 
       @category.name = params[:category][:name] if params[:category][:name].present?

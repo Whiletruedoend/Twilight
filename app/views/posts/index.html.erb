@@ -2,15 +2,8 @@
   <div class="posts-container">
 
   <section>
-
-    <div class="block-header">
-      <%= link_to "#{I18n.t("posts.profile")} |", edit_user_path %>
-      <%= link_to I18n.t("posts.main_page"), root_path%>
-      <%= link_to "| #{I18n.t("posts.add_post")}", posts_new_path if current_user&.is_admin?%>
-      <%= link_to "| #{I18n.t("posts.import")}", import_post_path if current_user&.is_admin?%>
-      <%= link_to "| #{I18n.t("posts.reset_filters")}", posts_path if params.has_key?(:tags) || params.has_key?(:user) || params.has_key?(:search) || params.has_key?(:category)%>
-        <input type="text" class="search" placeholder="Search..." />
-    </div><br>
+      <%= render partial: "posts/links_header", locals: { post: nil } %>
+    <br>
 
     <% if params[:search].present? && (@posts.count == 0) %>
       <article>
@@ -19,46 +12,9 @@
       </article>
     <% end %>
 
-    <% enable_categories = Rails.configuration.credentials[:enable_categories] %>
     <% @posts.each do |post| %>
     <article>
-      <header>
-        <h1>
-          <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
-          <% if enable_categories %>
-            <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
-              <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
-              <%= render "privacy-icons", object: post %>
-              <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-                <a><i class="fa fa-file right-small"></i></a>
-              <% end %>
-            </div>
-          <% else %>
-            <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
-            <%= render "privacy-icons", object: post %>
-            <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-              <a><i class="fa fa-file right-small"></i></a>
-            <% end %>
-          <% end %>
-          <h1 class="dashed-line"></h1>
-        </h1>
-        <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
-        <p class="metadata">
-          <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.id%>"><%= display_name(post.user) %></a>
-          <% if allowed_to?(:update?, post) %>
-            | <a href="/posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
-            | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
-          <% end %>
-          </i>
-        </p>
-        <p class="metadata">
-          <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.id%>"><%= I18n.t("posts.raw") %></a>
-            <% if allowed_to?(:export?, post) %>
-              | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
-            <% end %>
-          </i>
-        </p>
-      </header>
+       <%= render partial: "posts/post_header", locals: { post: post } %>
       <%= display_attachments(post) if post.content_attachments.present? %>
       <div class="posts-content"><% if post.text.length > 512 %>
           <%= markdown(truncate(post.text, length: 512)) %>
@@ -75,10 +31,5 @@
   </div>
 </body>
 
-<%= javascript_include_tag 'application.js' %>
-
-<script>
-    $(document).on("change", ".search", function () {
-        window.location.href = "/posts?search="+$(".search").val();
-    });
-</script>
+<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
+<%= javascript_include_tag 'search.js', "data-turbo-track": "reload" %>

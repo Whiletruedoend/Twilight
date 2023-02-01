@@ -30,81 +30,21 @@ module PostsHelper
     "#{host_link}#{url_for(att)}"
   end
 
-  def table_link_columns
-    content = ''
-
-    github = Rails.configuration.credentials[:links][:github]
-    if github.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-github\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{github}\">Github</a></td>
-                  </tr>"
-    end
-
-    kinopoisk = Rails.configuration.credentials[:links][:kinopoisk]
-    if kinopoisk.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-video-camera\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{kinopoisk}\">Kinopoisk</a></td>
-                  </tr>"
-    end
-
-    mal = Rails.configuration.credentials[:links][:mal]
-    if mal.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-list\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{mal}\">My Anime List</a></td>
-                  </tr>".html_safe
-    end
-
-    content.html_safe
-  end
-
-  def table_contacts_columns
-    content = ''
-
-    telegram = Rails.configuration.credentials[:links][:telegram]
-    if telegram.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-telegram -o fa-fw\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{telegram}\">Telegram</a></td>
-                  </tr>"
-    end
-
-    matrix = Rails.configuration.credentials[:links][:matrix]
-    if matrix.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-commenting -o fa-fw\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{matrix}\">Matrix</a> <--- prefer</td>
-                  </tr>"
-    end
-
-    jabber = Rails.configuration.credentials[:links][:jabber]
-    if jabber.present?
-      content += "<tr>
-                    <td><i class=\"fa fa-commenting-o -o fa-fw\"></i></td>
-                    <td><a target=\"_blank\" href=\"#{jabber}\">Jabber</a></td>
-                  </tr>"
-    end
-
-    content.html_safe
-  end
-
   def display_attachments(post)
     content = ''
     attachments_count = post.content_attachments&.count || 0
     size =
       case attachments_count
       when 1
-        300
+        :thumb300
       when 2
-        250
+        :thumb250
       when 3
-        200
+        :thumb200
       when 4, 5
-        150
+        :thumb150
       else
-        100
+        :thumb100
       end
 
     documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
@@ -118,13 +58,12 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += image_tag url_for(att.variant(resize_to_limit: [size, size])), id: 'zoom-bg'.to_s
+        content += link_to image_tag(url_for(att.variant(size).processed)), url_for(att), target: '_blank'.to_s
       elsif att.video?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{image_tag url_for(att.preview(resize_to_limit: [size, size]).processed), id: 'zoom-bg'}</a>"
+        content += video_tag(url_for(att), controls: true, preload: 'none',
+                                           poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
       elsif att.audio?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+        content += link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: '_blank'.to_s
       end
     end
     content.html_safe
@@ -165,14 +104,12 @@ module PostsHelper
     comment.attachments.each do |att|
       content +=
         if att.image?
-          "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.variant(resize_to_limit: [100, 100]))}</a>"
+          link_to image_tag(url_for(att.variant(:thumb100))), url_for(att), target: '_blank'.to_s
         elsif att.video?
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{image_tag url_for(att.preview(resize_to_limit: [100, 100]).processed)}</a>"
+          #{image_tag url_for(att.preview(:thumb100).processed)}</a>"
         elsif att.audio?
-          "<a target=\"_blank\" href=\"#{url_for(att)}\">
-          #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+          link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: '_blank'.to_s
         else
           "<a target=\"_blank\" href=\"#{url_for(att)}\">
           #{image_tag('/assets/file.png', height: 100, width: 100)}</a>"

@@ -8,7 +8,9 @@
 <article id="<%=post.id%>" class="feed">
   <div class="user">
     <div class="user-avatar feed-icon">
-      <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar)%> lazy="loaded">
+      <%if post.user.avatar.present?%>
+        <img alt="img" onerror="this.style.display = 'none'" lazy-progressive="true" src=<%=url_for(post.user.avatar)%> lazy="loaded">
+      <%end%>
     </div>
     <div class="name"><a href="?user=<%=post.user.id%>"><%=display_name(post.user)%></a></div>
     <div class="createdAt"><a href="?id=<%=post.id%>"><%=post.created_at.strftime("%H:%M:%S")%></a></div>

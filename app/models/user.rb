@@ -5,14 +5,14 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :rememberable, :validatable, authentication_keys: [:login]
 
-  has_many :posts
-  has_many :contents
-  has_many :channels
-  has_many :comments
-  has_many :invite_codes
-  has_many :categories
+  has_many :posts, dependent: :destroy
+  has_many :contents, dependent: :destroy
+  has_many :channels, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :invite_codes, dependent: :delete_all
+  has_many :categories, dependent: :delete_all
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
-                                 dependent: :delete_all
+                                 dependent: :delete_all # Not working deletion with SQLite!
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
   has_one_attached :avatar
@@ -29,6 +29,9 @@ class User < ApplicationRecord
        (rss_posts_count.to_i > max_rss_posts_count || rss_posts_count.to_i <= 0)
       u.errors.add(:base,
                    'Bad RSS displayed posts count value!')
+    end
+    if name.present? && User.where(name: name).present?
+      u.errors.add(:base, 'User with this display name already exists!')
     end
 
     user_theme = u.options['theme']
@@ -66,7 +69,7 @@ class User < ApplicationRecord
   # 'Disable' current password validation
 
   def update_with_password(params = {})
-    if params[:password].blank?
+    if params.present? && params[:password].blank?
       params.delete(:encrypted_password)
       update_without_password(params)
     else
@@ -104,5 +107,11 @@ class User < ApplicationRecord
 
     clean_up_passwords
     result
+  end
+
+  def destroy
+    avatar.purge
+    ItemTag.where(item: self).delete_all
+    super
   end
 end

@@ -56,8 +56,14 @@ class SendPostToPlatforms
 
     channels = merged.sort_by { |k, _v| k }.reverse.to_h # { "telegram"=>[1, 2], "matrix"=>3 }
 
-    channels.each do |k, v|
-      check_platforms(k, v)
+    # Только так, иначе всё сломается!
+    Thread.new do
+      execution_context = Rails.application.executor.run!
+      channels.each do |k, v|
+        check_platforms(k, v)
+      ensure
+        execution_context&.complete!
+      end
     end
   end
 

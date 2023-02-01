@@ -1,0 +1,8 @@
+.git/
+.idea/
+.tmp/
+*.Dockerfile
+README.md
+README-RU.md
+Twilight.drawio
+update_log.md

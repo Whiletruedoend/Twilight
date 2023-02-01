@@ -84,7 +84,8 @@ $color-black: #000000;
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
-        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link){
+        $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link,
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -310,10 +311,14 @@ $color-black: #000000;
     opacity: 85%;
   }
 
-  .block-header{
+  .links-header{
     text-align: center;
     line-height: 1.5;
-    margin-left: 4%;
+  }
+
+  .links-header-posts{
+    margin-left: 10%;
+    
     input{
       line-height: 1.0;
       float: right;
@@ -362,6 +367,14 @@ $color-black: #000000;
       }
     }
 
+    article header h1{
+      margin-bottom: 0;
+    }
+
+    article img{
+      padding-right: 10px;
+    }
+
     .right-small{
       float: right;
       font-size: 65%;
@@ -369,10 +382,6 @@ $color-black: #000000;
 
     .comments{
       margin-left: 1%;
-    }
-
-    article header h1{
-        margin-bottom: 0;
     }
 
     .tags{
@@ -456,7 +465,7 @@ $color-black: #000000;
 
     div {
       float: right;
-      width: 10em;
+      /* width: 10em;*/
       max-width: 100%;
       text-align: center;
     }
@@ -486,11 +495,24 @@ $color-black: #000000;
   }
 
   .alert{
-    padding: 0px 10px 5px 10px;
+    padding: 10px;
+  }
+
+  .alert-success{
+    margin: 1% 20% auto 20%;
+    background: $color-alert-success;
+    color: $color-alert-success-text;
   }
 
   .alert-danger{
-    margin: 2% 20% auto 20%;
+    margin: 1% 20% auto 20%;
+    background: $color-alert-danger;
+    color: $color-alert-danger-text;
+  }
+
+  .alert-center{
+    text-align: center;
+    font-size: 18px;
   }
 
   .dashed-line {
@@ -528,6 +550,7 @@ $color-black: #000000;
   .medium-zoom-image{
     cursor: zoom-in;
     transition: transform .3s cubic-bezier(.2,0,.2,1) !important;
+    padding-right: 5px;
   }
 
   /* WTF */
@@ -897,6 +920,11 @@ $color-black: #000000;
         cursor:not-allowed;
         background:none!important
       }
+
+      .list-exit{
+        position: fixed;
+        bottom: 0;
+      }
       
       .list-item{
         height: 56px;
@@ -974,7 +1002,8 @@ $color-black: #000000;
   .right-bar {
     overflow-y: scroll;
     background: $color-feed-bg2;
-    width: 50%;
+    width: 51%;
+    padding-right: 10px;
 
     code{
       color: $color-feed-link;
@@ -1046,6 +1075,7 @@ $color-black: #000000;
 
     .readmore{
       padding-top: 15px;
+      padding-bottom: 15px;
       color: $color-feed-link;
       background-color: $color-feed-bg;
     }
@@ -1076,11 +1106,11 @@ $color-black: #000000;
     p{
       margin: revert;
     }
-    
+
     .media-list{
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-
+  
       img{
         width: 100%;
         object-fit: cover;

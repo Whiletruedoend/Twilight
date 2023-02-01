@@ -4,7 +4,7 @@ EasyCaptcha.setup do |config|
   # Cache
   config.cache          = true
   # Cache temp dir from Rails.root
-  config.cache_temp_dir = "#{Rails.root}tmpcaptchas"
+  config.cache_temp_dir = "#{Rails.root}/tmp/captchas"
   # Cache size
   config.cache_size     = 500
   # Cache expire

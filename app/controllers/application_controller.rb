@@ -1,21 +1,18 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+
+  before_action :set_locale
   before_action :configure_permitted_parameters, if: :devise_controller?
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
 
-  protect_from_forgery with: :exception
+  add_flash_types :custom_error # hide 'alert' on main layout with custom error forms
 
   rescue_from ActiveRecord::RecordNotFound, with: ->(exception) { render_error(404, exception) }
   rescue_from ActionController::RoutingError, with: ->(exception) { render_error(404, exception) }
   rescue_from ActionPolicy::Unauthorized, with: ->(exception) { render_error(404, exception) }
-
-  # around_action :switch_locale
-  # def switch_locale(&action)
-  #  locale = params[:locale] || I18n.default_locale
-  #  I18n.with_locale(locale, &action)
-  # end
 
   protected
 
@@ -43,5 +40,16 @@ class ApplicationController < ActionController::Base
   def render_error(status, exception = nil)
     Rollbar.error(exception) if Rollbar.configuration.enabled
     render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found if status == 404
+  end
+
+  private
+
+  def set_locale
+    I18n.locale = extract_locale || I18n.default_locale
+  end
+
+  def extract_locale
+    parsed_locale = current_user&.options&.dig('locale')
+    I18n.available_locales.map(&:to_s).include?(parsed_locale) ? parsed_locale : nil
   end
 end
