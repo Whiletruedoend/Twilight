@@ -20,6 +20,8 @@ jobs:
     # listed at https://github.com/ruby/setup-ruby#using-self-hosted-runners
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.7
 
     - name: Rubocop run
       run: |
