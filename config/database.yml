@@ -13,12 +13,12 @@ development:
   database: <%= ENV['POSTGRES_DB'] { twilight_development } %>
   # database: db/development.sqlite3 # For sqlite3
 
-test:
-  <<: *default
-  database: <%= ENV['POSTGRES_DB'] { twilight_test } %>
-  # database: db/test.sqlite3 # For sqlite3
-
 production:
   <<: *default
   database: <%= ENV['POSTGRES_DB'] { twilight_production } %>
   # database: db/production.sqlite3 # For sqlite3
+
+test:
+  adapter: sqlite3
+  encoding: unicode
+  database: db/twilight_test.sqtile3

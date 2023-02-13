@@ -67,6 +67,7 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
     ```
   * Install yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
+  * (Optional) Install [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads);
   * Install project: 
   
     ```ssh

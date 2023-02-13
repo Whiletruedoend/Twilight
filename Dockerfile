@@ -34,8 +34,7 @@ COPY package.json yarn.lock ./
 
 # NodeJS & yarn install
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-RUN . ~/.nvm/nvm.sh && nvm install node 19.5.0 && \ 
-    nvm use 19.5.0 && nvm alias default 19.5.0 && \
+RUN . ~/.nvm/nvm.sh && nvm install node && \ 
     yarn install --frozen-lockfile
 
 # We're back at the base stage

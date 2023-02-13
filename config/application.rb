@@ -1,7 +1,6 @@
-# frozen_string_literal: true
+require_relative "boot"
 
-require_relative 'boot'
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -10,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Twilight
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     config.i18n.available_locales = %i[en ru]
     config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
@@ -42,10 +41,6 @@ module Twilight
       THEMES = Dir.glob("#{Rails.root}/app/assets/stylesheets/*_theme.scss").map { |s| File.basename(s, '.*') }
       CURRENT_TG_BOTS = {}
     end
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
+    # config.eager_load_paths << Rails.root.join("extras")
   end
 end

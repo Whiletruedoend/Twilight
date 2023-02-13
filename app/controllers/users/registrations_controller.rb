@@ -106,7 +106,7 @@ module Users
     # end
 
     protected
-    
+
     def users_params
       params.permit(:_method,
                     :id,

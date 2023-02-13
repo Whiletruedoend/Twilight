@@ -67,6 +67,7 @@ P.S. Список последних изменений можно посмот�
     ```
   * Установить yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
+  * (Не обязательно) Установить [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads);
   * Загрузить проект: 
   
     ```ssh

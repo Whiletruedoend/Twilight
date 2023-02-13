@@ -4,12 +4,18 @@ class Content < ApplicationRecord
   # validates :text, presence: true
   belongs_to :user
   belongs_to :post
-  
+
   # TODO: Если было изменено содержимое контента, то оно не всегда почему-то хочет отображать изменения.
-  after_create_commit { broadcast_update_to [self.post], partial: "posts/post", locals: { post: self.post }, target: "post_#{self.post.id}" }
-  after_update_commit { broadcast_update_to [self.post], partial: "posts/post", locals: { post: self.post }, target: "post_#{self.post.id}" }
-  after_destroy_commit { broadcast_update_to [self.post], partial: "posts/post", locals: { post: self.post }, target: "post_#{self.post.id}" }
-  
+  after_create_commit do
+    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
+  end
+  after_update_commit do
+    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
+  end
+  after_destroy_commit do
+    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
+  end
+
   has_many_attached :attachments do |attachable|
     attachable.variant :thumb100, resize_to_limit: [100, 100]
     attachable.variant :thumb150, resize_to_limit: [150, 150]

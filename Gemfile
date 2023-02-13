@@ -7,7 +7,7 @@ ruby '2.7.7'
 
 gem 'activerecord', '>= 6.1.7.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 6.1.4'
+gem 'rails', '~> 7.0.4.2'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '>= 1.4'
 # Use Puma as the app server
@@ -67,6 +67,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
+gem 'net-http'
 gem 'colorize'
 
 # rubocop
@@ -109,3 +110,5 @@ gem 'jquery-ui-rails'
 gem 'rails_sortable'
 gem 'therubyracer', platforms: :ruby
 gem 'will_paginate', '~> 3.3.1'
+
+gem 'dotenv-rails'

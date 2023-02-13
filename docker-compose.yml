@@ -14,7 +14,7 @@ services:
       - "${PORT}:${PORT}"
     env_file: .env
     environment:
-      - RAILS_ENV=${ENV}
+      - RAILS_ENV=${RAILS_ENV}
       - PORT=${PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
