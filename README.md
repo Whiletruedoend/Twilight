@@ -67,6 +67,7 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
     ```
   * Install yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
+  * Install imagemagick [Windows](https://imagemagick.org/script/download.php#windows) | [Linux](https://imagemagick.org/script/download.php#linux)
   * (Optional) Install [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads);
   * Install project: 
   
@@ -97,14 +98,6 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   * After a successful build, run:
   ```
     docker-compose up web
-  ```
-  * (If you want use postgres in docker, use):
-  ```
-    docker-compose up db
-  ```
-  (You can find out the IP of the runned postgres with the command:)
-  ```
-    docker inspect twilight-db-1 | grep IPAddress
   ```
   * (If you need make migrations, use):
   ```

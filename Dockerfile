@@ -15,6 +15,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
 RUN apt-get update; apt-get install -y --no-install-recommends \
+    libpng-dev libjpeg-dev libtiff-dev \
     tzdata libv8-dev imagemagick libmagickwand-dev \
     libpq-dev libffi-dev \
     postgresql-client sqlite3 \
@@ -62,7 +63,7 @@ COPY --chown=app --from=dependencies /node_modules/ node_modules/
 COPY --chown=app . ./
 
 # Install assets
-#RUN RAILS_ENV=production bundle exec rake assets:precompile
+# RUN cd /home/app && bundle exec rake webpacker:compile && bundle exec rake assets:precompile
 
 # Listen port
 EXPOSE ${PORT}

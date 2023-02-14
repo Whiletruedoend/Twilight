@@ -67,6 +67,7 @@ P.S. Список последних изменений можно посмот�
     ```
   * Установить yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
+  * Установить imagemagick [Windows](https://imagemagick.org/script/download.php#windows) | [Linux](https://imagemagick.org/script/download.php#linux)
   * (Не обязательно) Установить [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads);
   * Загрузить проект: 
   
@@ -97,10 +98,6 @@ P.S. Список последних изменений можно посмот�
   * После успешной сборки образа, выполнить:
   ```
     docker-compose up web
-  ```
-  * (Если требуется использовать postgres из docker'a, выполнить):
-  ```
-    docker-compose up db
   ```
   * (Если нужно выполнить миграции, то):
   ```

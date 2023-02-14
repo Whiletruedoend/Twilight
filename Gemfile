@@ -67,8 +67,8 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem 'net-http'
 gem 'colorize'
+gem 'net-http'
 
 # rubocop
 gem 'code-scanning-rubocop'
@@ -112,3 +112,4 @@ gem 'therubyracer', platforms: :ruby
 gem 'will_paginate', '~> 3.3.1'
 
 gem 'dotenv-rails'
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?

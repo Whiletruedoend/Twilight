@@ -1,6 +1,24 @@
 version: '3.4'
 
 services:
+#  redis:
+#    image: "redis:7-alpine"
+#    ports:
+#      - 6379
+#    volumes:
+#      - ./tmp/redis_data:/var/lib/redis/data
+
+  db:
+    image: postgres
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    expose:
+      - ${POSTGRES_PORT}
+    env_file: 
+      - .env
+    volumes:
+      - .db-data:/var/lib/postgresql/pgdata
+
   web:
     build: .
     #command: > 
@@ -24,26 +42,12 @@ services:
     depends_on:
       - db
 #      - redis
+    links:
+      - db:db
     volumes:
       - .:/home/app
     tty: true
     stdin_open: true
-
-#  redis:
-#    image: "redis:7-alpine"
-#    ports:
-#      - 6379
-#    volumes:
-#      - ./tmp/redis_data:/var/lib/redis/data
-
-  db:
-    image: postgres
-    env_file: 
-      - .env
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-    volumes:
-      - .db-data:/var/lib/postgresql/data
 
 volumes:
   db-data:
