@@ -93,19 +93,19 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   * Configure config/credentials.yml
   * Run:
   ```
-    docker-compose build web
+    docker build -t twilight .
   ```
   * After a successful build, run:
   ```
-    docker-compose up web
+    docker-compose up twilight
   ```
   * (If you need make migrations, use):
   ```
-    docker-compose run --rm web bin/rails db:migrate
+    docker-compose run --rm twilight bin/rails db:migrate
   ```
   * To make yourself an admin and configure (credentials.yml and database.yml) server, you need to enter the container with the command:
   ```
-    docker exec -it twilight-web-1 /bin/bash 
+    docker exec -it twilight /bin/bash 
   ```
 
 The site will now be available at: `http://localhost:3080`

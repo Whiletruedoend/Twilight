@@ -93,19 +93,19 @@ P.S. Список последних изменений можно посмот�
   * Настроить config/credentials.yml
   * Выполнить команду:
   ```
-    docker-compose build web
+    docker build -t twilight .
   ```
   * После успешной сборки образа, выполнить:
   ```
-    docker-compose up web
+    docker-compose up twilight
   ```
   * (Если нужно выполнить миграции, то):
   ```
-    docker-compose run --rm web bin/rails db:migrate
+    docker-compose run --rm twilight bin/rails db:migrate
   ```
   * Чтобы сделать себя админом и в контейнере изменять credentials.yml и database.yml, нужно войти в контейнер командой:
   ```
-    docker exec -it twilight-web-1 /bin/bash 
+    docker exec -it twilight /bin/bash
   ```
 
 Теперь сайт будет доступен по адресу: `http://localhost:3080`

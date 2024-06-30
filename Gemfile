@@ -7,11 +7,11 @@ ruby '2.7.7'
 
 gem 'activerecord', '>= 6.1.7.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.4.2'
+gem 'rails', '~> 7.0.8.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '>= 1.4'
 # Use Puma as the app server
-gem 'puma', '>= 5.6.4'
+gem 'puma', '>= 6.4.2'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacke
@@ -82,7 +82,6 @@ gem 'addressable', '>= 2.8.0'
 gem 'betterlorem'
 gem 'devise'
 gem 'dry-initializer-rails'
-gem 'easy_captcha', github: 'kopylovvlad/easy_captcha'
 gem 'enumerize'
 gem 'grape'
 gem 'image_processing', '>= 1.12.2'
@@ -92,12 +91,14 @@ gem 'open-uri'
 gem 'pg'
 gem 'redcarpet'
 gem 'reverse_markdown'
-gem 'rmagick', '~> 4.1.1'
+gem 'rmagick'
+gem 'easy_captcha', path: 'vendor/gems/easy_captcha'
 gem 'rollbar'
 gem 'rubyzip'
 gem 'simple_command'
 gem 'socksify', require: false # TCP through a SOCKS5 proxy
 gem 'telegram-bot'
+gem 'rake', '~> 13.2.1'
 
 gem 'sidekiq'
 
