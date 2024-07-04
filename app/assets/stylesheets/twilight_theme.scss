@@ -43,20 +43,31 @@ $color-checkbox-unchecked-bg: #631119;
 $color-checkbox-text-unchecked: #df4655;
 $color-checkbox-focus: #1b1b1c;
 
-$color-feed-bg: #ffffff;
-$color-feed-bg2: #eeeeee;
-$color-feed-font: #000000;
-$color-feed-icon: #9cccfd; /* #e0e0e0; */
-$color-feed-time: #bbb;
-$color-feed-date: #66b1ff;
+$color-feed-bg: #0d1117;
+$color-feed-bg2: #161b22;
+$color-feed-font: #f0f0f0;
+$color-feed-icon: #3E5A68; /* #e0e0e0; */
+$color-feed-time: #f0f0f0;
+$color-feed-date: #4683c8;
 
-$color-feed-link: #337ab7;
+$color-feed-link: #b3b3b3;
 
-$color-feed-menu-active: #409eff;
+$color-feed-menu-active: #2e6aaf;
 
-$color-feed-tags-list: #ecf5ff;
-$color-feed-tags-list-item: #909399;
-$color-feed-tags-border: #e6e6e6;
+$color-feed-tags-list: #1d2021;
+$color-feed-tags-list-item: #bdae93;
+$color-feed-tags-border: #454646;
+
+$color-feed-filters-search-bg: #3E5A68;
+$color-feed-filters-search-border: #3E5A68;
+$color-feed-filters-search-font: #f0f0f0;
+$color-feed-filters-icon: #b3b3b3;
+$color-feed-filters-bg: #0d1117;
+$color-feed-filters-bg2: #1b1b1c;
+$color-feed-filters-font: #f0f0f0;
+$color-feed-filters-border: #b3b3b3;
+$color-feed-filters-badge-font: #f0f0f0;
+$color-feed-badge-bg: #bdae93;
 
 $color-alert-danger: #13171d;
 $color-alert-danger-text: #df4655;
@@ -90,5 +101,8 @@ $color-black: #000000;
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border, $color-feed-link,
-        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
+        $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
+        $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
+        $color-feed-filters-badge-font, $color-feed-badge-bg
 );

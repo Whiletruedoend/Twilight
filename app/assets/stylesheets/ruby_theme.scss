@@ -1,9 +1,9 @@
 @import "base";
 
-$bg: #f2f2f4;
+$bg: #eeeeee;
 
 $color-link-light: #bd6d76;
-$color-link: #df4655;
+$color-link: #d72134;
 $color-link-dark: #631119;
 
 $color-avatar-bg: #bd6d76;
@@ -11,17 +11,17 @@ $color-avatar-border: #1b1b1c;
 
 $color-privacy-registered-p: #1375b2;
 $color-privacy-registered: #5cb85c;
-$color-privacy-me-p: #df4655;
+$color-privacy-me-p: #d72134;
 $color-privacy-me: #5659e0;
 
 $color-wrapper: #515151;
 
 $color-border: #555555;
-$color-nav-focus-bg: #fafbfc;
+$color-nav-focus-bg: #d3d3d3;
 $color-gray: #2E2F30;
 $color-form-textarea-bg: #f6f8fa;
 
-$color-container-bg: #f1f8ff;
+$color-container-bg: #d3d3d3;
 
 $color-scrollbar-light: #bbc1c7;
 $color-scrollbar-dark: #93989e;
@@ -30,17 +30,17 @@ $color-darkpurple: #31303b;
 $color-button-bg: #306593;
 $color-button-text: #f0f0f0;
 
-$color-checkbox-bg: #fafbfc;
+$color-checkbox-bg: #dfdfdf;
 $color-checkbox-border: #000000;
-$color-checkbox-checked-bg: #fafbfc;
+$color-checkbox-checked-bg: #dfdfdf;
 $color-checkbox-checked-border: #000000;
 
 $color-checkbox-channels-bg: #5cb85c;
 
-$color-checkbox-text-checked: #6af68a;
+$color-checkbox-text-checked: #5cb85c;
 $color-checkbox-process_checking: #a1bfa1;
-$color-checkbox-unchecked-bg: #df4655;
-$color-checkbox-text-unchecked: #df4655;
+$color-checkbox-unchecked-bg: #d72134;
+$color-checkbox-text-unchecked: #d72134;
 $color-checkbox-focus: #1b1b1c;
 
 $color-feed-bg: #ffffff;
@@ -57,6 +57,17 @@ $color-feed-menu-active: #409eff;
 $color-feed-tags-list: #ecf5ff;
 $color-feed-tags-list-item: #909399;
 $color-feed-tags-border: #e6e6e6;
+
+$color-feed-filters-search-bg: #66b1ff;
+$color-feed-filters-search-border: #66b1ff;
+$color-feed-filters-search-font: #fff;
+$color-feed-filters-icon: #555555;
+$color-feed-filters-bg: #fff;
+$color-feed-filters-bg2: #eeeeee;
+$color-feed-filters-font: #555555;
+$color-feed-filters-border: #ccc;
+$color-feed-filters-badge-font: #fff;
+$color-feed-badge-bg: #777777;
 
 $color-alert-danger: #f2dede;
 $color-alert-danger-text: #a94442;
@@ -90,5 +101,8 @@ $color-black: #000000;
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border, $color-feed-link,
-        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
+        $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
+        $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
+        $color-feed-filters-badge-font, $color-feed-badge-bg
 );

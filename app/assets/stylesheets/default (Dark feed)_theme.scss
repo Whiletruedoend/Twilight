@@ -1,92 +1,92 @@
 @import "base";
 
-$bg: #282828;
+$bg: #181a1b;
 
-$color-link-light: #e07d2b;
-$color-link: #fe8019;
-$color-link-dark: #d65d0e;
+$color-link-light: #22c6c6;
+$color-link: #10A0A0;
+$color-link-dark: #0c6a6a;
 
-$color-avatar-bg: #689d6a;
-$color-avatar-border: #83a598;
+$color-avatar-bg: #3E5A68;
+$color-avatar-border: #FBFBFB;
 
-$color-privacy-registered-p: #458588;
-$color-privacy-registered: #689d6a;
-$color-privacy-me-p: #fb4934;
-$color-privacy-me: #b16286;
+$color-privacy-registered-p: #1375b2;
+$color-privacy-registered: #5cb85c;
+$color-privacy-me-p: #df4655;
+$color-privacy-me: #4e518b;
 
 $color-wrapper: #515151;
 
 $color-border: #555555;
-$color-nav-focus-bg: #32302f;
+$color-nav-focus-bg: #3939398c;
 $color-gray: #2E2F30;
-$color-form-textarea-bg: #504945;
+$color-form-textarea-bg: #222426;
 
-$color-container-bg: #3c3836;
+$color-container-bg: #121414;
 
-$color-scrollbar-light: #3c3836;
-$color-scrollbar-dark: #282828;
+$color-scrollbar-light: #454a4d;
+$color-scrollbar-dark: #202324;
 
 $color-darkpurple: #31303b;
-$color-button-bg: #458588;
-$color-button-text: #fbf1c7;
+$color-button-bg: #306593;
+$color-button-text: #ffffff;
 
-$color-checkbox-bg: #21262d;
+$color-checkbox-bg: #1f2123;
 $color-checkbox-border: #454646;
 $color-checkbox-checked-bg: #1d2021;
-$color-checkbox-checked-border: #928374;
+$color-checkbox-checked-border: #bdae93;
 
-$color-checkbox-channels-bg: #98971a;
+$color-checkbox-channels-bg: #5cb85c;
 
-$color-checkbox-text-checked: #b8bb26;
+$color-checkbox-text-checked: #6af68a;
 $color-checkbox-process_checking: #a1bfa1;
-$color-checkbox-unchecked-bg: #cc241d;
-$color-checkbox-text-unchecked: #fb4934;
-$color-checkbox-focus: #1d2021;
+$color-checkbox-unchecked-bg: #631119;
+$color-checkbox-text-unchecked: #df4655;
+$color-checkbox-focus: #1b1b1c;
 
-$color-feed-bg: #282828;
-$color-feed-bg2: #504945;
-$color-feed-font: #ebdbb2;
-$color-feed-icon: #689d6a; /* #e0e0e0; */
-$color-feed-time: #fbf1c7;
-$color-feed-date: #fbf1c7;
+$color-feed-bg: #181a1b;
+$color-feed-bg2: #222426;
+$color-feed-font: #f0f0f0;
+$color-feed-icon: #3E5A68; /* #e0e0e0; */
+$color-feed-time: #909399;
+$color-feed-date: #e6e6e6;
 
-$color-feed-link: #a89984;
+$color-feed-link: #b3b3b3;
 
-$color-feed-menu-active: #d65d0e;
+$color-feed-menu-active: #0c6a6a;
 
 $color-feed-tags-list: #1d2021;
-$color-feed-tags-list-item: #928374;
+$color-feed-tags-list-item: #b3b3b3;
 $color-feed-tags-border: #454646;
 
-$color-feed-filters-search-bg: #689d6a;
-$color-feed-filters-search-border: #689d6a;
-$color-feed-filters-search-font: #fbf1c7;
-$color-feed-filters-icon: #fbf1c7;
-$color-feed-filters-bg: #282828;
+$color-feed-filters-search-bg: #3E5A68;
+$color-feed-filters-search-border: #3E5A68;
+$color-feed-filters-search-font: #f0f0f0;
+$color-feed-filters-icon: #f0f0f0;
+$color-feed-filters-bg: #181a1b;
 $color-feed-filters-bg2: #1d2021;
-$color-feed-filters-font: #fbf1c7;
+$color-feed-filters-font: #f0f0f0;
 $color-feed-filters-border: #1d2021;
-$color-feed-filters-badge-font: #fbf1c7;
-$color-feed-badge-bg: #928374;
+$color-feed-filters-badge-font: #f0f0f0;
+$color-feed-badge-bg: #454646;
 
-$color-alert-danger: #ad3b14;
-$color-alert-danger-text: #fcf4cd;
-$color-alert-success: #689d6a;
-$color-alert-success-text: #fcf4cd;
+$color-alert-danger: #222426;
+$color-alert-danger-text: #df4655;
+$color-alert-success: #222426;
+$color-alert-success-text: #a1bfa1;
 
-$color-table-th: $color-checkbox-checked-border;
-$color-table-th-border: $color-checkbox-checked-border;
-$color-table-td: $color-checkbox-checked-border;
-$color-table-tr-hover: #fbf1c7;
+$color-table-th: #22c6c6;
+$color-table-th-border: #10A0A0;
+$color-table-td: #10A0A0;
+$color-table-tr-hover: #FBFBFB;
 
-$color-category-default: #ebdbb2;
+$color-category-default: #10A0A0;
 
-$color-code-bg: #32302f;
+$color-code-bg: #222426;
 
-$font: #ebdbb2;
-$font-link: #a89984;
+$font: #f0f0f0;
+$font-link: #b3b3b3;
 
-$color-white: #fbf1c7;
+$color-white: #ffffff;
 $color-black: #000000;
 
 @include base($bg, $color-darkpurple, $color-code-bg,

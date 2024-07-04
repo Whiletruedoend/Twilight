@@ -49,3 +49,4 @@ yarn-debug.log*
 config/database.yml
 Gemfile.lock
 .env
+gemset.nix

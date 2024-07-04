@@ -85,7 +85,10 @@ $color-black: #000000;
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link,
-        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text){
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
+        $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
+        $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
+        $color-feed-filters-badge-font, $color-feed-badge-bg){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -223,7 +226,14 @@ $color-black: #000000;
     color: $font;
   }
 
-  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs li a:hover, .nav-tabs > li.active > a:focus{ color: $color-link-light; background-color: $color-nav-focus-bg; }
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs li a:hover, .nav-tabs > li.active > a:focus{
+    color: $color-link-light;
+    background-color: $color-nav-focus-bg;
+    border-left-color: $font;
+    border-top-color: $font;
+    border-right-color: $font;
+  }
+  .nav-tabs { border-bottom: 1px solid $font;}
 
   .tab-content{
     font-family: 'Roboto', sans-serif;
@@ -552,7 +562,11 @@ $color-black: #000000;
     transition: transform .3s cubic-bezier(.2,0,.2,1) !important;
     padding-right: 5px;
   }
-
+  
+  .dropdown-menu{
+    color: $color-feed-font;
+    background-color: $color-feed-bg;
+  }
   /* WTF */
 
   .tooltip {
@@ -966,10 +980,22 @@ $color-black: #000000;
       overflow: scroll;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+
+      a:hover {
+        color: $color-feed-tags-list-item;
+        background-color: $color-feed-tags-list;
       }
+    }
 
     .list-group-item{
       margin-top: .5rem;
+      color: $color-feed-tags-list-item;
+      background-color: $color-feed-filters-bg;
+      border-color: $color-feed-filters-border;
+      .badge{
+        color: $color-feed-filters-badge-font;
+        background-color: $color-feed-badge-bg;
+      }
     }
     
     .filters-group{
@@ -982,6 +1008,13 @@ $color-black: #000000;
         font-size: 0;
         white-space: nowrap;
         vertical-align: middle;
+        .btn{
+          color: $color-feed-filters-search-font;
+          background-color: $color-feed-filters-search-bg;
+        }
+        .btn-primary{
+          border-color: $color-feed-filters-search-border;
+        }
       }
     }
     .btn-danger{
@@ -994,6 +1027,16 @@ $color-black: #000000;
       .previous_page, .next_page {
         display: none;
       }
+    }
+    .form-control{
+      color: $color-feed-filters-font;
+      background-color: $color-feed-filters-bg;
+      border-color: $color-feed-filters-border;
+    }
+    .input-group-addon{
+      color: $color-feed-filters-icon;
+      background-color: $color-feed-filters-bg2;
+      border-color: $color-feed-filters-border;
     }
   }
 

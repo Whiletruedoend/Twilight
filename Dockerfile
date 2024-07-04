@@ -58,12 +58,12 @@ COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
 # Copy over npm packages from the dependencies stage
 # Note that we have to use `--chown` here
 
-COPY --from=dependencies /node_modules/ node_modules/
+COPY --from=dependencies /node_modules/ /root/app/node_modules/
 
 # Finally, copy over the code
 # This is where the .dockerignore file comes into play
 # Note that we have to use `--chown` here
-RUN mkdir -p /root/app
+#RUN mkdir -p /root/app
 COPY .  /root/app/
 
 # For EasyCaptcha install
