@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe SendPostToPlatforms, type: :service do
-  subject(:service) { described_class.new(post, params) }
+  subject(:service) { described_class.new(post, "http://localhost:3080", params) }
 
   let(:post) { create(:post, title: 'Post title') }
   let(:params) do

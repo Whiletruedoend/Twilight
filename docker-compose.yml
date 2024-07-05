@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-#  redis:
-#    image: "redis:7-alpine"
-#    volumes:
-#      - ./tmp/redis_data:/var/lib/redis/data
-#    networks:
-#      - twilightnet
+  redis:
+    image: "redis:7-alpine"
+    volumes:
+      - ./tmp/redis_data:/var/lib/redis/data
+    networks:
+      - twilightnet
 
   twilight_db:
     image: postgres
@@ -51,11 +51,12 @@ services:
 #      - "traefik.http.routers.twilight-secure.tls=true"
     depends_on:
       - twilight_db
-#      - redis
+      - redis
     links:
       - twilight_db:twilight_db
     volumes:
       - ./config:/root/app/config
+      - .env:/root/app/.env
     tty: true
     stdin_open: true
     networks:

@@ -5,9 +5,11 @@ class Platform::SendPostToMatrix
 
   attr_accessor :post, :params, :channel_ids
 
-  def initialize(post, params, channel_ids)
+  def initialize(post, base_url, params, channel_ids)
     @params = params
     @post = post
+    @base_url = base_url
+    
     @channels =
       Channel.where(id: channel_ids).map do |channel|
         { id: channel.id, room: channel.room, matrix_token: channel.token, server: channel.options['server'] }
@@ -77,7 +79,7 @@ class Platform::SendPostToMatrix
       options = channel_options(channel)
 
       if options[:onlylink]
-        post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+        post_link = "#{@base_url}/posts/#{@post.id}"
         full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
         text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
       end
@@ -187,7 +189,7 @@ class Platform::SendPostToMatrix
   end
 
   def send_mx_onlylink_post(channel, options)
-    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.id}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
 

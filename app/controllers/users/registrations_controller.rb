@@ -11,6 +11,18 @@ module Users
     # super
     # end
 
+    def set_tags
+      if params['action'].nil? || params['action'] == 'new'
+        set_meta_tags(title: 'Sign up',
+                      description: 'Sign up to view posts and manage preferences',
+                      keywords: 'Twilight, Notes, signup')
+      elsif params['action'] == 'edit'
+        set_meta_tags(title: 'Profile',
+                      description: 'Manage your profile',
+                      keywords: 'Twilight, Notes, profile')
+      end
+    end
+
     def after_sign_in_path_for(_resource)
       edit_user_path
     end

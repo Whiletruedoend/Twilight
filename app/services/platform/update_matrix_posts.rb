@@ -5,9 +5,10 @@ class Platform::UpdateMatrixPosts
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
+  def initialize(post, base_url, params)
     @params = params
     @post = post
+    @base_url = base_url
 
     @title = post.title
     @content = params[:post][:content]
@@ -35,7 +36,7 @@ class Platform::UpdateMatrixPosts
         server = platform_post.channel.options['server']
 
         deleted_indexes = []
-        del_att.each do |k, _v|
+        del_att.each_key do |k|
           attachment = platform_post[:identifier].select { |att| att['blob_signed_id'] == k }
           i = platform_post[:identifier].index { |x| attachment.include?(x) }
           method = "rooms/#{platform_post[:identifier][i]['room_id']}/redact/#{platform_post[:identifier][i]['event_id']}"

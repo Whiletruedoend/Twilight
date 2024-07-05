@@ -5,9 +5,10 @@ class UpdatePostMessages
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
+  def initialize(post, base_url, params)
     @params = params
     @post = post
+    @base_url = base_url
 
     @attachments = @params[:post][:attachments]
     @deleted_attachments = @params[:deleted_attachments]
@@ -38,8 +39,8 @@ class UpdatePostMessages
       execution_context = Rails.application.executor.run!
       posted_platforms = @post.platforms
 
-      Platform::UpdateTelegramPosts.call(@post, params) if posted_platforms['telegram']
-      Platform::UpdateMatrixPosts.call(@post, params) if posted_platforms['matrix']
+      Platform::UpdateTelegramPosts.call(@post, @base_url, params) if posted_platforms['telegram']
+      Platform::UpdateMatrixPosts.call(@post, @base_url, params) if posted_platforms['matrix']
     ensure
       execution_context&.complete!
     end

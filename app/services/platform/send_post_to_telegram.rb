@@ -5,9 +5,10 @@ class Platform::SendPostToTelegram
 
   attr_accessor :post, :params, :channel_ids
 
-  def initialize(post, params, channel_ids)
+  def initialize(post, base_url, params, channel_ids)
     @params = params
     @post = post
+    @base_url = base_url
 
     @platform = Platform.find_by(title: 'telegram')
 
@@ -212,7 +213,7 @@ class Platform::SendPostToTelegram
   def send_tg_onlylink_post(channel, options)
     bot = get_tg_bot(channel)
 
-    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.id}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{full_post_link}" : full_post_link
 

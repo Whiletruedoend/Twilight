@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :set_locale
+  before_action :set_tags
   before_action :configure_permitted_parameters, if: :devise_controller?
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
@@ -15,6 +16,12 @@ class ApplicationController < ActionController::Base
   rescue_from ActionPolicy::Unauthorized, with: ->(exception) { render_error(404, exception) }
 
   protected
+
+  def set_tags
+    set_meta_tags(title: 'Notes',
+                  description: 'My useful notes',
+                  keywords: 'Twilight, Notes')
+  end
 
   def current_post
     @current_post ||= Post.find(params[:id])

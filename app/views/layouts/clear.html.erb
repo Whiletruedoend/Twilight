@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%=Rails.configuration.credentials[:title]%></title>
+  <%= display_meta_tags site: Rails.configuration.credentials[:title] %>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 

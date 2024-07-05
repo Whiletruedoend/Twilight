@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Platform::SendPostToTelegram, type: :service do
-  subject(:service) { described_class.new(post, params, channel_ids) }
+  subject(:service) { described_class.new(post, "http://localhost:3080", params, channel_ids) }
   let(:platform) { create(:platform, title: 'Telegram') }
 
   let(:post) { create(:post, title: 'Post title') }

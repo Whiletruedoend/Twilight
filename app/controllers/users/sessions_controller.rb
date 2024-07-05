@@ -6,6 +6,12 @@ module Users
 
     # GET /resource/sign_in
 
+    def set_tags
+      set_meta_tags(title: 'Sign in',
+                    description: 'Sign in to view posts and manage preferences',
+                    keywords: 'Twilight, Notes, signin')
+    end
+
     # POST /resource/sign_in
     def create
       if valid_captcha?(sessions_params[:user][:captcha])

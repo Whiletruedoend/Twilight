@@ -10,6 +10,59 @@ class PostsController < ApplicationController
 
   before_action :authenticate_user!, except: except_pages
 
+  def set_tags
+    if params['action'].nil? || params['action'] == 'index'
+      set_meta_tags(title: 'Posts',
+                    description: 'Browse all posts',
+                    keywords: 'Twilight, Notes, posts')
+    elsif params['action'] == 'feed'                
+      set_meta_tags(title: 'Feed',
+        description: 'Twitter-style posts',
+        keywords: 'Twilight, Notes, feed')
+    elsif params['action'] == 'new'
+      set_meta_tags(title: 'Create post',
+                    description: 'Create your posts',
+                    keywords: 'Twilight, Notes, posts')
+    end
+  end
+
+  def set_tags_post(current_post)
+    img_preview = current_post.content_attachments&.find{ |a| a.image? }
+    img_preview_url = img_preview.present? ? "#{request.base_url}#{rails_blob_path(img_preview, only_path: true)}" : ""
+
+    video_preview = current_post.content_attachments&.find{ |a| a.video? }
+    video_preview_url = video_preview.present? ? "#{request.base_url}#{rails_blob_path(video_preview, only_path: true)}" : ""
+
+    title = current_post.title.present? ? current_post.title : "#{current_post.id} | #{Rails.configuration.credentials[:title]}"
+    category = Rails.configuration.credentials[:enable_categories] ? current_post.category&.name || "" : ""
+
+    author = current_post.user.name.present? ? current_post.user.name : current_post.user.login
+
+    if img_preview_url.present?
+      set_meta_tags(og: {image: img_preview_url})
+    end
+    if video_preview_url.present? # Todo: add YouTube support 
+      set_meta_tags(og: {video: video_preview_url})
+    end
+
+    set_meta_tags(title: title,
+      description: current_post.text,
+      keywords: current_post.active_tags.map { |t| t.tag.name }.join(", "),
+      og: {
+        title: title,
+        description: current_post.text,
+        type: "website",
+        url: request.original_url
+      },
+      article: {
+        published_time: current_post.created_at,
+        modified_time: current_post.updated_at,
+        section: category
+      },
+      author: author
+    )
+  end
+
   def index
     user_post = Post.get_posts(params, current_user)
     if user_post.present? && params.key?(:tags)
@@ -23,6 +76,8 @@ class PostsController < ApplicationController
 
   def show
     authorize! current_post
+
+    set_tags_post(current_post)
   end
 
   def edit
@@ -32,7 +87,7 @@ class PostsController < ApplicationController
   def update
     authorize! current_post
 
-    if current_post.update(privacy: (posts_params[:post][:privacy] || 2))
+    if current_post.update(privacy: posts_params[:post][:privacy] || 2)
 
       tags = (params[:tags].present? ? params[:tags].to_unsafe_h : {})
 
@@ -53,9 +108,9 @@ class PostsController < ApplicationController
 
       if posts_params[:post][:category_name].present?
         cat = current_user.categories.find_by(name: posts_params[:post][:category_name])
-        current_post.update(category: (cat.presence || Category.create!(user: current_user,
-                                                                        name: posts_params[:post][:category_name],
-                                                                        color: posts_params[:post][:category_color])))
+        current_post.update(category: cat.presence || Category.create!(user: current_user,
+                                                                       name: posts_params[:post][:category_name],
+                                                                       color: posts_params[:post][:category_color]))
       # We need category owned by user checking?
       elsif posts_params[:post][:category_name].blank? && posts_params[:post][:category].present?
         if current_post.category_id != posts_params[:post][:category]
@@ -65,19 +120,21 @@ class PostsController < ApplicationController
         current_post.update(category_id: nil) unless current_post.category_id.nil?
       end
 
+      base_url = request.base_url
+
       channels_p = params['channels']&.to_unsafe_h
       if channels_p.present?
         channels_p.each do |k, v|
           if v.to_i == 1 # TODO: make it? Need2fix duplicate content when creating!
             # params["platforms"] = { k=>(v ? 1 : 0).to_s }
-            # SendPostToPlatforms.call(@post, params)
+            # SendPostToPlatforms.call(@post, base_url, params)
           else
             DeletePostMessages.call(current_post, k)
           end
         end
       end
 
-      UpdatePostMessages.call(current_post, posts_params)
+      UpdatePostMessages.call(current_post, base_url, posts_params)
       current_post.update(title: posts_params[:post][:title]) # ?
 
       redirect_to current_post
@@ -90,6 +147,9 @@ class PostsController < ApplicationController
     authorize! current_user, to: :create_posts?
 
     @post = Post.new
+    set_meta_tags(title: 'Posts',
+                  description: 'Create & share your posts',
+                  keywords: 'Twilight, Notes, posts')
   end
 
   def create
@@ -98,6 +158,7 @@ class PostsController < ApplicationController
     @post = Post.new(title: posts_params[:post][:title])
     @post.user = current_user
     @post.privacy = posts_params.dig(:post, :privacy) || 2
+    base_url = request.base_url
 
     if posts_params[:post][:category_name].present?
       cat = current_user.categories.find_by(name: posts_params[:post][:category_name])
@@ -129,7 +190,7 @@ class PostsController < ApplicationController
       tags.merge!(new_tags) if new_tags.any?
       tags.each { |tag| ItemTag.create!(item: @post, tag_id: tag[0], enabled: tag[1].to_i) } if tags.any?
 
-      SendPostToPlatforms.call(@post, posts_params)
+      SendPostToPlatforms.call(@post, base_url, posts_params)
 
       redirect_to @post
     else
@@ -184,6 +245,11 @@ class PostsController < ApplicationController
       Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
     end
 
+    if params.dig("id").present?
+      post = @posts.find_by(id: params["id"])
+      set_tags_post(post) if post.present?
+    end
+
     respond_to do |format|
       format.html
       format.js
@@ -204,6 +270,16 @@ class PostsController < ApplicationController
 
   def raw
     authorize! current_post, to: :show?
+
+    set_meta_tags(title: current_post.title,
+                  description: current_post.text,
+                  keywords: current_post.active_tags.map { |t| t.tag.name }.join(", "),
+                  og: {
+                    title: current_post.title,
+                    description: current_post.text,
+                    type: "website",
+                    url: request.original_url
+                  })
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
                                                                  disable_indented_code_blocks: true, autolink: false,

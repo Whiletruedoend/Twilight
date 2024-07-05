@@ -5,9 +5,10 @@ class Platform::UpdateTelegramPosts
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
+  def initialize(post, base_url, params)
     @params = params
     @post = post
+    @base_url = base_url
 
     @platform = Platform.find_by(title: 'telegram')
 
@@ -169,7 +170,7 @@ class Platform::UpdateTelegramPosts
   end
 
   def update_onlylink(bot, platform_post)
-    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.id}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     onlylink_text = @new_title.present? ? "<b>#{@new_title}</b>\n\n#{full_post_link}" : full_post_link
 

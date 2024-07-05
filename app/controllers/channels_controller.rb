@@ -3,6 +3,12 @@
 class ChannelsController < ApplicationController
   before_action :authenticate_user!
 
+  def set_tags
+    set_meta_tags(title: 'Channels',
+                  description: 'Manage your channels',
+                  keywords: 'Twilight, Notes, channels')
+  end
+
   def edit
     authorize! current_channel, to: :update?
   end

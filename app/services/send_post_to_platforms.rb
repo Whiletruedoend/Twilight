@@ -5,9 +5,11 @@ class SendPostToPlatforms
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
+  def initialize(post, base_url, params)
     @params = params
     @post = post
+    @base_url = base_url
+
     @attachments = @params[:post][:attachments].reverse if @params[:post][:attachments].present?
     @options = @params[:options]
 
@@ -70,9 +72,9 @@ class SendPostToPlatforms
   def check_platforms(platform, channel_ids)
     case platform
     when 'telegram'
-      Platform::SendPostToTelegram.call(@post, params, channel_ids)
+      Platform::SendPostToTelegram.call(@post, @base_url, params, channel_ids)
     when 'matrix'
-      Platform::SendPostToMatrix.call(@post, params, channel_ids)
+      Platform::SendPostToMatrix.call(@post, @base_url, params, channel_ids)
     end
   end
 end
