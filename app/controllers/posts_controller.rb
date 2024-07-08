@@ -9,6 +9,23 @@ class PostsController < ApplicationController
     end
 
   before_action :authenticate_user!, except: except_pages
+  after_action :track_action, only: %i[index show raw feed]
+
+  def track_action
+    post = Post.find_by(id: params.dig("id"))
+    request_params = request.path_parameters
+    if post.present?
+      post_id = post.id.to_s
+      if not Ahoy::Event.where(name: "Post_#{post_id}", visit_id: current_visit.id).where_properties(id: post_id).exists?
+        ahoy.track("Post_#{post_id}", request_params)
+      end
+    else
+      request_properties = { action: request_params[:action], controller: request_params[:controller] }
+      if not Ahoy::Event.where(name: "Posts", visit_id: current_visit.id).where_properties(request_properties).exists?
+        ahoy.track("Posts", request_params)
+      end
+    end
+  end
 
   def set_tags
     if params['action'].nil? || params['action'] == 'index'
@@ -246,8 +263,8 @@ class PostsController < ApplicationController
     end
 
     if params.dig("id").present?
-      post = @posts.find_by(id: params["id"])
-      set_tags_post(post) if post.present?
+      @current_post = @posts.find_by(id: params["id"])
+      set_tags_post(@current_post) if @current_post.present?
     end
 
     respond_to do |format|

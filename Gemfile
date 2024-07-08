@@ -79,6 +79,7 @@ gem 'rubocop-rails'
 gem 'action_policy'
 gem 'active_storage_validations'
 gem 'addressable', '>= 2.8.0'
+gem "ahoy_matey"
 gem 'betterlorem'
 gem 'devise'
 gem 'dry-initializer-rails'

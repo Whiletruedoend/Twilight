@@ -13,6 +13,7 @@
       <%end%>
     </div>
     <div class="name"><a href="?user=<%=post.user.id%>"><%=display_name(post.user)%></a></div>
+    <div class="views"><i class="fa fa-light fa-eye"></i> <%= post.views %> |</div>
     <div class="createdAt"><a href="?id=<%=post.id%>"><%=post.created_at.strftime("%H:%M:%S")%></a></div>
     <%= render "privacy-icons", object: post %>
   </div>
@@ -25,6 +26,12 @@
   <%if post.content_attachments&.any?%>
     <div class="media-list">
       <%=display_feed_attachments(post)%>
-    <div>
+    </div>
   <%end%>
+  <div class="footer">
+    <a class="item-right" href="?id=<%=post.id%>"><i class="fa fa-commenting-o"> <%= I18n.t("comments.comment_header") %> (<%= post.comments.count %>)</i></a>
+    <%if params[:id].present?%>
+      <%= render "posts/comments" %>
+    <%end%>
+  </div>
 </article>

@@ -63,4 +63,9 @@ class Post < ApplicationRecord
     DeletePostMessages.call(self)
     super
   end
+
+  # Todo: make turbo for views?
+  def views
+    Ahoy::Event.where(name: "Post_#{self.id}").distinct.count(:visit_id)
+  end
 end

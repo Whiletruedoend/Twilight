@@ -390,8 +390,8 @@ $color-black: #000000;
       font-size: 65%;
     }
 
-    .comments{
-      margin-left: 1%;
+    h1 .right-small:not(:first-child) {
+      margin-right: 0.5%;
     }
 
     .tags{
@@ -1108,11 +1108,16 @@ $color-black: #000000;
       .createdAt{
         color: $color-feed-time;
         margin-right: 5px;
+        margin-left: 5px;
 
         a, a:hover{
           color: $color-feed-time;
           background-color: $color-feed-bg;
         }
+      }
+      .views{
+        cursor: pointer;
+        color: $color-feed-time;
       }
     }
 
@@ -1158,6 +1163,23 @@ $color-black: #000000;
         width: 100%;
         object-fit: cover;
         object-position: top;
+      }
+    }
+    .footer{
+      margin-top: 1.5%;
+      .item-right{
+        margin-right: 5px;
+        float: right;
+      }
+      .item-center{
+        text-align: center;
+      }
+      .comments-container{
+        background: none;
+        background-color: none;
+      }
+      .comments-width{
+        max-width: 100%;
       }
     }
   }

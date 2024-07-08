@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
                                  dependent: :delete_all # Not working deletion with SQLite!
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
+  has_many :visits, class_name: "Ahoy::Visit"
 
   has_one_attached :avatar
 
