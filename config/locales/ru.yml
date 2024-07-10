@@ -208,6 +208,7 @@ ru:
         signed_in: Вы успешно авторизовались!
         signed_up: Вы успешно зарегистрировались!
         signed_out: Вы успешно вышли из аккаунта!
+        wrong_captcha: Неверный проверочный код
     failure:
       user:
         unauthenticated: Необходима авторизация

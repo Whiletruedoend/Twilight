@@ -3,7 +3,7 @@
 require 'dry-initializer'
 
 class PostsSearch < ApplicationSearch
-  option :current_user
+  option :current_user, optional: true
   # option :user_tags, optional: true
   option :id, optional: true
   option :user_id, optional: true

@@ -3,6 +3,7 @@
 module Users
   class SessionsController < Devise::SessionsController
     # before_action :configure_sign_in_params, only: [:create]
+    prepend_before_action :captcha_valid, only: [:create]
 
     # GET /resource/sign_in
 
@@ -12,25 +13,26 @@ module Users
                     keywords: 'Twilight, Notes, signin')
     end
 
-    # POST /resource/sign_in
-    def create
+    protected
+
+    def captcha_valid
       if valid_captcha?(sessions_params[:user][:captcha])
-        super
+        true
       else
+        set_flash_message :alert, :wrong_captcha
         redirect_to sign_in_url
       end
     end
 
-    protected
-
     def sessions_params
       params.permit(:authenticity_token,
                     :commit,
-                    user: %i[login
-                             password
-                             code
-                             captcha
-                             remember_me])
+                    user: [:login,
+                            :password,
+                            :code,
+                            :captcha,
+                            :remember_me,
+                          ])
     end
 
     # DELETE /resource/sign_out

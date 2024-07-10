@@ -208,6 +208,7 @@ en:
         signed_in: You have successfully logged in!
         signed_up: You have successfully registered!
         signed_out: You have successfully signed out!
+        wrong_captcha: Wrong captcha
     failure:
       user:
         unauthenticated: Authorization required

@@ -225,9 +225,9 @@ class PostsController < ApplicationController
 
     tags = user&.active_tags&.any? ? user&.active_tags&.map { |i| i.tag.id } : Tag.all.ids
     limit = user&.options&.dig('visible_posts_count') || Rails.configuration.credentials[:rss_default_visible_posts]
-    post_params = { current_user: user, limit: limit, tags: tags, title: params[:title] }
+    @posts = PostsSearch.new(current_user: user, limit: limit, tags: tags, title: params[:title]).call(Post.all)
 
-    @posts = PostsSearch.new(post_params).call(Post.all).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
+    @posts = @posts.order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
 
     @markdown = Redcarpet::Markdown.new(CustomRender.new({ hard_wrap: true,
                                                            no_intra_emphasis: true,
@@ -246,14 +246,14 @@ class PostsController < ApplicationController
         (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
       end
 
-    post_params = { current_user: user,
-                    id: params[:id],
-                    user_id: params[:user],
-                    strict_tags: params[:tag],
-                    text: params[:text],
-                    date: params[:to] }
+    @posts = PostsSearch.new( current_user: user,
+                              id: params[:id],
+                              user_id: params[:user],
+                              strict_tags: params[:tag],
+                              text: params[:text],
+                              date: params[:to]
+                            ).call(Post.all)
 
-    @posts = PostsSearch.new(post_params).call(Post.all)
     @posts = @posts.paginate(page: params[:page], per_page: 15).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
     @last_date = nil
 
