@@ -1,5 +1,5 @@
 # Start from a small, trusted base image with the version pinned down
-FROM ruby:2.7.7-slim AS base
+FROM ruby:3.3.2-slim AS base
 
 # Required Libraries
 #RUN apt-get update; apt-get install -y --no-install-recommends \ 
@@ -18,8 +18,7 @@ RUN apt-get update; apt-get install -y --no-install-recommends \
     libpng-dev libjpeg-dev libtiff-dev ffmpeg \
     tzdata libv8-dev imagemagick libmagickwand-dev \
     libpq-dev libffi-dev \
-    postgresql-client sqlite3 \
-    #postgresql postgresql-contrib sqlite3 \
+    postgresql-client \
     nodejs redis yarn
 
 # This stage will be responsible for installing gems and npm packages
@@ -32,7 +31,7 @@ COPY Gemfile ./
 COPY ./vendor/gems/easy_captcha /vendor/gems/easy_captcha
 
 # Install gems (excluding test dependencies)
-RUN gem install bundler -v 2.2.25
+RUN gem install bundler -v 2.5.9
   
 RUN bundle install --jobs=3 --retry=3
 

@@ -84,12 +84,11 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
 
 ### Docker
 
-  * Download project:
   ```
   git clone https://github.com/Whiletruedoend/Twilight
   cd Twilight/
   ```
-  * (Optional) Configure .env for existing postgres database, or change to sqlite3 in config/database.yml
+  * (Optional) Configure .env for existing postgres database
   * Configure config/credentials.yml
   * Run:
   ```
@@ -212,7 +211,7 @@ Only the information from the first token is identical to the information from t
 
 Therefore, this does not seem to carry a serious threat. But just in case, he warned that there were no questions. 
 ## Schemas and screenshots
-ER-diagram:
+ER-diagram(Ver. 1.0.1):
 <img src="https://i.imgur.com/RQQCRpa.jpeg"></img>
 Main page (configurating):
  * Version 0 (standalone page):
@@ -233,13 +232,8 @@ Article creation (Default theme):
 <img src="https://i.imgur.com/3QStroz.png"></img>
 Specific article:
 <img src="https://i.imgur.com/9F0W2Nr.png"></img>
-## Contribution
 
-  1) Fork tis project;
-  2) Make changes to the forked project;
-  3) On the page of this repository, poke Pull Requests and make a Pull Request by selecting your fork in the right list; 
-  
 ## Contact
-If you have any ideas or your own developments, or just questions about the performance of the code, then you can always contact me at the following addresses: 
+If you have any ideas or your own developments, then you can always contact me at the following addresses: 
 
 - [Matrix](https://matrix.to/#/@whiletruedoend:matrix.org)

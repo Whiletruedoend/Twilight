@@ -18,6 +18,8 @@ module Twilight
     config.time_zone = config.credentials[:time_zone]
     config.i18n.default_locale = config.credentials[:locale]
 
+    config.active_storage.variant_processor = :mini_magick
+
     require 'ext/string'
     require 'ext/matrix'
     require 'ext/zip_file_generator'

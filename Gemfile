@@ -3,13 +3,13 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.7'
+ruby '3.3.2'
 
 gem 'activerecord', '>= 6.1.7.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 7.0.8.1'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '>= 1.4'
+#gem 'sqlite3', '>= 1.4'
 # Use Puma as the app server
 gem 'puma', '>= 6.4.2'
 # Use SCSS for stylesheets
@@ -35,6 +35,17 @@ gem 'actionpack', '>= 6.1.4.1'
 # Reduces boot times through caching; required in config/boot.b
 gem 'bootsnap', '>= 1.4.4', require: false
 
+group :development do
+  # Access an interactive console on exception pages or by calling 'console' anywhere in the code
+  gem 'web-console', '>= 4.1.0'
+  # Display performance information such as SQL time and flame graphs for each request in your browser.
+  # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
+  gem 'listen'
+  gem 'rack-mini-profiler'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+end
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
@@ -43,17 +54,6 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'rubocop-rspec', require: false
-end
-
-group :development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code
-  gem 'web-console', '>= 4.1.0'
-  # Display performance information such as SQL time and flame graphs for each request in your browser.
-  # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
-  gem 'listen', '~> 3.3'
-  gem 'rack-mini-profiler', '~> 2.0'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
 end
 
 group :test do
@@ -91,7 +91,7 @@ gem 'mini_magick'
 gem 'nokogiri', '>= 1.11.0.rc4'
 gem 'open-uri'
 gem 'pg'
-gem 'rake', '~> 13.2.1'
+gem 'rake', '>= 13.2.1'
 gem 'redcarpet'
 gem 'reverse_markdown'
 gem 'rmagick'
@@ -103,6 +103,8 @@ gem 'socksify', require: false # TCP through a SOCKS5 proxy
 gem 'telegram-bot'
 
 gem 'sidekiq'
+gem 'base64'
+gem 'mutex_m'
 
 gem 'bootstrap-sass'
 gem 'bootstrap-will_paginate', '~> 0.0.10'
