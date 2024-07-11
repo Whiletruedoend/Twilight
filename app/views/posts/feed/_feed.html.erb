@@ -24,9 +24,7 @@
   </div>
                 
   <%if post.content_attachments&.any?%>
-    <div class="media-list">
-      <%=display_feed_attachments(post)%>
-    </div>
+    <%=display_feed_attachments(post)%>
   <%end%>
   <div class="footer">
     <a class="item-right" href="?id=<%=post.id%>"><i class="fa fa-commenting-o"> <%= I18n.t("comments.comment_header") %> (<%= post.comments.count %>)</i></a>

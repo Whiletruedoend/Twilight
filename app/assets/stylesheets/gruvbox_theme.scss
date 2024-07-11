@@ -68,6 +68,8 @@ $color-feed-filters-font: #fbf1c7;
 $color-feed-filters-border: #1d2021;
 $color-feed-filters-badge-font: #fbf1c7;
 $color-feed-badge-bg: #928374;
+$color-feed-music-bg: #1d2021;
+$color-feed-music-icon: #fbf1c7;
 
 $color-alert-danger: #ad3b14;
 $color-alert-danger-text: #fcf4cd;
@@ -104,5 +106,5 @@ $color-black: #000000;
         $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
         $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
         $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
-        $color-feed-filters-badge-font, $color-feed-badge-bg
+        $color-feed-filters-badge-font, $color-feed-badge-bg, $color-feed-music-bg, $color-feed-music-icon
 );

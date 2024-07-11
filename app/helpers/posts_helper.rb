@@ -28,21 +28,37 @@ module PostsHelper
 
   def display_attachments(post)
     content = ''
-    attachments_count = post.content_attachments&.count || 0
-    size =
-      case attachments_count
-      when 1
-        :thumb300
-      when 2
-        :thumb250
-      when 3
-        :thumb200
-      when 4, 5
-        :thumb150
-      else
-        :thumb100
-      end
 
+    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    if documents.any?
+      documents.each do |att|
+        content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
+        #{I18n.t('posts.download')} #{truncate(att.filename.to_s, length: 100)} </a>"
+      end
+    end
+    content += '<br><br>' if documents.any?
+
+    content += "<div class=\"attachments\">"
+    post.content_attachments&.each do |att|
+      if att.image?
+        content += link_to image_tag(url_for(att)), url_for(att), target: '_blank'.to_s
+      elsif att.video?
+        content += video_tag(url_for(att), controls: true, preload: 'none',
+                                           poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
+      elsif att.audio?
+        content += "<div class=\"audio-cover\">"
+        content += "<i class=\"fa fa-light fa-music\"></i>"
+        content += "#{audio_tag(url_for(att), autoplay: false, controls: true)}"
+        content += '</div>'
+      end
+    end
+    content += '</div>'
+    content.html_safe
+  end
+
+  # TODO
+  def display_raw_attachments(post)
+    content = ''
     documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
     if documents.any?
       documents.each do |att|
@@ -54,14 +70,17 @@ module PostsHelper
 
     post.content_attachments&.each do |att|
       if att.image?
-        content += link_to image_tag(url_for(att.variant(size).processed)), url_for(att), target: '_blank'.to_s
+        content += link_to image_tag(url_for(att)), url_for(att), target: '_blank'.to_s
+        content += '<br>'
       elsif att.video?
-        content += video_tag(url_for(att), controls: true, preload: 'none',
-                                           poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
+        content += link_to url_for(att).to_s
+        content += '<br>'
       elsif att.audio?
-        content += link_to audio_tag(url_for(att), autoplay: false, controls: true), url_for(att), target: '_blank'.to_s
+        content += link_to url_for(att).to_s
+        content += '<br>'
       end
     end
+    content += '<br>' if post.content_attachments&.any?
     content.html_safe
   end
 
@@ -77,6 +96,7 @@ module PostsHelper
       end
     end
 
+    content += "<div class=\"attachments\">"
     post.content_attachments&.each do |att|
       if att.image?
         content += image_tag url_for(att), id: 'zoom-bg'.to_s
@@ -88,10 +108,13 @@ module PostsHelper
         # content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
         #             #{image_tag url_for(att.preview(resize_to_limit: [50, 50]).processed)}</a>"
       elsif att.audio?
-        content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
-                     #{audio_tag(url_for(att), autoplay: false, controls: true)}</a>"
+        content += "<div class=\"audio-cover\">"
+        content += "<i class=\"fa fa-light fa-music\"></i>"
+        content += "#{audio_tag(url_for(att), autoplay: false, controls: true)}"
+        content += '</div>'
       end
     end
+    content += '</div>'
     content.html_safe
   end
 

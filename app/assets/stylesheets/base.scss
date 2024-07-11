@@ -88,7 +88,7 @@ $color-black: #000000;
         $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
         $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
         $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
-        $color-feed-filters-badge-font, $color-feed-badge-bg){
+        $color-feed-filters-badge-font, $color-feed-badge-bg, $color-feed-music-bg, $color-feed-music-icon){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -381,13 +381,16 @@ $color-black: #000000;
       margin-bottom: 0;
     }
 
+    /*
     article img{
       padding-right: 10px;
     }
+    */
 
     .right-small{
       float: right;
       font-size: 65%;
+      margin-right: 0.5%;
     }
 
     h1 .right-small:not(:first-child) {
@@ -420,6 +423,44 @@ $color-black: #000000;
   .blue-icon { color: $color-privacy-registered-p; }
   .twilight-icon{ color: $color-privacy-me; }
   .red-icon { color: $color-privacy-me-p; }
+
+  /* attachments */
+
+  .attachments{
+    display: grid;
+    /* grid-template-columns: repeat(3, 1fr); */
+    grid-gap: 1%;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+    img{
+      width: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .audio-cover{
+      background-color: $color-feed-music-bg;
+      min-width: 200px;
+      min-height: 200px;
+      max-width: 220px;
+      max-height: 220px;
+      background-size: cover;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .fa-music::before{
+        font-size: 50px;
+        color: $color-feed-music-icon;
+      }
+
+      audio{
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+      }
+    }
+  }
 
   /* channels */
 
@@ -1155,16 +1196,6 @@ $color-black: #000000;
       margin: revert;
     }
 
-    .media-list{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-  
-      img{
-        width: 100%;
-        object-fit: cover;
-        object-position: top;
-      }
-    }
     .footer{
       margin-top: 1.5%;
       .item-right{
