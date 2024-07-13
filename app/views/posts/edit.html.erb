@@ -70,26 +70,24 @@
             <p><%= I18n.t("posts.channels_not_found") %></p>
           <% end %>
 
-          <% if Rails.configuration.credentials[:enable_categories] %>
-            <div class="form-group">
-              <h3><%= I18n.t("posts.category") %></h3>
-              <% if @current_user.categories.any? %>
-                  <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
-                  <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
-                <% if @current_post.category.present? %>
-                  <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
-                <% else %>
-                  <%= f.select(:category, categories) %>
-                <% end %>
-              <% end %><br><br>
-              <div class="form-inline">
-                <div class="form-group">
-                  <%= f.text_field :category_name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("posts.new_category") %>
-                  <%= f.color_field :category_color, class: "color-picker" %>
-                </div>
+          <div class="form-group">
+            <h3><%= I18n.t("posts.category") %></h3>
+            <% if @current_user.categories.any? %>
+                <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
+                <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
+              <% if @current_post.category.present? %>
+                <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
+              <% else %>
+                <%= f.select(:category, categories) %>
+              <% end %>
+            <% end %><br><br>
+            <div class="form-inline">
+              <div class="form-group">
+                <%= f.text_field :category_name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("posts.new_category") %>
+                <%= f.color_field :category_color, class: "color-picker" %>
               </div>
             </div>
-          <% end %>
+          </div>
 
           <div class="form-group">
             <h3><%= I18n.t("posts.privacy") %></h3>

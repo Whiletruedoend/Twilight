@@ -51,7 +51,7 @@ class PostsController < ApplicationController
     video_preview_url = video_preview.present? ? "#{request.base_url}#{rails_blob_path(video_preview, only_path: true)}" : ""
 
     title = current_post.title.present? ? current_post.title : "#{current_post.id} | #{Rails.configuration.credentials[:title]}"
-    category = Rails.configuration.credentials[:enable_categories] ? current_post.category&.name || "" : ""
+    category = current_post.category&.name || ""
 
     author = current_post.user.name.present? ? current_post.user.name : current_post.user.login
 

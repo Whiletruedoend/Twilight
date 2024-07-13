@@ -56,14 +56,14 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   
   ### Manual
  
-  * Install ruby (2.7.7):
+  * Install ruby (3.3.2):
     * For [rvm](https://rvm.io/):
     ```ssh
-     rvm install ruby-2.7.7
+     rvm install ruby-3.3.2
     ```
     * For [rbenv](https://github.com/rbenv/rbenv):
     ```ssh
-     rbenv install 2.7.7
+     rbenv install 3.3.2
     ```
   * Install yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
@@ -81,6 +81,12 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
      
   * Setting up: `config/credentials.yml`
   * Run server with command: `rails s`
+
+  **Windows gem install fixes**:
+  ```
+gem install pg -- --with-pg-dir="C:\Program Files\PostgreSQL\15" (insert your path)
+gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
+  ```
 
 ### Docker
 

@@ -3,21 +3,13 @@
     <!-- <i class="fa fa-bookmark right-small"></i> -->
     <i class="fa fa-light fa-eye right-small"> <%= post.views %></i>
     <i class="fa fa-commenting-o right-small"> <%= post.comments.count %></i>
-    <% if Rails.configuration.credentials[:enable_categories] %>
-      <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
-        <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
-        <%= render "privacy-icons", object: post %>
-        <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-          <a><i class="fa fa-file right-small"></i></a>
-        <% end %>
-       </div>
-    <% else %>
+    <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
       <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
       <%= render "privacy-icons", object: post %>
       <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
         <a><i class="fa fa-file right-small"></i></a>
       <% end %>
-    <% end %>
+    </div>
     <h1 class="dashed-line"></h1>
   </h1>
   <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
@@ -38,12 +30,10 @@
   </p>
 
   <% if params[:action] == "show" %>
-    <% if Rails.configuration.credentials[:enable_categories] %>
-      <% if post.category&.name.present? %>
-        <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=post.category.id%>"><%= post.category.name %></a></i></p>
-      <% else %>
-        <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
-      <% end %>
+    <% if post.category&.name.present? %>
+      <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=post.category.id%>"><%= post.category.name %></a></i></p>
+    <% else %>
+      <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
     <% end %>
   <% end %>
 </header>

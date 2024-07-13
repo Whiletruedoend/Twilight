@@ -2,9 +2,7 @@
   <div class="comments-container"><center><%=I18n.t("manage.manage_admins_only")%></center></div>
 <% else %>
   <div class="comments-container">
-    <% if Rails.configuration.credentials[:enable_categories] %>
-      <%= render "users/registrations/manage/categories" %><br>
-    <% end %>
+    <%= render "users/registrations/manage/categories" %><br>
     <%= render "users/registrations/manage/invite_codes_gen" %><br>
     <%= render "users/registrations/manage/invite_codes", object: InviteCode.first(10) %><br>
     <%= (button_to I18n.t("manage.all_invite_codes_list"), full_invite_codes_list_path, class: "actions btn btn-primary", method: :get) if InviteCode.any? %><br>

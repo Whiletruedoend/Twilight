@@ -56,14 +56,14 @@ P.S. Список последних изменений можно посмот�
 
   ### Обычный
  
-  * Установить ruby (2.7.7):
+  * Установить ruby (3.3.2):
     * Для [rvm](https://rvm.io/):
     ```ssh
-     rvm install ruby-2.7.7
+     rvm install ruby-3.3.2
     ```
     * Для [rbenv](https://github.com/rbenv/rbenv):
     ```ssh
-     rbenv install 2.7.7
+     rbenv install 3.3.2
     ```
   * Установить yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Установить redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
@@ -81,6 +81,12 @@ P.S. Список последних изменений можно посмот�
      
   * Настроить: `config/credentials.yml`
   * Запустить сервер командой: `rails s`
+
+  **Windows установка проблемных гемов**:
+  ```
+gem install pg -- --with-pg-dir="C:\Program Files\PostgreSQL\15" (вставьте ваш путь)
+gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
+  ```
 
   ### Docker
 
