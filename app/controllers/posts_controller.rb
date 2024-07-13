@@ -220,7 +220,7 @@ class PostsController < ApplicationController
       if current_user.present?
         current_user
       else
-        (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
+        (User.find_by(rss_token: params[:token]) if params.key?(:token))
       end
 
     tags = user&.active_tags&.any? ? user&.active_tags&.map { |i| i.tag.id } : Tag.all.ids
@@ -243,7 +243,7 @@ class PostsController < ApplicationController
       if current_user.present?
         current_user
       else
-        (User.find_by(rss_token: params[:rss_token]) if params.key?(:rss_token))
+        (User.find_by(rss_token: params[:token]) if params.key?(:token))
       end
 
     @posts = PostsSearch.new( current_user: user,
@@ -257,7 +257,7 @@ class PostsController < ApplicationController
     @posts = @posts.paginate(page: params[:page], per_page: 15).order(created_at: (params[:sort] == 'asc' ? 'asc' : 'desc'))
     @last_date = nil
 
-    if Rails.configuration.credentials[:fail2ban][:enabled] && user.nil? && params.key?(:rss_token)
+    if Rails.configuration.credentials[:fail2ban][:enabled] && user.nil? && params.key?(:token)
       ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
       Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
     end

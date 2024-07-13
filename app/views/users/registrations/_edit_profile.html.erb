@@ -5,6 +5,7 @@
     <input type="text" size="28" class="form-control" id="token_field" readonly value="<%= current_user.rss_token || "#{I18n.t("edit.token_not_generated")}" %>">
   </div>
   <button onclick="copy()" type="submit" class="btn btn-primary"><%= I18n.t("edit.copy") %></button>
+  <button onclick="copy_url()" type="submit" class="btn btn-primary"><%= I18n.t("edit.copy_url") %></button>
 </div>
 
 <br>

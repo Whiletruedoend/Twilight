@@ -112,6 +112,7 @@ en:
     name: Display name
     tags: Tags
     copy: Copy
+    copy_url: Copy URL
     main_information: Main Information
     personal_tags: Personal Tags
     avatar: Avatar

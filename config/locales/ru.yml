@@ -112,6 +112,7 @@ ru:
     name: Отображаемое имя 
     tags: Тэги
     copy: Скопировать
+    copy_url: Скопировать URL
     main_information: Основная Информация
     personal_tags: Персональные Тэги
     avatar: Аватар

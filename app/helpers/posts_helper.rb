@@ -47,6 +47,7 @@ module PostsHelper
                                            poster: url_for(att.preview(resize_to_limit: [200, 200]).processed)).to_s
       elsif att.audio?
         content += "<div class=\"audio-cover\">"
+        content += "<div class=\"audio-title\">#{att.filename.to_s[0..64]}</div>"
         content += "<i class=\"fa fa-light fa-music\"></i>"
         content += "#{audio_tag(url_for(att), autoplay: false, controls: true)}"
         content += '</div>'
@@ -109,6 +110,7 @@ module PostsHelper
         #             #{image_tag url_for(att.preview(resize_to_limit: [50, 50]).processed)}</a>"
       elsif att.audio?
         content += "<div class=\"audio-cover\">"
+        content += "<div class=\"audio-title\">#{att.filename.to_s[0..64]}</div>"
         content += "<i class=\"fa fa-light fa-music\"></i>"
         content += "#{audio_tag(url_for(att), autoplay: false, controls: true)}"
         content += '</div>'

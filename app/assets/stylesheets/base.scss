@@ -454,11 +454,25 @@ $color-black: #000000;
         color: $color-feed-music-icon;
       }
 
+      .audio-title{
+        position: absolute;
+     /* min-height: 95%;
+        max-width: 95%; */
+        margin-bottom: 70%;
+        display: flex;
+        justify-content: center;
+        color: $color-feed-music-icon;
+        font-size: 12px;
+      }
+
       audio{
           position: absolute;
           bottom: 0;
           width: 100%;
       }
+    }
+    .vsc-controller{ /* wtf */
+      display: none;
     }
   }
 
