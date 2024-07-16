@@ -7,7 +7,7 @@
       <div class="comment">
         <div class="comment-avatar"><% if channel&.avatar&.present?%><%= image_tag url_for(channel.avatar) %><% end %></div>
         <% name = channel.options&.dig("title") %>
-        <div class="comment-metadata"><%= name %> <i class="comment-small"> | <%= channel.options&.dig("username").present? ? link_to(channel.platform.title.capitalize, "https://t.me/#{channel.options&.dig("username")}" ) : channel.platform.title.capitalize %> | <%= link_to I18n.t("channels.update"), edit_channel_url(channel) %> | <a href="/channels/delete/<%=channel.id%>" data-confirm="<%= I18n.t("channels.delete_channel_confirm") %>"><%= I18n.t("channels.delete") %></a></i><i class="comment-small right">ID: <%= channel.room %></i></div>
+        <div class="comment-metadata"><%= name %> <i class="comment-small"> | <%= channel_url(channel) %> | <%= link_to I18n.t("channels.update"), edit_channel_url(channel) %> | <a href="/channels/delete/<%=channel.id%>" data-confirm="<%= I18n.t("channels.delete_channel_confirm") %>"><%= I18n.t("channels.delete") %></a></i><i class="comment-small right">ID: <%= channel.room %></i></div>
         <%=I18n.t("channels.status")%>: <%= channel.enabled ? I18n.t("channels.enabled") : I18n.t("channels.disabled") %><br>
         <%=I18n.t("channels.comments")%>: <%= channel.options["comments_enabled"] ? I18n.t("channels.c_enabled") : I18n.t("channels.c_disabled") %><br>
         Posts count: <%= channel.platform_posts.group(:post).count.count %>

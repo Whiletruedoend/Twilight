@@ -14,7 +14,8 @@ class Platform::DeleteMatrixPosts
       matrix_token = platform_post.channel.token
       server = platform_post.channel.options['server']
       begin
-        if platform_post.content.has_attachments?
+        # Matrix onlylink is a Hash, but attachments is an Array.
+        if platform_post.content.has_attachments? && !platform_post.identifier.is_a?(Hash)
           platform_post.identifier.each do |att|
             method = "rooms/#{att['room_id']}/redact/#{att['event_id']}"
             data = { reason: "Delete post ##{platform_post.post_id}" }

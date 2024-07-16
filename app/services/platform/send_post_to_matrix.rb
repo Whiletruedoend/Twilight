@@ -44,9 +44,14 @@ class Platform::SendPostToMatrix
     unless @post.text.present? || (@post.text.blank? && @post.content_attachments.present?) # Content not created!
       content_text = params[:post][:content]
 
-      attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true) if @attachments.present?
+      attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true) unless @attachments.join(' ').empty?
       @attachments.each { |att| attachment_content.attachments.attach(att) } if attachment_content.present?
       Content.create!(user: @post.user, post: @post, text: content_text, has_attachments: false) if content_text.present?
+    end
+
+    # TODO: Check compatibility with telegram
+    if @post.title.present? && @post.contents.where(has_attachments: false).empty?
+      Content.create!(user: @post.user, post: @post, text: "", has_attachments: false)
     end
 
     # No content - no post :\
@@ -66,7 +71,7 @@ class Platform::SendPostToMatrix
 
       if content.has_attachments?
         send_mx_attachments(content)
-      elsif content_text.present?
+      elsif content_text.present? || (!content_text.present? && title.present?)
         send_mx_content(content, text)
         break # If posts exists && content count >2, then for matrix PlatformPost content has first content id
       end
@@ -79,9 +84,8 @@ class Platform::SendPostToMatrix
       options = channel_options(channel)
 
       if options[:onlylink]
-        post_link = "#{@base_url}/posts/#{@post.id}"
-        full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
-        text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
+        send_mx_onlylink_post(content, channel, options) unless Content.where(post: @post, has_attachments: true).present?
+        next
       end
 
       method = "rooms/#{channel[:room]}/send/m.room.message"
@@ -108,7 +112,7 @@ class Platform::SendPostToMatrix
       options = channel_options(channel)
 
       if options[:onlylink]
-        send_mx_onlylink_post(channel, options)
+        send_mx_onlylink_post(content, channel, options)
         next
       end
 
@@ -188,7 +192,7 @@ class Platform::SendPostToMatrix
     { enable_notifications: notification, onlylink: onlylink, caption: caption }
   end
 
-  def send_mx_onlylink_post(channel, options)
+  def send_mx_onlylink_post(content, channel, options)
     post_link = "#{@base_url}/posts/#{@post.id}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
