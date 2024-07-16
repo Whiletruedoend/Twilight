@@ -16,12 +16,12 @@ class PostsController < ApplicationController
     request_params = request.path_parameters
     if post.present?
       post_id = post.id.to_s
-      if not Ahoy::Event.where(name: "Post_#{post_id}", visit_id: current_visit.id).where_properties(id: post_id).exists?
+      if not Ahoy::Event.where(name: "Post_#{post_id}", visit_id: current_visit&.id).where_properties(id: post_id).exists?
         ahoy.track("Post_#{post_id}", request_params)
       end
     else
       request_properties = { action: request_params[:action], controller: request_params[:controller] }
-      if not Ahoy::Event.where(name: "Posts", visit_id: current_visit.id).where_properties(request_properties).exists?
+      if not Ahoy::Event.where(name: "Posts", visit_id: current_visit&.id).where_properties(request_properties).exists?
         ahoy.track("Posts", request_params)
       end
     end

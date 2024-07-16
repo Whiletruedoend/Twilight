@@ -179,6 +179,9 @@ class CheckChannel
       options[:avatar_size] = 0
     end
 
+    #Channel URL (via matrix.to)
+    options[:url] = "https://matrix.to/#/#{room}"
+
     @channel.options = options
   end
 end
