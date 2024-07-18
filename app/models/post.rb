@@ -87,6 +87,14 @@ class Post < ApplicationRecord
     find_by! uuid: id
   end
 
+  def self.find_with_slug(s)
+    friendly.find_by(slug: s) || find(s)
+  end
+
+  def slug_url
+    slug.present? ? slug : uuid
+  end
+
   private
 
   def slug_candidates

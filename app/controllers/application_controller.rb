@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_post
-    @current_post ||= Post.find(params[:uuid])
+    @current_post ||= Post.find_with_slug(params[:uuid])
   end
 
   def current_comment
