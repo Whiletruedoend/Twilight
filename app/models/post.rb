@@ -11,9 +11,15 @@ class Post < ApplicationRecord
   has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id', dependent: :delete_all
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
+  before_create -> { self.uuid = SecureRandom.uuid }
+
+  extend FriendlyId
+  friendly_id :slug_candidates, use: [:slugged, :finders]
+
   # scope :with_active_tags, ->(tag_id) { select { |post| post.active_tags.include?(tag_id) } }
   scope :without_active_tags, -> { select { |post| post.active_tags.empty? } }
 
+  #self.implicit_order_column = :created_at
   self.per_page = 15
 
   def self.get_posts(params, current_user)
@@ -71,5 +77,19 @@ class Post < ApplicationRecord
   # Todo: make turbo for views?
   def views
     Ahoy::Event.where(name: "Post_#{self.id}").distinct.count(:visit_id)
+  end
+
+  def to_param
+    uuid
+  end
+
+  def self.find(id)
+    find_by! uuid: id
+  end
+
+  private
+
+  def slug_candidates
+    [:title, [:title, :uuid]]
   end
 end

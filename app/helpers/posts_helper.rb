@@ -142,7 +142,7 @@ module PostsHelper
   end
 
   def render_title(post)
-    post.title.present? ? link_markdown(post.title).html_safe : "##{post.id}"
+    post.title.present? ? link_markdown(post.title).html_safe : "##{post.uuid}"
   end
 
   def render_published_platforms(post)

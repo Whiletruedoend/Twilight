@@ -193,7 +193,7 @@ class Platform::SendPostToMatrix
   end
 
   def send_mx_onlylink_post(content, channel, options)
-    post_link = "#{@base_url}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.uuid}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
 

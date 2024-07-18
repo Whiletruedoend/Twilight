@@ -8,7 +8,7 @@
     <div id="add" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
       <div class="card-block">
         <%= form_with(model: Comment, :method => 'put', :remote => true) do  |f| %>
-          <%= hidden_field(:comment, :post, { value: @current_post.id }) %>
+          <%= hidden_field(:comment, :post, { value: @current_post.uuid }) %>
           <div id="markdown" class="tab-pane in active title">
             <div class="comment-editor">
               <%= f.text_area :content, { id: "comments_content", placeholder: "#{I18n.t("posts.text_placeholder")}" } %>

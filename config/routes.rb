@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   get 'posts/import', to: 'posts#import', as: :import_post
   post 'posts/import', to: 'posts#import'
-  resources :posts, except: [:destroy]
+  resources :posts, except: [:destroy], param: :uuid
 
   resources :users, except: [:edit]
   post '/edit', to: 'users#edit', as: :edit_user
@@ -22,9 +22,9 @@ Rails.application.routes.draw do
   get '/rss', to: 'posts#rss', as: :rss, format: 'rss'
 
   post '/posts/new', to: 'posts#new'
-  get 'posts/delete/:id', to: 'posts#destroy', as: :post_path
-
-  get 'posts/export/:id', to: 'posts#export', as: :export_post_path
+  get 'posts/delete/:uuid', to: 'posts#destroy', as: :post_path
+  get 'posts/export/:uuid', to: 'posts#export', as: :export_post_path
+  get 'posts/raw/:uuid', to: 'posts#raw', as: :raw_post_path
 
   resources :channels, except: %i[index show destroy]
   get 'channels/delete/:id', to: 'channels#destroy', as: :channel_path
@@ -39,8 +39,6 @@ Rails.application.routes.draw do
 
   get '/stats/full_users_list', to: 'pages#full_users_list', as: :full_users_list
   get '/manage/full_invite_codes_list', to: 'pages#full_invite_codes_list', as: :full_invite_codes_list
-
-  get 'posts/raw/:id', to: 'posts#raw', as: :raw_post_path
 
   case Rails.configuration.credentials[:root_page]
     when 1

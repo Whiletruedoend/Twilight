@@ -213,7 +213,7 @@ class Platform::SendPostToTelegram
   def send_tg_onlylink_post(channel, options)
     bot = get_tg_bot(channel)
 
-    post_link = "#{@base_url}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.uuid}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{full_post_link}" : full_post_link
 

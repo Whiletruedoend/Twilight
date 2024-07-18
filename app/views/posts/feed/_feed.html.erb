@@ -5,7 +5,7 @@
   <% @last_date = date %>
 <%end%>
 
-<article id="<%=post.id%>" class="feed">
+<article id="<%=post.uuid%>" class="feed">
   <!--
   <% if post.category.present? %>
     <div class="category" style="<%="border-left: none; background-color: #{post.category.color};"%>"></div>
@@ -19,11 +19,11 @@
     </div>
     <div class="name"><a href="?user=<%=post.user.id%>"><%=display_name(post.user)%></a></div>
     <div class="views"><i class="fa fa-light fa-eye"></i> <%= post.views %> |</div>
-    <div class="createdAt"><a href="?id=<%=post.id%>"><%=post.created_at.strftime("%H:%M:%S")%></a></div>
+    <div class="createdAt"><a href="?uuid=<%=post.uuid%>"><%=post.created_at.strftime("%H:%M:%S")%></a></div>
     <%= render "privacy-icons", object: post %>
   </div>
     
-  <div id="<%=post.id%>" class="text">
+  <div id="<%=post.uuid%>" class="text">
     <%= markdown(post.title) if post.title.present?%>
     <%= markdown(post.text) %>
   </div>
@@ -41,8 +41,8 @@
       </div>
       <% end %>
     <% end %>
-    <a class="item-right" href="?id=<%=post.id%>"><i class="fa fa-commenting-o"> <%= I18n.t("comments.comment_header") %> (<%= post.comments.count %>)</i></a>
-    <%if params[:id].present?%>
+    <a class="item-right" href="?uuid=<%=post.uuid%>"><i class="fa fa-commenting-o"> <%= I18n.t("comments.comment_header") %> (<%= post.comments.count %>)</i></a>
+    <%if params[:uuid].present?%>
       <%= render "posts/comments" %>
     <%end%>
   </div>

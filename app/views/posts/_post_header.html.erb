@@ -4,7 +4,7 @@
     <i class="fa fa-light fa-eye right-small"> <%= post.views %></i>
     <i class="fa fa-commenting-o right-small"> <%= post.comments.count %></i>
     <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
-      <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
+      <a href="/posts/<%= post.uuid %>"><%= render_title(post) %> </a>
       <%= render "privacy-icons", object: post %>
       <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
         <a><i class="fa fa-file right-small"></i></a>
@@ -16,15 +16,15 @@
   <p class="metadata">
     <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.id%>"><%= display_name(post.user) %></a>
       <% if allowed_to?(:update?, post) %>
-          | <a href="/posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
-          | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
+          | <a href="/posts/<%=post.uuid%>/edit"><%= I18n.t("posts.edit_post") %></a>
+          | <a href="/posts/delete/<%=post.uuid%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
       <% end %>
     </i>
   </p>
   <p class="metadata">
-    <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.id%>"><%= I18n.t("posts.raw") %></a>
+    <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.uuid%>"><%= I18n.t("posts.raw") %></a>
       <% if allowed_to?(:export?, post) %>
-        | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
+        | <a href="/posts/export/<%=post.uuid%>"><%= I18n.t("posts.export") %></a>
       <% end %>
     </i>
   </p>

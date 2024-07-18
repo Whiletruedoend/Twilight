@@ -16,7 +16,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
         if post.title.present?
           xml.title @markdown.render(post.title)
         else
-          xml.title "##{post.id}"
+          xml.title "##{post.uuid}"
         end
 
         text = post.text

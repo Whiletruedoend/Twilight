@@ -12,12 +12,12 @@ class PostsController < ApplicationController
   after_action :track_action, only: %i[index show raw feed]
 
   def track_action
-    post = Post.find_by(id: params.dig("id"))
+    post = Post.find_by(uuid: params.dig("uuid"))
     request_params = request.path_parameters
     if post.present?
-      post_id = post.id.to_s
-      if not Ahoy::Event.where(name: "Post_#{post_id}", visit_id: current_visit&.id).where_properties(id: post_id).exists?
-        ahoy.track("Post_#{post_id}", request_params)
+      post_uuid = post.uuid.to_s
+      if not Ahoy::Event.where(name: "Post_#{post_uuid}", visit_id: current_visit&.id).where_properties(id: post_uuid).exists?
+        ahoy.track("Post_#{post_uuid}", request_params)
       end
     else
       request_properties = { action: request_params[:action], controller: request_params[:controller] }
@@ -50,7 +50,7 @@ class PostsController < ApplicationController
     video_preview = current_post.content_attachments&.find{ |a| a.video? }
     video_preview_url = video_preview.present? ? "#{request.base_url}#{rails_blob_path(video_preview, only_path: true)}" : ""
 
-    title = current_post.title.present? ? current_post.title : "#{current_post.id} | #{Rails.configuration.credentials[:title]}"
+    title = current_post.title.present? ? current_post.title : "#{current_post.uuid} | #{Rails.configuration.credentials[:title]}"
     category = current_post.category&.name || ""
 
     author = current_post.user.name.present? ? current_post.user.name : current_post.user.login
@@ -247,7 +247,7 @@ class PostsController < ApplicationController
       end
 
     @posts = PostsSearch.new( current_user: user,
-                              id: params[:id],
+                              uuid: params[:uuid],
                               user_id: params[:user],
                               strict_tags: params[:tag],
                               text: params[:text],
@@ -262,8 +262,8 @@ class PostsController < ApplicationController
       Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
     end
 
-    if params.dig("id").present?
-      @current_post = @posts.find_by(id: params["id"])
+    if params.dig("uuid").present?
+      @current_post = @posts.find_by(uuid: params["uuid"])
       set_tags_post(@current_post) if @current_post.present?
     end
 

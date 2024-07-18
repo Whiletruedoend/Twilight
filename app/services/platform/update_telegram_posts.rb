@@ -170,7 +170,7 @@ class Platform::UpdateTelegramPosts
   end
 
   def update_onlylink(bot, platform_post)
-    post_link = "#{@base_url}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.uuid}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     onlylink_text = @new_title.present? ? "<b>#{@new_title}</b>\n\n#{full_post_link}" : full_post_link
 

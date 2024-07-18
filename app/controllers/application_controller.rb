@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_post
-    @current_post ||= Post.find(params[:id])
+    @current_post ||= Post.find(params[:uuid])
   end
 
   def current_comment
