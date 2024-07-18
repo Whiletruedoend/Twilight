@@ -93,6 +93,10 @@
             <h3><%= I18n.t("posts.privacy") %></h3>
             <%= f.select(:privacy, [[I18n.t("posts.privacy_public"), 0], [I18n.t("posts.privacy_registered"), 1], [I18n.t("posts.privacy_onlyme"), 2]], required: true) %>
           </div>
+          <div class="colorful-checkboxes" style="display: inherit">
+            <%= f.check_box(:is_hidden, { :class=>"colorful-checkbox", :checked => @current_post.is_hidden }) %>
+            <%= f.label :is_hidden, I18n.t("posts.is_hidden") %>
+          </div>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>
             <% tags = ItemTag.where(item: @current_post) %>

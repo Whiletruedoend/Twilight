@@ -132,7 +132,7 @@ module PostsHelper
       privacy = [0]
     end
 
-    item = Post.where(privacy: privacy)
+    item = Post.where(privacy: privacy, is_hidden: false)
     item += users_item if users_item.present?
 
     tags.map do |tag|

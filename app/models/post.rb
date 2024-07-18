@@ -25,12 +25,17 @@ class Post < ApplicationRecord
   def self.get_posts(params, current_user)
     if params.key?(:user)
       current_privacy = current_user.present? ? [0, 1] : [0]
-      privacy = (current_user.present? && (User.find_by(id: params[:user]) == current_user) ? [0, 1, 2] : current_privacy)
-      posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]))
+      is_same_user = (User.find_by(id: params[:user]) == current_user)
+      privacy = (current_user.present? && is_same_user ? [0, 1, 2] : current_privacy)
+      if is_same_user
+        posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]))
+      else
+        posts = Post.where(privacy: privacy, user: User.find_by(id: params[:user]), is_hidden: false)
+      end
     else
       my_posts = current_user.present? ? Post.where(user: current_user).ids : []
       current_privacy = current_user.present? ? [0, 1] : [0]
-      not_my_posts = Post.where.not(user: current_user).where(privacy: current_privacy).ids
+      not_my_posts = Post.where.not(user: current_user).where(privacy: current_privacy, is_hidden: false).ids
       posts = Post.where(id: my_posts + not_my_posts)
     end
     posts = posts.where('lower(title) LIKE ?', "%#{params[:search].downcase}%") if params.key?(:search)

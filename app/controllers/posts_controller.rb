@@ -152,7 +152,7 @@ class PostsController < ApplicationController
       end
 
       UpdatePostMessages.call(current_post, base_url, posts_params)
-      current_post.update(title: posts_params[:post][:title]) # ?
+      current_post.update(title: posts_params[:post][:title], is_hidden: params[:post][:is_hidden]) # ?
 
       redirect_to current_post
     else
@@ -329,6 +329,7 @@ class PostsController < ApplicationController
   def posts_params
     params.permit(:_method,
                   :id,
+                  :uuid,
                   :authenticity_token,
                   :commit,
                   channels: {},
@@ -342,6 +343,7 @@ class PostsController < ApplicationController
                          :privacy,
                          :new_tags_name,
                          :new_tags_enabled_by_default,
+                         :is_hidden,
                          { attachments: [] }])
   end
 end
