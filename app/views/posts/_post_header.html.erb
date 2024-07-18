@@ -28,6 +28,16 @@
       <% end %>
     </i>
   </p>
+  <% if post.platform_posts.any? %>
+  <% r = render_published_platforms(post) %>
+    <% unless r.empty? %>
+    <p class="metadata">
+      <i class="fa fa-tasks">
+        <%= r %>
+      </i>
+    </p>
+    <% end %>
+  <% end %>
 
   <% if params[:action] == "show" %>
     <% if post.category&.name.present? %>

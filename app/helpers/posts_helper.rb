@@ -6,22 +6,6 @@ module PostsHelper
     tags.presence || 'no tags'
   end
 
-  def get_published_platforms(post)
-    post.platform_posts.map { |p| { name: p.platform.title, link: post_link(p) } }
-  end
-
-  def post_link(post)
-    case p.platform.title
-    when 'telegram'
-      chat = Telegram.bot.get_chat(chat_id: post.identifier['chat_id'])
-      if chat['result']['username'].present? && (chat['result']['type'] != 'private')
-        "https://t.me/#{chat['result']['username']}/#{post.identifier['message_id']}"
-      end
-      # else # TODO: moare platform support!
-      # nil
-    end
-  end
-
   def get_full_attachment_link(att)
     "#{request.base_url}#{url_for(att)}"
   end
@@ -159,6 +143,22 @@ module PostsHelper
 
   def render_title(post)
     post.title.present? ? link_markdown(post.title).html_safe : "##{post.id}"
+  end
+
+  def render_published_platforms(post)
+    content = ''
+    post.published_platforms.each_with_index do |(k,v), i|
+      vv = v.reject{ |vv| vv[:channel_name].nil?}.uniq{ |u| u[:channel_name] }
+      next if vv.empty?
+      content += "#{k.capitalize}: "
+      content += ' | ' if i != 0
+      vv.each_with_index do |vvv, ii|
+        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url]) : "#{vvv[:channel_name]} (Private)" 
+        content += ', ' if ii != vv.size - 1
+      end
+    end
+    # content += '-' if content.empty? # Post present, but channel was deleted
+    content.html_safe
   end
 
   def link_markdown(title)

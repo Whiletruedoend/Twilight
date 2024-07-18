@@ -14,9 +14,7 @@
   + [Production](#Production)
 * [Current features](#Current-features)
 * [Bugs and some features](#Bugs-and-some-features)
-* [Security question](#Security-question)
 * [Schemas and screenshots](#Schemas-and-screenshots)
-* [Contribution](#Contribution)
 * [Contact](#Contact)
 
  <img src="https://i.imgur.com/j6FCqsv.png"></img>
@@ -207,15 +205,6 @@ Bugs:
 
 I'm too lazy to fix them, whoever wants (it would be very cool), then I will gladly accept the Pull Request; 
 
-### Security question
-
-Now it turns out that if a user has several channels, then even having several authorization tokens, only one (the very first specified) is used to preload pictures (attachments).
-
-But let's say this situation: the user has 2 channels (2 tones, respectively), and there is a second person who knows the first token, but does not know the second. Then, proceeding from the logic that all attachments are loaded into a temporary channel from the first token, he can simply intercept the information that was intended for the second token.
-
-Only the information from the first token is identical to the information from the second token (after all, the content is uploaded to different channels the same!), So even by intercepting this information, a conditional attacker will receive the same result.
-
-Therefore, this does not seem to carry a serious threat. But just in case, he warned that there were no questions. 
 ## Schemas and screenshots
 ER-diagram(Ver. 1.0.1):
 <img src="https://i.imgur.com/RQQCRpa.jpeg"></img>

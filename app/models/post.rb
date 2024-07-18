@@ -31,6 +31,10 @@ class Post < ApplicationRecord
     posts
   end
 
+  def published_platforms
+    platform_posts.map { |p| { name: p.platform.title, url: p.post_link, channel_name: p.channel&.options&.dig("title") } }.group_by{ |g| g[:name] }
+  end
+
   def active_tags_names
     active_tags.map { |s| s.tag.name }
   end
