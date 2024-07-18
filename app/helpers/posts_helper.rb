@@ -161,6 +161,20 @@ module PostsHelper
     content.html_safe
   end
 
+  def render_feed_published_flatforms(post)
+    content = ''
+    post.published_platforms.each_with_index do |(k,v), i|
+      vv = v.reject{ |vv| vv[:channel_name].nil?}.uniq{ |u| u[:channel_name] }
+      p_class = "platform-tg" if k == "telegram"
+      p_class = "platform-mx" if k == "matrix"
+      next if vv.empty?
+      vv.each_with_index do |vvv, ii|
+        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url], class: p_class) : "#{vvv[:channel_name]} (Private)" 
+      end
+    end
+    content.html_safe
+  end
+
   def link_markdown(title)
     title.gsub(/\[(.*?)\]\((.*?)\)/) { |_m| "<a href=\"#{Regexp.last_match(2)}\">#{Regexp.last_match(1)}</a>" }
   end

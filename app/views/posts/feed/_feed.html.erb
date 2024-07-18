@@ -6,6 +6,11 @@
 <%end%>
 
 <article id="<%=post.id%>" class="feed">
+  <!--
+  <% if post.category.present? %>
+    <div class="category" style="<%="border-left: none; background-color: #{post.category.color};"%>"></div>
+  <% end %>
+  -->
   <div class="user">
     <div class="user-avatar feed-icon">
       <%if post.user.avatar.present?%>
@@ -27,6 +32,15 @@
     <%=display_feed_attachments(post)%>
   <%end%>
   <div class="footer">
+    <% if post.platform_posts.any? %>
+    <% r = render_feed_published_flatforms(post) %>
+      <% unless r.empty? %>
+      <div class="platforms">
+          <%= r %>
+          <!-- <div class="platform-tg">Telegram debug></div><div class="platform-mx">Matrix debug></div><div class="platform-mx">Matrix debug></div><div class="platform-mx">Matrix debug></div><div class="platform-mx">Matrix debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div><div class="platform-tg">Telegram debug></div> -->
+      </div>
+      <% end %>
+    <% end %>
     <a class="item-right" href="?id=<%=post.id%>"><i class="fa fa-commenting-o"> <%= I18n.t("comments.comment_header") %> (<%= post.comments.count %>)</i></a>
     <%if params[:id].present?%>
       <%= render "posts/comments" %>
