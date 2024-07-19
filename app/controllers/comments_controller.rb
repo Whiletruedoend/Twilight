@@ -42,9 +42,14 @@ class CommentsController < ApplicationController
 
   def destroy
     authorize! current_comment
+    ref_url = request.referrer
 
     post = current_comment.post
     current_comment.delete
-    redirect_to post_path(post)
+    if ref_url.include?("feed")
+      redirect_to ref_url
+    else
+      redirect_to post_path(post)
+    end
   end
 end

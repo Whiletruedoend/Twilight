@@ -65,6 +65,7 @@ en:
     no_category: No category
     new_category: "*Optional* New category"
     new_tags: "*Optional* tag1,tag2,tag3"
+    is_hidden: "Post is hidden (from posts list)?"
   tags:
     manage_tags: Manage tags
     tags_header: New tags

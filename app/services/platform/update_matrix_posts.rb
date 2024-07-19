@@ -158,7 +158,7 @@ class Platform::UpdateMatrixPosts
   end
 
   def edit_mx_onlylink_post(platform_post, room_id, event_id)
-    post_link = "#{@base_url}/posts/#{@post.uuid}"
+    post_link = "#{@base_url}/posts/#{@post.slug_url}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
 

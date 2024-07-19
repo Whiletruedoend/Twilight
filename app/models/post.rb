@@ -11,10 +11,10 @@ class Post < ApplicationRecord
   has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id', dependent: :delete_all
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
 
-  before_create -> { self.uuid = SecureRandom.uuid }
+  before_create :gen_uuid
 
   extend FriendlyId
-  friendly_id :slug_candidates, use: [:slugged, :finders]
+  friendly_id :title, use: [:slugged, :finders]
 
   # scope :with_active_tags, ->(tag_id) { select { |post| post.active_tags.include?(tag_id) } }
   scope :without_active_tags, -> { select { |post| post.active_tags.empty? } }
@@ -81,7 +81,12 @@ class Post < ApplicationRecord
 
   # Todo: make turbo for views?
   def views
-    Ahoy::Event.where(name: "Post_#{self.id}").distinct.count(:visit_id)
+    Ahoy::Event.where(name: "Post_#{self.uuid}").distinct.count(:visit_id)
+  end
+
+  def gen_uuid
+    self.uuid = SecureRandom.uuid
+    gen_uuid if Post.find_by(uuid: uuid).present?
   end
 
   def to_param
@@ -100,9 +105,9 @@ class Post < ApplicationRecord
     slug.present? ? slug : uuid
   end
 
-  private
+ # private
 
-  def slug_candidates
-    [:title, [:title, :uuid]]
-  end
+ # def slug_candidates
+ #   [:title, [:title, :uuid]]
+ # end
 end
