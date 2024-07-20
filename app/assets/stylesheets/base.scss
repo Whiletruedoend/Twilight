@@ -89,7 +89,8 @@ $color-black: #000000;
         $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
         $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
         $color-feed-filters-badge-font, $color-feed-badge-bg, $color-feed-music-bg, $color-feed-music-icon,
-        $color-feed-platform-tg, $color-feed-platform-mx){
+        $color-feed-platform-tg, $color-feed-platform-mx, $color-feed-pages-bg, $color-feed-pages-font, $color-feed-pages-active-bg,
+        $color-feed-pages-active-font){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -1055,7 +1056,7 @@ $color-black: #000000;
         background-color: $color-feed-badge-bg;
       }
     }
-    
+
     .filters-group{
       margin-bottom: 10px;
       display: table;
@@ -1095,6 +1096,28 @@ $color-black: #000000;
       color: $color-feed-filters-icon;
       background-color: $color-feed-filters-bg2;
       border-color: $color-feed-filters-border;
+    }
+    
+    /* feeds pages */
+    .pagination{
+      li > a, span {
+        color: $color-feed-pages-font;
+        background-color: $color-feed-pages-bg;
+        border: 1px solid $color-feed-pages-active-bg;
+      }
+      .active > {
+        a {
+          color: $color-feed-pages-active-font;
+          background-color: $color-feed-pages-active-bg;
+          text-decoration: underline;
+      
+          &:hover, &:focus {
+            color: $color-feed-date;
+            background-color: $color-feed-pages-active-bg;
+            text-decoration: underline;
+          }
+        }
+      }    
     }
   }
 
