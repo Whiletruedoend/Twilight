@@ -26,6 +26,7 @@ class SendPostToPlatforms
     content = Content.create!(user: @post.user, post: @post, text: params[:post][:content],
                               has_attachments: @attachments.present?)
     @attachments.each { |att| content.attachments.attach(att) } if @attachments.present?
+    content.upd_post if @attachments.present?
   end
 
   def call

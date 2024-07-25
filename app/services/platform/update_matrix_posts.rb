@@ -155,6 +155,7 @@ class Platform::UpdateMatrixPosts
       blob_id = ActiveStorage::Blob.find_signed(attachment[0])&.id # may deleted in tg update
       @post.content_attachments.find_by(blob_id: blob_id).purge if blob_id.present? && attachment[1] == '0'
     end
+    @post.contents.first&.upd_post if @deleted_attachments.present?
   end
 
   def edit_mx_onlylink_post(platform_post, room_id, event_id)

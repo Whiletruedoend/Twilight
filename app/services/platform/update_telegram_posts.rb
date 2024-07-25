@@ -296,6 +296,7 @@ class Platform::UpdateTelegramPosts
     @deleted_attachments.each do |attachment|
       @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
     end
+    @post.contents.first&.upd_post if @deleted_attachments.present?
   end
 
   def move_caption(bot, platform_post, deleted_indexes)

@@ -10,10 +10,11 @@ class PlatformPost < ApplicationRecord
   def post_link
     case platform.title
     when 'telegram'
-      # TODO: WTF?? Make local
-      chat = Telegram.bot.get_chat(chat_id: identifier['chat_id'])
-      if chat['result']['username'].present? && (chat['result']['type'] != 'private')
-        "https://t.me/#{chat['result']['username']}/#{identifier['message_id']}"
+      return "" if channel.nil?
+      if channel.options.dig("username").present? #&& (chat['result']['type'] != 'private')
+        "https://t.me/#{channel.options.dig("username")}/#{identifier['message_id']}"
+      else
+        ""
       end
     when 'matrix'
       return "" if channel.nil?

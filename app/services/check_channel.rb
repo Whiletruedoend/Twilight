@@ -97,6 +97,7 @@ class CheckChannel
 
     options[:title] = chat['result']['title']
     options[:username] = chat['result']['username']
+    options[:invite_link] = chat['result']['invite_link']
 
     avatar = get_chat_avatar(bot, params[:channel][:room])
     if avatar.present?

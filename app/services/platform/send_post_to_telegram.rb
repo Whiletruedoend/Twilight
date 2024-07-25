@@ -61,6 +61,7 @@ class Platform::SendPostToTelegram
     if @attachments.present? # Create first attachment post
       attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true)
       @attachments.each { |att| attachment_content.attachments.attach(att) } if @attachments.present?
+      attachment_content.upd_post if @attachments.present?
     end
 
     post_text_blocks.each { |t| Content.create!(user: @post.user, post: @post, text: t) } if post_text_blocks.present?

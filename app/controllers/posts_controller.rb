@@ -172,7 +172,7 @@ class PostsController < ApplicationController
   def create
     authorize! current_user, to: :create_posts?
 
-    @post = Post.new(title: posts_params[:post][:title])
+    @post = Post.new(title: posts_params[:post][:title], is_hidden: params[:post][:is_hidden])
     @post.user = current_user
     @post.privacy = posts_params.dig(:post, :privacy) || 2
     base_url = request.base_url

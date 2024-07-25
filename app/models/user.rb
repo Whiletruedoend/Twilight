@@ -11,8 +11,7 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :invite_codes, dependent: :delete_all
   has_many :categories, dependent: :delete_all
-  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
-                                 dependent: :delete_all # Not working deletion with SQLite!
+  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
   has_many :visits, class_name: "Ahoy::Visit"
 
@@ -110,7 +109,18 @@ class User < ApplicationRecord
 
   def destroy
     avatar.purge
-    ItemTag.where(item: self).delete_all
-    super
+    ItemTag.where(item_type: "User", item: self).delete_all
+    ids = ItemTag.select { |i| i.item_type == "Post" && i.item.present? && i.item.user == self }
+    ItemTag.where(id: ids).delete_all if ids.present?
+    InviteCode.where(user: self).delete_all
+    Comment.where(user: self).destroy_all
+    Post.where(user: self).destroy_all
+    Content.where(user: self).destroy_all
+    Channel.where(user: self).destroy_all
+    Category.where(user: self).destroy_all
+    Ahoy::Event.where(user: self).update(user: nil)
+    Ahoy::Visit.where(user: self).update(user: nil)
+    self.delete
+    #super # TODO: Fix it
   end
 end

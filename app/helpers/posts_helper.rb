@@ -54,14 +54,15 @@ module PostsHelper
     content += '<br><br>' if documents.any?
 
     post.content_attachments&.each do |att|
+      full_att_link = get_full_attachment_link(att)
       if att.image?
-        content += link_to image_tag(url_for(att)), url_for(att), target: '_blank'.to_s
+        content += link_to image_tag(full_att_link), full_att_link, target: '_blank'.to_s
         content += '<br>'
       elsif att.video?
-        content += link_to url_for(att).to_s
+        content += link_to full_att_link.to_s
         content += '<br>'
       elsif att.audio?
-        content += link_to url_for(att).to_s
+        content += link_to full_att_link.to_s
         content += '<br>'
       end
     end
@@ -150,10 +151,10 @@ module PostsHelper
     post.published_platforms.each_with_index do |(k,v), i|
       vv = v.reject{ |vv| vv[:channel_name].nil?}.uniq{ |u| u[:channel_name] }
       next if vv.empty?
-      content += "#{k.capitalize}: "
       content += ' | ' if i != 0
+      content += "#{k.capitalize}: "
       vv.each_with_index do |vvv, ii|
-        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url]) : "#{vvv[:channel_name]} (Private)" 
+        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url]) : link_to("#{vvv[:channel_name]} (Private)", "#")
         content += ', ' if ii != vv.size - 1
       end
     end
@@ -169,7 +170,7 @@ module PostsHelper
       p_class = "platform-mx" if k == "matrix"
       next if vv.empty?
       vv.each_with_index do |vvv, ii|
-        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url], class: p_class) : "#{vvv[:channel_name]} (Private)" 
+        content += vvv[:url].present? ? link_to(vvv[:channel_name], vvv[:url], class: p_class) : link_to("#{vvv[:channel_name]} (Private)", "#", class: p_class)
       end
     end
     content.html_safe
