@@ -17,6 +17,7 @@ class PostsController < ApplicationController
     if post.present?
       post_uuid = post.uuid.to_s
       if not Ahoy::Event.where(name: "Post_#{post_uuid}", visit_id: current_visit&.id).where_properties(uuid: post_uuid).exists?
+        request_params["uuid"] = post_uuid
         ahoy.track("Post_#{post_uuid}", request_params)
       end
     else

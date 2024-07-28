@@ -26,6 +26,7 @@ class ExportFiles
       \n\n<TW_METADATA>
         <DATE>#{@post.updated_at}</DATE>
         <PRIVACY>#{@post.privacy}</PRIVACY>
+        <IS_HIDDEN>#{@post.is_hidden ? 1 : 0}</IS_HIDDEN>
         <CATEGORY>#{@post.category_id}</CATEGORY>
         <TAGS>#{ItemTag.where(enabled: true, item: @post).map { |item_tag| item_tag.tag.name.to_s }.join(',')}</TAGS>
       </TW_METADATA>
