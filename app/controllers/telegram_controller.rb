@@ -5,7 +5,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   include TelegramShared
 
   def initialize(bot = nil, update = nil)
-    @channel_ids = Channel.where(enabled: true).map(&:room)
+    @channel_ids = Channel.where(enabled: true).map{ |ch| [ch.id, ch.room]}.to_h
     @telegram_platform = Platform.find_by(title: 'telegram')
     super
   end
@@ -26,24 +26,48 @@ class TelegramController < Telegram::Bot::UpdatesController
 
   def check_message(message)
     comment_channel = message.dig('reply_to_message', 'sender_chat', 'id')
+    from_channel = message.dig('sender_chat', 'id')
 
-    return check_platform_comment(message) if comment_channel.present? && @channel_ids.include?(comment_channel.to_s)
+    if from_channel.present? && @channel_ids.values.include?(from_channel.to_s)
+      channel = Channel.find_by(room: from_channel)
+      check_linked_group(message, channel) 
+      check_platform_message(message, channel)
+    end
+    return check_platform_comment(message) if comment_channel.present? && @channel_ids.values.include?(comment_channel.to_s)
 
     reply_message = message.dig('reply_to_message', 'message_id') # Check reply on chat comment
     check_reply_comment(message, reply_message) if reply_message.present?
   end
 
+  def check_linked_group(message, channel)
+    linked_chat_id = channel.options.dig('linked_chat_id')
+    return if linked_chat_id.present?
+    options = channel.options
+    options["linked_chat_id"] = message["chat"]["id"]
+    options["comments_enabled"] = true
+    channel.update!(options: options)
+  end
+
+  def check_platform_message(message, channel)
+    chat_id = message.dig('sender_chat', 'id')
+    message_id = message.dig('forward_from_message_id')
+    platform_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier["chat_id"] == chat_id && pp.identifier["message_id"] == message_id }
+    identifier = platform_post.identifier
+    identifier["linked_chat_message_id"] = message.dig('message_id')
+    platform_post.update!(identifier: identifier)
+  end
+
   def check_edit_message(message)
     comment_channel = message.dig('reply_to_message', 'sender_chat', 'id')
 
-    return check_edit_platform_comment(message) if comment_channel.present? && @channel_ids.include?(comment_channel.to_s)
+    return check_edit_platform_comment(message) if comment_channel.present? && @channel_ids.values.include?(comment_channel.to_s)
 
     reply_message = message.dig('reply_to_message', 'message_id') # Check reply on chat comment
     check_edit_reply_comment(message, reply_message) if reply_message.present?
   end
 
   def check_platform_comment(message)
-    Rails.logger.debug('TG: ADDING COMMENT...'.red) if Rails.env.development?
+    Rails.logger.debug('TG: ADDING COMMENT...'.green) if Rails.env.development?
     post_message_id = message['reply_to_message']['forward_from_message_id']
 
     platform_post = nil
@@ -62,7 +86,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def check_edit_platform_comment(message)
-    Rails.logger.debug('TG: CHECK EDITING COMMENT...'.red) if Rails.env.development?
+    Rails.logger.debug('TG: CHECK EDITING COMMENT...'.green) if Rails.env.development?
     post_message_id = message['message_id']
     comment = nil
     Comment.all.each do |p|
@@ -77,7 +101,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def check_reply_comment(message, reply_message)
-    Rails.logger.debug('TG: CHECK REPLY COMMMENT...'.red) if Rails.env.development?
+    Rails.logger.debug('TG: CHECK REPLY COMMMENT...'.green) if Rails.env.development?
 
     platform_post = nil
 
@@ -95,7 +119,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def check_edit_reply_comment(message, reply_message)
-    Rails.logger.debug('TG: CHECK REPLY EDITING COMMMENT...'.red) if Rails.env.development?
+    Rails.logger.debug('TG: CHECK REPLY EDITING COMMMENT...'.green) if Rails.env.development?
 
     prev_comment = nil
     current_comment = nil
@@ -119,13 +143,14 @@ class TelegramController < Telegram::Bot::UpdatesController
     user = check_user(message)
 
     attachment = check_attachments(message)
+    channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id').to_s }.first
     if attachment.present?
       identifier = { message_id: message['message_id'],
                      chat_id: message['chat']['id'],
                      file_id: attachment[:file_id],
                      file_size: attachment[:file_size] }
       if attachment[:media_group_id].present?
-        Rails.logger.debug("MEDIA GROUP ID PRESENT... #{attachment[:media_group_id]}".red) if Rails.env.development?
+        Rails.logger.debug("MEDIA GROUP ID PRESENT... #{attachment[:media_group_id]}".green) if Rails.env.development?
         # puts(attachment)
         # Find comment by media_group_id and att attachment if found
         media_comment = []
@@ -138,7 +163,7 @@ class TelegramController < Telegram::Bot::UpdatesController
             media_comment = comm
           end
         end
-        Rails.logger.debug('MEDIA COMMENT CHECK...'.red) if Rails.env.development?
+        Rails.logger.debug('MEDIA COMMENT CHECK...'.green) if Rails.env.development?
         if media_comment.present? # Already exists, update comment...
           media_array = []
           # P.S. Only first array element contains media_group_id
@@ -159,15 +184,15 @@ class TelegramController < Telegram::Bot::UpdatesController
         end
       end
       comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
-                                platform_user: user, has_attachments: true)
+                                platform_user: user, has_attachments: true, channel_id: channel_id)
       file = URI.parse(attachment[:link]).open
       comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
-      Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.red) if Rails.env.development?
+      Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
       identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
-      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user)
-      Rails.logger.debug('TG: COMMENT ADDED!'.red) if Rails.env.development?
+      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user, channel_id: channel_id)
+      Rails.logger.debug('TG: COMMENT ADDED!'.green) if Rails.env.development?
     end
   end
 
@@ -186,7 +211,7 @@ class TelegramController < Telegram::Bot::UpdatesController
           c.each_with_index do |e, j|
             next unless (e['message_id'] == message['message_id']) && (c['file_size'] != attachment[:file_size])
 
-            Rails.logger.debug('FOUND YA IN ARRAY!'.red) if Rails.env.development?
+            Rails.logger.debug('FOUND YA IN ARRAY!'.green) if Rails.env.development?
             # delete(e) # Sync attachment deletion
             # c.append(identifier)
             e.clear
@@ -194,7 +219,7 @@ class TelegramController < Telegram::Bot::UpdatesController
             att_id = j
           end
         elsif (c['message_id'] == message['message_id']) && (c['file_size'] != attachment[:file_size])
-          Rails.logger.debug('FOUND YA IN HASH!'.red) if Rails.env.development?
+          Rails.logger.debug('FOUND YA IN HASH!'.green) if Rails.env.development?
           c.clear
           c.merge!(identifier)
           att_id = i
@@ -209,11 +234,11 @@ class TelegramController < Telegram::Bot::UpdatesController
       end
       comment_text = message['caption']
       comment.update!(text: comment_text, is_edited: true)
-      Rails.logger.debug('TG: COMMENT WITH ATTACHMENTS UPDATED!'.red) if Rails.env.development?
+      Rails.logger.debug('TG: COMMENT WITH ATTACHMENTS UPDATED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
       comment.update!(text: comment_text, is_edited: true)
-      Rails.logger.debug('TG: COMMENT UPDATED!'.red) if Rails.env.development?
+      Rails.logger.debug('TG: COMMENT UPDATED!'.green) if Rails.env.development?
     end
   end
 
@@ -239,7 +264,7 @@ class TelegramController < Telegram::Bot::UpdatesController
       end
 
     if user.present?
-      Rails.logger.debug('TG: USER FOUND'.red) if Rails.env.development?
+      Rails.logger.debug('TG: USER FOUND'.green) if Rails.env.development?
       old_identifier = user.identifier
       identifier = { id: tg_user, fname: tg_fname, lname: tg_lname, username: tg_username }
       identifier[:avatar_size] = avatar[:file_size] if avatar.present?
@@ -252,7 +277,7 @@ class TelegramController < Telegram::Bot::UpdatesController
 
       user.update!(identifier: identifier) unless old_identifier == identifier # Update user info
     else
-      Rails.logger.debug('TG: USER NOT FOUND, CREATING...'.red) if Rails.env.development?
+      Rails.logger.debug('TG: USER NOT FOUND, CREATING...'.green) if Rails.env.development?
       identifier =
         { id: tg_user, fname: tg_fname, lname: tg_lname, username: tg_username }.compact
       user = PlatformUser.create!(identifier: identifier, platform: @telegram_platform)
@@ -282,7 +307,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def check_attachments(message)
-    Rails.logger.debug('CHECKING ATTACHMENTS...'.red) if Rails.env.development?
+    Rails.logger.debug('CHECKING ATTACHMENTS...'.green) if Rails.env.development?
     if message.key?('photo')
       file_id = message['photo'].last['file_id']
     elsif message.key?('video')
@@ -295,7 +320,7 @@ class TelegramController < Telegram::Bot::UpdatesController
 
     return nil if file_id.nil?
 
-    Rails.logger.debug('TG: ATTACHMENT FOUND!'.red) if Rails.env.development?
+    Rails.logger.debug('TG: ATTACHMENT FOUND!'.green) if Rails.env.development?
     msg = bot.get_file(file_id: file_id)
 
     { link: "https://api.telegram.org/file/bot#{bot.token}/#{msg['result']['file_path']}",

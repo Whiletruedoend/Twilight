@@ -920,6 +920,12 @@ $color-black: #000000;
     tr:hover td {
       color: $color-table-tr-hover;
     }
+
+    /* Platforms in comments */
+    .colorful-checkboxes{
+      text-align: left;
+      margin: 1% 1% auto 1%;
+    }
   }
 
   .user-avatar{

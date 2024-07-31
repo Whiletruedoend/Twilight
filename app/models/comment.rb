@@ -3,6 +3,7 @@
 class Comment < ApplicationRecord
   belongs_to :post
   belongs_to :user, optional: true # Site comment
+  belongs_to :channel, optional: true
   belongs_to :platform_user, optional: true # Platform comment
   has_many_attached :attachments
 

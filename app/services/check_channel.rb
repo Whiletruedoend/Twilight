@@ -92,7 +92,7 @@ class CheckChannel
         return errors.add(:base, errs) if errs.any?
       end
 
-      options[:room_comments] = comment_chat_id
+      options[:linked_chat_id] = comment_chat_id
     end
 
     options[:title] = chat['result']['title']
