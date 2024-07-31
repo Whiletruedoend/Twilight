@@ -1,0 +1,33 @@
+<% if post.comments.empty? %>
+    <center><%= I18n.t("comments.comments_not_found") %></center>
+<% else %>
+    <%post.comments.order("created_at ASC").group_by(&:channel).each do |ch, comms|%>
+        <%= ch.present? ? "#{ch.options["title"]} (#{ch.platform.title})" : "Blog" %>: <br>
+        <%comms.each do |comm|%>
+            <% user = comm.platform_user || comm.user %>
+            <div class="comment">
+                <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
+                <% name = display_comments_name(user) %>
+                <div class="comment-metadata">
+                    <%= name %>
+                    <i class="comment-small">- <%= comm.created_at.strftime("%Y-%m-%d %H:%M") %>
+                        <% if comm.is_edited %>
+                            <i class="fa fa-pencil-square-o "></i>
+                        <% end %>
+                        <% if current_user.present? && current_user.is_a?(User) && comm.user.present? && (current_user == comm.user)%>
+                            | <a href="/comments/<%=comm.id%>/edit"><%= I18n.t("comments.edit") %></a>
+                        <% end %>
+                    </i>
+                    <% if current_user.present? && current_user.is_a?(User) && (current_user.is_admin? || (current_user.present? && current_user.is_a?(User) && comm.user.present? && (current_user == comm.user))) %>
+                    <i class="comment-small right"><a href = "/comments/delete/<%=comm.id%>"><%= I18n.t("comments.delete") %></a></i>
+                    <% end %>
+                </div>
+                <%= markdown(comm.text) %>
+                <% if comm.has_attachments %>
+                    <hr style="border-top: dashed 2px;" />
+                    <%= display_comment_attachments(comm) if comm.attachments.any? %>
+                <% end%>
+            </div>          
+        <%end%>
+    <%end%>
+<% end %>

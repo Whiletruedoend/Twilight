@@ -9,6 +9,12 @@ class Comment < ApplicationRecord
 
   validate :text_or_attachments
 
+  thread_mattr_accessor :current_user
+
+  after_create_commit do upd_comment end
+  after_update_commit do upd_comment end
+  after_destroy_commit do upd_comment end
+
   def text_or_attachments
     return unless text.empty? && !has_attachments
 
@@ -29,5 +35,9 @@ class Comment < ApplicationRecord
   def destroy
     attachments.purge
     super
+  end
+
+  def upd_comment
+    broadcast_update_to [self.post], partial: 'comments/comment_list', locals: { post: self.post, current_user: self.current_user }, target: "comments_#{self.post.id}"
   end
 end

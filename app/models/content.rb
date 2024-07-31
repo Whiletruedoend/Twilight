@@ -5,7 +5,6 @@ class Content < ApplicationRecord
   belongs_to :user
   belongs_to :post
 
-  # TODO: Если было изменено содержимое контента, то оно не всегда почему-то хочет отображать изменения.
   after_create_commit do upd_post end
   after_update_commit do upd_post end
   after_destroy_commit do upd_post end

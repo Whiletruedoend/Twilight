@@ -12,18 +12,7 @@ class CommentsController < ApplicationController
     if params['channels'].present? && channels.any?
       SendCommentToPlatforms.call(params, channels, current_post, current_user)
     else
-      current_comment = Comment.create!(text: params[:comment][:content], user: current_user, post: current_post)
-    end
-
-    if current_comment.present? && current_comment.save
-      if ref_url.include?("feed")
-        redirect_to ref_url
-      else
-      redirect_to post_path(current_comment.post)
-      end
-    else
-      redirect_to ref_url
-      #render :new
+      current_comment = Comment.create!(text: params[:comment][:content], user: current_user, post: current_post, current_user: current_user)
     end
   end
 
@@ -35,7 +24,7 @@ class CommentsController < ApplicationController
     authorize! current_comment
     ref_url = request.referrer
 
-    if current_comment.update(text: params[:comment][:content], is_edited: true)
+    if current_comment.update(text: params[:comment][:content], is_edited: true, current_user: current_user)
       if ref_url.include?("feed")
         redirect_to ref_url
       else
@@ -48,7 +37,7 @@ class CommentsController < ApplicationController
 
   def destroy
     authorize! current_comment
-    ref_url = request.
+    ref_url = request.referrer
     
     # TODO: Delete from platforms
 

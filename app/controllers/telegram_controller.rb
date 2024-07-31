@@ -184,14 +184,14 @@ class TelegramController < Telegram::Bot::UpdatesController
         end
       end
       comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
-                                platform_user: user, has_attachments: true, channel_id: channel_id)
+                                platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0)
       file = URI.parse(attachment[:link]).open
       comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
       Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
       identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
-      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user, channel_id: channel_id)
+      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user, channel_id: channel_id, current_user: 0)
       Rails.logger.debug('TG: COMMENT ADDED!'.green) if Rails.env.development?
     end
   end

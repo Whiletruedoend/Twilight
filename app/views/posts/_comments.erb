@@ -1,49 +1,9 @@
 <br>
-<% if @current_post.comments.any? %>
-  <div class="comments-container comments-width">
-    <center><%= render "comments/add" if current_user.present? %></center>
-    <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
-    <% comments = @current_post.comments.order("created_at DESC").group_by{ |item| item.send("user").present? } %>
-    <% if comments[true].present? %>
-      <%= I18n.t("comments.blog") %>: <br>
-      <% comments[true].each do |comment|%>
-        <% user = comment.user %>
-          <div class="comment">
-          <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
-          <% name = display_name(user) %>
-            <div class="comment-metadata"><%= name %> <i class="comment-small">- <%= comment.created_at.strftime("%Y-%m-%d %H:%M") %> <% if comment.is_edited %> <i class="fa fa-pencil-square-o "></i> <% end %><% if current_user.present? && (current_user == user)%> | <a href="/comments/<%=comment.id%>/edit"><%= I18n.t("comments.edit") %></a><% end %></i><% if current_user.present? && (current_user.is_admin? || (current_user == user)) %><i class="comment-small right"><a href = "/comments/delete/<%=comment.id%>"><%= I18n.t("comments.delete") %></a></i><% end %></div>
-          <%= markdown(comment.text) %>
-          <% if comment.has_attachments %>
-            <hr style="border-top: dashed 2px;" />
-            <%= display_comment_attachments(comment) if comment.attachments.any? %>
-          <% end%>
-        </div>
-        <br> <!-- May delete (reply?) -->
-      <% end %>
-    <% end %>
-    <% if comments[false].present? %>
-      <%= I18n.t("comments.telegram") %>:
-      <% comments[false].each do |comment|%>
-        <% user = comment.platform_user %>
-        <div class="comment">
-          <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
-          <% name = comment.username %>
-          <div class="comment-metadata"><%= name[:name] %> <i class="comment-small">- <%= comment.created_at.strftime("%Y-%m-%d %H:%M") %> <% if comment.is_edited %> <i class="fa fa-pencil-square-o"></i> <% end %>| <%= user["identifier"].dig("username").present? ? link_to(user.platform.title.capitalize, "https://t.me/#{user["identifier"].dig("username")}" ) : user.platform.title.capitalize %></i><i class="comment-small right">ID: <%= comment.platform_user.identifier["id"] %></i></div>
-          <%= comment.text %>
-          <% if comment.has_attachments %>
-            <hr style="border-top: dashed 2px;" />
-            <%= display_comment_attachments(comment) if comment.attachments.any? %>
-          <% end %>
-        </div>
-        <br> <!-- May delete (reply?) -->
-      <% end %>
-    <% end %>
-  </div>
-<% else %>
-  <div class="comments-container comments-width">
-    <center>
-      <%= render "comments/add" if current_user.present? %><br>
-      <%= I18n.t("comments.comments_not_found") %>
-    </center>
-  </div>
-<% end %>
+<div class="comments-container comments-width">
+  <center><%= render "comments/add" if current_user.present? %></center>
+  <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
+  <%= turbo_stream_from @current_post %>
+    <div id="<%="comments_#{@current_post.id}"%>">
+      <%= render partial: "comments/comment_list", locals: { post: @current_post, current_user: current_user } %>
+    </div>
+</div>

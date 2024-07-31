@@ -64,7 +64,7 @@ class Platform::SendCommentToTelegram
               platform: @platform
             }
       # TODO: make platform user detecteble?
-      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, platform_user_id: nil, has_attachments: has_attachments, channel_id: channel[:id])
+      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, platform_user_id: nil, has_attachments: has_attachments, channel_id: channel[:id], current_user: @current_user)
     end
   rescue StandardError => e
     Rails.logger.error("Failed create telegram comment for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}")
