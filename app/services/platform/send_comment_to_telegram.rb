@@ -19,7 +19,8 @@ class Platform::SendCommentToTelegram
           room: channel.room,
           token: channel.token,
           room_attachments: channel.options['room_attachments'],
-          linked_chat_id: channel.options.dig('linked_chat_id')}
+          linked_chat_id: channel.options.dig('linked_chat_id'),
+        }
       end
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
@@ -59,12 +60,12 @@ class Platform::SendCommentToTelegram
                                 parse_mode: 'html'})
 
       res = { chat_id: @msg['result']['chat']['id'],
-              message_id: @msg['result']['message_id'],
+              message_id: @msg['result']['message_id']
               #date: @msg['result']['date'],
-              platform: @platform
             }
       # TODO: make platform user detecteble?
-      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, platform_user_id: nil, has_attachments: has_attachments, channel_id: channel[:id], current_user: @current_user)
+      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments,
+      channel_id: channel[:id], current_user: @current_user, platform: @platform)
     end
   rescue StandardError => e
     Rails.logger.error("Failed create telegram comment for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}")

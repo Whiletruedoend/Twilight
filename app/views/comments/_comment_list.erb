@@ -1,8 +1,10 @@
 <% if post.comments.empty? %>
     <center><%= I18n.t("comments.comments_not_found") %></center>
 <% else %>
+    <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
     <%post.comments.order("created_at ASC").group_by(&:channel).each do |ch, comms|%>
-        <%= ch.present? ? "#{ch.options["title"]} (#{ch.platform.title})" : "Blog" %>: <br>
+        <%next if ch.present? && !ch.enabled%>
+        <div class="comment-header-medium"><%= ch.present? ? "#{ch.options["title"]} (#{ch.platform.title.capitalize})" : "Blog" %>:</div>
         <%comms.each do |comm|%>
             <% user = comm.platform_user || comm.user %>
             <div class="comment">

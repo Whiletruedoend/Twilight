@@ -5,8 +5,9 @@ class TelegramController < Telegram::Bot::UpdatesController
   include TelegramShared
 
   def initialize(bot = nil, update = nil)
-    @channel_ids = Channel.where(enabled: true).map{ |ch| [ch.id, ch.room]}.to_h
     @telegram_platform = Platform.find_by(title: 'telegram')
+    @channel_ids = Channel.where(enabled: true, platform: @telegram_platform).map{ |ch| [ch.id, ch.room]}.to_h
+    @linked_group_channels_ids = Channel.where(id: @channel_ids.keys).map{ |ch| [ch.id, ch.options.dig("linked_chat_id")] }.to_h.compact_blank
     super
   end
 
@@ -72,12 +73,12 @@ class TelegramController < Telegram::Bot::UpdatesController
 
     platform_post = nil
 
-    PlatformPost.all.each do |p_post|
+    PlatformPost.where(platform: @telegram_platform).each do |p_post|
       if p_post[:identifier].is_a?(Array) # Post has attachments
         p_post[:identifier].each do |p|
           platform_post = p_post if p['message_id'] == post_message_id && p_post.platform_id == @telegram_platform.id
         end
-      elsif p_post[:identifier]['message_id'] == post_message_id && p_post.platform_id == @telegram_platform.id
+      elsif p_post[:identifier]['message_id'] == post_message_id
         platform_post = p_post
       end
     end
@@ -89,7 +90,7 @@ class TelegramController < Telegram::Bot::UpdatesController
     Rails.logger.debug('TG: CHECK EDITING COMMENT...'.green) if Rails.env.development?
     post_message_id = message['message_id']
     comment = nil
-    Comment.all.each do |p|
+    Comment.where(platform: @telegram_platform).each do |p|
       if p[:identifier].is_a?(Array) # Comment has attachments
         p[:identifier].each { |c| comment = p if c['message_id'] == post_message_id }
       elsif p[:identifier]['message_id'] == post_message_id
@@ -104,13 +105,15 @@ class TelegramController < Telegram::Bot::UpdatesController
     Rails.logger.debug('TG: CHECK REPLY COMMMENT...'.green) if Rails.env.development?
 
     platform_post = nil
-
-    Comment.all.each do |p_post|
+    
+    Comment.where(platform: @telegram_platform).each do |p_post|
+      next if p_post[:identifier].nil? # Blog comment
       if p_post[:identifier].is_a?(Array) # Post has attachments
         p_post[:identifier].each do |p|
-          platform_post = p_post if p['message_id'] == reply_message && p_post.platform_user.platform_id == @telegram_platform.id
+          platform_post = p_post if p['message_id'] == reply_message #&& p_post.platform_user.platform_id == @telegram_platform.id
         end
-      elsif p_post[:identifier]['message_id'] == reply_message && p_post.platform_user.platform_id == @telegram_platform.id
+      # Todo: Add platform id to comment
+      elsif p_post[:identifier]['message_id'] == reply_message #&& p_post.platform_user.platform_id == @telegram_platform.id
         platform_post = p_post
       end
     end
@@ -124,7 +127,7 @@ class TelegramController < Telegram::Bot::UpdatesController
     prev_comment = nil
     current_comment = nil
 
-    Comment.all.each do |p|
+    Comment.where(platform: @telegram_platform).each do |p|
       if p[:identifier].is_a?(Array) # Comment has attachments
         p[:identifier].each do |c|
           prev_comment = p if c['message_id'] == reply_message
@@ -143,7 +146,8 @@ class TelegramController < Telegram::Bot::UpdatesController
     user = check_user(message)
 
     attachment = check_attachments(message)
-    channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id').to_s }.first
+    channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id').to_s }&.first
+    channel_id = @linked_group_channels_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id') }&.first if channel_id.nil?
     if attachment.present?
       identifier = { message_id: message['message_id'],
                      chat_id: message['chat']['id'],
@@ -154,7 +158,7 @@ class TelegramController < Telegram::Bot::UpdatesController
         # puts(attachment)
         # Find comment by media_group_id and att attachment if found
         media_comment = []
-        Comment.all.each do |comm|
+        Comment.where(platform: @telegram_platform).each do |comm|
           if comm[:identifier].is_a?(Array) # Comment has attachments
             comm[:identifier].each do |c|
               media_comment = comm if c['media_group_id'] == attachment[:media_group_id].to_s
@@ -184,14 +188,16 @@ class TelegramController < Telegram::Bot::UpdatesController
         end
       end
       comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
-                                platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0)
+                                platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0,
+                                platform: @telegram_platform)
       file = URI.parse(attachment[:link]).open
       comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
       Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
       identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
-      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user, channel_id: channel_id, current_user: 0)
+      Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user,
+      channel_id: channel_id, current_user: 0, platform: @telegram_platform)
       Rails.logger.debug('TG: COMMENT ADDED!'.green) if Rails.env.development?
     end
   end

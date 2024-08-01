@@ -1,7 +1,6 @@
 <br>
 <div class="comments-container comments-width">
   <center><%= render "comments/add" if current_user.present? %></center>
-  <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
   <%= turbo_stream_from @current_post %>
     <div id="<%="comments_#{@current_post.id}"%>">
       <%= render partial: "comments/comment_list", locals: { post: @current_post, current_user: current_user } %>

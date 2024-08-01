@@ -851,9 +851,13 @@ $color-black: #000000;
       font-size: 25px;
     }
 
+    .comment-header-medium{
+      font-size: 20px;
+    }
+
     .comment{
       position: relative;
-      margin-top: 1%;
+      margin-top: 0.5%;
       margin-bottom: 2%;
 
       .wrapper {

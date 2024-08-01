@@ -13,19 +13,23 @@
             <div class="comment-editor">
               <%= f.text_area :content, { id: "comments_content", placeholder: "#{I18n.t("posts.text_placeholder")}" } %>
             </div>
-            <%telegram_channels = @current_post.published_channels.where(platform: Platform.find_by(title: "telegram"))%>
-            <% if telegram_channels.any? %>
-              <div class="colorful-checkboxes">
-                <% telegram_channels.each do |channel| %>
-                  <% title = channel.options&.dig("title") %>
-                  <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
-                  <%= label_tag "channels_#{channel.id}", title&.capitalize %>
-                <% end %>
-              </div>
-            <% end %>
+            <%if allowed_to?(:create_platform_comments?, @current_post)%>
+              <%telegram_channels = @current_post.published_channels.where(platform: Platform.find_by(title: "telegram"))%>
+              <%if telegram_channels.any?%>
+                <div class="colorful-checkboxes">
+                  <%telegram_channels.each do |channel|%>
+                    <%title = channel.options&.dig("title")%>
+                    <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                  <%end%>
+                </div>
+              <%end%>
+            <%else%>
+              <br>
+            <%end%>
             <p><%= f.submit I18n.t("channels.add")%><br></p>
           </div>
-        <% end %>
+        <%end%>
       </div>
     </div>
   </div>
