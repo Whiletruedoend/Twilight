@@ -73,7 +73,7 @@ class TelegramController < Telegram::Bot::UpdatesController
 
     platform_post = nil
 
-    PlatformPost.where(platform: @telegram_platform).each do |p_post|
+    PlatformPost.where(channel: @channel_ids.keys).each do |p_post|
       if p_post[:identifier].is_a?(Array) # Post has attachments
         p_post[:identifier].each do |p|
           platform_post = p_post if p['message_id'] == post_message_id && p_post.platform_id == @telegram_platform.id
@@ -112,7 +112,6 @@ class TelegramController < Telegram::Bot::UpdatesController
         p_post[:identifier].each do |p|
           platform_post = p_post if p['message_id'] == reply_message #&& p_post.platform_user.platform_id == @telegram_platform.id
         end
-      # Todo: Add platform id to comment
       elsif p_post[:identifier]['message_id'] == reply_message #&& p_post.platform_user.platform_id == @telegram_platform.id
         platform_post = p_post
       end
@@ -149,57 +148,62 @@ class TelegramController < Telegram::Bot::UpdatesController
     channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id').to_s }&.first
     channel_id = @linked_group_channels_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id') }&.first if channel_id.nil?
     if attachment.present?
-      identifier = { message_id: message['message_id'],
-                     chat_id: message['chat']['id'],
-                     file_id: attachment[:file_id],
-                     file_size: attachment[:file_size] }
-      if attachment[:media_group_id].present?
-        Rails.logger.debug("MEDIA GROUP ID PRESENT... #{attachment[:media_group_id]}".green) if Rails.env.development?
-        # puts(attachment)
-        # Find comment by media_group_id and att attachment if found
-        media_comment = []
-        Comment.where(platform: @telegram_platform).each do |comm|
-          if comm[:identifier].is_a?(Array) # Comment has attachments
-            comm[:identifier].each do |c|
-              media_comment = comm if c['media_group_id'] == attachment[:media_group_id].to_s
-            end
-          elsif comm[:identifier]['media_group_id'] == attachment[:media_group_id].to_s
-            media_comment = comm
-          end
-        end
-        Rails.logger.debug('MEDIA COMMENT CHECK...'.green) if Rails.env.development?
-        if media_comment.present? # Already exists, update comment...
-          media_array = []
-          # P.S. Only first array element contains media_group_id
-          if media_comment.identifier.is_a?(Array)
-            media_comment.identifier.each { |media| media_array.append(media) }
-          else
-            media_array.append(media_comment.identifier)
-          end
-          media_array.append(identifier)
-          media_comment.identifier = media_array
-          media_comment.text = attachment[:caption] if attachment[:caption] != media_comment.text && attachment[:caption].present?
-          file = URI.parse(attachment[:link]).open
-          media_comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
-          media_comment.save!
-          return
-        else
-          identifier[:media_group_id] = attachment[:media_group_id].to_s
-        end
-      end
-      comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
-                                platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0,
-                                platform: @telegram_platform)
-      file = URI.parse(attachment[:link]).open
-      comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
-      Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
+      create_attachment_comment(message, attachment, user, platform_post, channel_id)
     else
       comment_text = message['text']
       identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
       Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user,
-      channel_id: channel_id, current_user: 0, platform: @telegram_platform)
+                      channel_id: channel_id, current_user: 0, platform: @telegram_platform, 
+                      reply: (platform_post.is_a?(Comment) ? platform_post : nil))
       Rails.logger.debug('TG: COMMENT ADDED!'.green) if Rails.env.development?
     end
+  end
+
+  def create_attachment_comment(message, attachment, user, platform_post, channel_id)
+    identifier = { message_id: message['message_id'],
+                   chat_id: message['chat']['id'],
+                   file_id: attachment[:file_id],
+                   file_size: attachment[:file_size] }
+    if attachment[:media_group_id].present?
+      Rails.logger.debug("MEDIA GROUP ID PRESENT... #{attachment[:media_group_id]}".green) if Rails.env.development?
+      # puts(attachment)
+      # Find comment by media_group_id and att attachment if found
+      media_comment = []
+      Comment.where(platform: @telegram_platform).each do |comm|
+        if comm[:identifier].is_a?(Array) # Comment has attachments
+          comm[:identifier].each do |c|
+            media_comment = comm if c['media_group_id'] == attachment[:media_group_id].to_s
+          end
+        elsif comm[:identifier]['media_group_id'] == attachment[:media_group_id].to_s
+          media_comment = comm
+        end
+      end
+      Rails.logger.debug('MEDIA COMMENT CHECK...'.green) if Rails.env.development?
+      if media_comment.present? # Already exists, update comment...
+        media_array = []
+        # P.S. Only first array element contains media_group_id
+        if media_comment.identifier.is_a?(Array)
+          media_comment.identifier.each { |media| media_array.append(media) }
+        else
+          media_array.append(media_comment.identifier)
+        end
+        media_array.append(identifier)
+        media_comment.identifier = media_array
+        media_comment.text = attachment[:caption] if attachment[:caption] != media_comment.text && attachment[:caption].present?
+        file = URI.parse(attachment[:link]).open
+        media_comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
+        media_comment.save!
+        return
+      else
+        identifier[:media_group_id] = attachment[:media_group_id].to_s
+      end
+    end
+    comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
+                              platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0,
+                              platform: @telegram_platform, reply: (platform_post.is_a?(Comment) ? platform_post : nil))
+    file = URI.parse(attachment[:link]).open
+    comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
+    Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
   end
 
   def edit_comment(message, comment)

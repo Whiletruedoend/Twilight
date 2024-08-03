@@ -8,6 +8,9 @@ class Comment < ApplicationRecord
   belongs_to :platform, optional: true
   has_many_attached :attachments
 
+  has_many :replies, class_name: "Comment", foreign_key: "reply_id"
+  belongs_to :reply, class_name: "Comment", optional: true
+
   validate :text_or_attachments
 
   thread_mattr_accessor :current_user

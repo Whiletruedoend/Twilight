@@ -42,9 +42,11 @@ class CommentsController < ApplicationController
     ref_url = request.referrer
     
     # TODO: Delete from platforms
-
     post = current_comment.post
     current_comment.current_user = current_user
+
+    DeletePlatformComments.call([current_comment])
+
     current_comment.destroy!
 
     redirect_to ref_url

@@ -63,7 +63,6 @@ class Platform::SendCommentToTelegram
               message_id: @msg['result']['message_id']
               #date: @msg['result']['date'],
             }
-      # TODO: make platform user detecteble?
       Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments,
       channel_id: channel[:id], current_user: @current_user, platform: @platform)
     end
