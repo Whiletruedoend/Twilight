@@ -198,7 +198,8 @@ class TelegramController < Telegram::Bot::UpdatesController
         identifier[:media_group_id] = attachment[:media_group_id].to_s
       end
     end
-    comment = Comment.create!(identifier: identifier, text: attachment[:caption], post: platform_post.post,
+    text = attachment[:caption].present? ? attachment[:caption] : ""
+    comment = Comment.create!(identifier: identifier, text: text, post: platform_post.post,
                               platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0,
                               platform: @telegram_platform, reply: (platform_post.is_a?(Comment) ? platform_post : nil))
     file = URI.parse(attachment[:link]).open
@@ -216,22 +217,21 @@ class TelegramController < Telegram::Bot::UpdatesController
                      file_size: attachment[:file_size] }
       att_id = nil
 
-      comment[:identifier].each_with_index do |c, i|
-        if c.is_a?(Array)
-          c.each_with_index do |e, j|
-            next unless (e['message_id'] == message['message_id']) && (c['file_size'] != attachment[:file_size])
-
-            Rails.logger.debug('FOUND YA IN ARRAY!'.green) if Rails.env.development?
-            # delete(e) # Sync attachment deletion
-            # c.append(identifier)
-            e.clear
-            e.merge!(identifier)
-            att_id = j
-          end
-        elsif (c['message_id'] == message['message_id']) && (c['file_size'] != attachment[:file_size])
-          Rails.logger.debug('FOUND YA IN HASH!'.green) if Rails.env.development?
+      if comment[:identifier].is_a?(Array)
+        comment[:identifier].each_with_index do |c, i|
+          next unless (c['message_id'] == message['message_id']) && (c['file_size'] != attachment[:file_size])
+          Rails.logger.debug('FOUND YA IN ARRAY!'.green) if Rails.env.development?
+          # delete(e) # Sync attachment deletion
+          # c.append(identifier)
           c.clear
           c.merge!(identifier)
+          att_id = j
+        end
+      else
+        if (comment[:identifier]['message_id'] == message['message_id']) && (comment[:identifier]['file_size'] != attachment[:file_size])
+          Rails.logger.debug('FOUND YA IN HASH!'.green) if Rails.env.development?
+          comment[:identifier].clear
+          comment[:identifier].merge!(identifier)
           att_id = i
         end
       end
@@ -243,11 +243,11 @@ class TelegramController < Telegram::Bot::UpdatesController
                                    content_type: file.content_type)
       end
       comment_text = message['caption']
-      comment.update!(text: comment_text, is_edited: true)
+      comment.update!(text: comment_text, is_edited: true, current_user: 0)
       Rails.logger.debug('TG: COMMENT WITH ATTACHMENTS UPDATED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
-      comment.update!(text: comment_text, is_edited: true)
+      comment.update!(text: comment_text, is_edited: true, current_user: 0)
       Rails.logger.debug('TG: COMMENT UPDATED!'.green) if Rails.env.development?
     end
   end

@@ -873,6 +873,29 @@ $color-black: #000000;
         align-items: center;
 
         float:left; /* Выравнивание по левому краю */
+        margin: 0px 7px 0 0; /* Отступы вокруг картинки */
+        position: static;
+        width: 75px;
+        height: 75px;
+
+        background: $color-avatar-bg;
+        border: 1px solid $color-avatar-border;
+        box-sizing: border-box;
+        border-radius: 90px;
+
+        img{
+          height: 100%;
+          width: auto;
+        }
+      }
+
+      .channel-avatar{
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        float:left; /* Выравнивание по левому краю */
         margin: 7px 7px 0 0; /* Отступы вокруг картинки */
         position: static;
         width: 75px;
