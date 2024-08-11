@@ -5,6 +5,9 @@
 @import "dropzone";
 @import "fonts";
 
+$small: 400px;
+$medium: 1000px;
+
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -833,6 +836,10 @@ $color-black: #000000;
     font-style: normal;
     font-weight: normal;
 
+    @media screen and (max-width: $medium) {
+      font-size: 14px;
+    }
+
     .comment-editor{
       padding-top: 20px;
       display: flex;
@@ -853,16 +860,22 @@ $color-black: #000000;
 
     .comment-header{
       font-size: 25px;
+      @media screen and (max-width: $medium) {
+        font-size: 21px;
+      }
     }
 
     .comment-header-medium{
       font-size: 20px;
+      @media screen and (max-width: $medium) {
+        font-size: 17px;
+      }
     }
 
     .comment{
       position: relative;
       margin-top: 0.5%;
-      margin-bottom: 2%;
+      margin-bottom: 0.5%;
 
       .wrapper {
         width: 300px;
@@ -890,6 +903,11 @@ $color-black: #000000;
         img{
           height: 100%;
           width: auto;
+        }
+
+        @media screen and (max-width: $medium) {
+          width: 35px;
+          height: 35px;
         }
       }
 
@@ -922,10 +940,26 @@ $color-black: #000000;
         font-size: 20px;
         margin-bottom: 10px;
 
-        .comment-small{ font-size: 16px; }
+        @media screen and (max-width: $medium) {
+          font-size: 17px;
+        }
+
+        .comment-small{
+          font-size: 16px;
+          @media screen and (max-width: $medium) {
+            font-size: 13px;
+          }
+        }
         .right{
           float: right;
           margin-right: 1%;
+        }
+      }
+      .comment-text p{
+        font-size: 16px;
+        @media screen and (max-width: $medium) {
+          font-size: 14px;
+          margin: 12px 0px 0px 12px; /* WTF bypass */
         }
       }
     }
@@ -960,7 +994,13 @@ $color-black: #000000;
   }
 
   /* comment replies */
-  .replies { margin-left: 75px; } /* avatar size */
+  .replies { 
+    display: grid;
+    margin-left: 75px; /* avatar size */
+    @media screen and (max-width: $medium) {
+      margin-left: 35px; /* avatar size */
+    }
+  }
   /* 7 levels nesting */
   .replies .replies .replies .replies .replies .replies .replies {margin-left: 0;}
 

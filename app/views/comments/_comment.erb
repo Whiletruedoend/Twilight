@@ -1,6 +1,6 @@
 <% user = comment.platform_user || comment.user %>
 <div class="comment">
-     <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
+    <div class="comment-avatar"><% if user.avatar.present?%><%= image_tag url_for(user.avatar) %><% end %></div>
     <% name = display_comments_name(user) %>
     <div class="comment-metadata">
         <%= name %>
@@ -8,24 +8,25 @@
             <% if comment.is_edited %>
                 <i class="fa fa-pencil-square-o "></i>
             <% end %>
-            <% if allowed_to?(:update?, comment)%>
+            <% # https://github.com/palkan/action_policy/discussions/254 # %>
+            <% if current_user.present? && allow_update(comment, current_user)%>
                 | <a href="/comments/<%=comment.id%>/edit"><%= I18n.t("comments.edit") %></a>
             <% end %>
         </i>
-        <% if allowed_to?(:destroy?, comment) %>
-        <i class="comment-small right"><a href = "/comments/delete/<%=comment.id%>"><%= I18n.t("comments.delete") %></a></i>
+        <% if current_user.present? && allow_destroy(comment, current_user) %>
+            <i class="comment-small right"><a href = "/comments/delete/<%=comment.id%>"><%= I18n.t("comments.delete") %></a></i>
         <% end %>
-        <% if allowed_to?(:comment?, comment) %>
-        <a class="comment-small right collapsed" data-toggle="collapse" data-parent="#accordion" href="#add-<%=comment.id%>" aria-expanded="false" aria-controls="add"><%=I18n.t("comments.reply")%></a>
+        <% if current_user.present? && allow_comment(comment, current_user) %>
+            <a class="comment-small right collapsed" data-toggle="collapse" data-parent="#accordion" href="#add-<%=comment.id%>" aria-expanded="false" aria-controls="add"><%=I18n.t("comments.reply")%></a>
         <% end%>
     </div>
-    <%= markdown(comment.text) %>
+    <div class="comment-text"><%= markdown(comment.text) %></div>
     <% if comment.has_attachments %>
         <hr style="border-top: dashed 2px;" />
         <%= display_comment_attachments(comment) if comment.attachments.any? %>
     <% end%>
 </div>
 
-<% if allowed_to?(:comment?, comment) %>
-  <p><%= render partial: 'comments/add', locals: { post: comment.post, parent_id: comment.id } %></p>
+<% if current_user.present? && allow_comment(comment, current_user) %>
+  <%= render partial: 'comments/add', locals: { post: comment.post, parent_id: comment.id } if current_user.present? %><br>
 <% end%>
