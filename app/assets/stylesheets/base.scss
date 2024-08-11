@@ -626,6 +626,10 @@ $color-black: #000000;
     color: $color-feed-font;
     background-color: $color-feed-bg;
   }
+
+  .center{
+    text-align: center;
+  }
   /* WTF */
 
   .tooltip {
@@ -954,6 +958,11 @@ $color-black: #000000;
       margin: 1% 1% auto 1%;
     }
   }
+
+  /* comment replies */
+  .replies { margin-left: 75px; } /* avatar size */
+  /* 7 levels nesting */
+  .replies .replies .replies .replies .replies .replies .replies {margin-left: 0;}
 
   .user-avatar{
     overflow: hidden;

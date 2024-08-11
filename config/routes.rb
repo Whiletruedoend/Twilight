@@ -31,6 +31,7 @@ Rails.application.routes.draw do
 
   put '/comments', to: 'comments#create', as: :create_comments_path
   resources :comments, only: %i[create edit update]
+  post '/comments/new/(:parent_id)', to: 'comments#new', as: :new_comment
   get 'comments/delete/:id', to: 'comments#destroy', as: :comment_path
 
   resources :invite_codes, only: [:create]

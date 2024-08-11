@@ -39,7 +39,7 @@ class Platform::SendCommentToTelegram
   def send_telegram_comment(channel)
     bot = get_tg_bot(channel)
 
-    text = @params[:comment][:content]
+    text = @params[:comment][:text]
 
     has_attachments = @params.dig(:comment, :attachments)
 
@@ -51,20 +51,28 @@ class Platform::SendCommentToTelegram
       return Rails.logger.error("Can't get linked group chat_id or linked message_id for channel #{channel[:id]} at #{Time.now.utc.iso8601}!")
     end
 
+    if @params[:comment][:parent_id].to_i > 0
+      parent = current_post.comments.find_by_id(@params[:comment].delete(:parent_id))
+      linked_chat_id = parent.identifier["chat_id"]
+      message_id = parent.identifier["message_id"]
+      parent_id = parent.id 
+    end
+
     if has_attachments.present? && !has_attachments.empty?
       send_telegram_attachments(bot, channel)
     else
       @msg = bot.send_message({ chat_id: linked_chat_id,
                                 text: text,
                                 reply_to_message_id: message_id,
-                                parse_mode: 'html'})
+                                parse_mode: 'html',
+                                parent_id: parent_id.present? ? parent_id : nil})
 
       res = { chat_id: @msg['result']['chat']['id'],
               message_id: @msg['result']['message_id']
               #date: @msg['result']['date'],
             }
       Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments,
-      channel_id: channel[:id], current_user: @current_user, platform: @platform)
+      channel_id: channel[:id], platform: @platform)
     end
   rescue StandardError => e
     Rails.logger.error("Failed create telegram comment for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}")

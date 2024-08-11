@@ -194,6 +194,7 @@ en:
     blog: Blog
     telegram: Telegram
     add: Add new comment
+    reply: Reply
     edit: Edit
     delete: Delete comment
   feeds:

@@ -153,8 +153,8 @@ class TelegramController < Telegram::Bot::UpdatesController
       comment_text = message['text']
       identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
       Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user,
-                      channel_id: channel_id, current_user: 0, platform: @telegram_platform, 
-                      reply: (platform_post.is_a?(Comment) ? platform_post : nil))
+                      channel_id: channel_id, platform: @telegram_platform, 
+                      parent_id: (platform_post.is_a?(Comment) ? platform_post.id : nil))
       Rails.logger.debug('TG: COMMENT ADDED!'.green) if Rails.env.development?
     end
   end
@@ -200,8 +200,8 @@ class TelegramController < Telegram::Bot::UpdatesController
     end
     text = attachment[:caption].present? ? attachment[:caption] : ""
     comment = Comment.create!(identifier: identifier, text: text, post: platform_post.post,
-                              platform_user: user, has_attachments: true, channel_id: channel_id, current_user: 0,
-                              platform: @telegram_platform, reply: (platform_post.is_a?(Comment) ? platform_post : nil))
+                              platform_user: user, has_attachments: true, channel_id: channel_id,
+                              platform: @telegram_platform, parent_id: (platform_post.is_a?(Comment) ? platform_post.id : nil))
     file = URI.parse(attachment[:link]).open
     comment.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
     Rails.logger.debug('TG: COMMENT WITH ATTACHMENT ADDED!'.green) if Rails.env.development?
@@ -243,11 +243,11 @@ class TelegramController < Telegram::Bot::UpdatesController
                                    content_type: file.content_type)
       end
       comment_text = message['caption']
-      comment.update!(text: comment_text, is_edited: true, current_user: 0)
+      comment.update!(text: comment_text, is_edited: true)
       Rails.logger.debug('TG: COMMENT WITH ATTACHMENTS UPDATED!'.green) if Rails.env.development?
     else
       comment_text = message['text']
-      comment.update!(text: comment_text, is_edited: true, current_user: 0)
+      comment.update!(text: comment_text, is_edited: true)
       Rails.logger.debug('TG: COMMENT UPDATED!'.green) if Rails.env.development?
     end
   end

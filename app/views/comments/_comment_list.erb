@@ -2,11 +2,9 @@
     <center><%= I18n.t("comments.comments_not_found") %></center>
 <% else %>
     <div class="comment-header"><%= I18n.t("comments.comment_header") %>:</div>
-    <%post.comments.order("created_at ASC").group_by(&:channel).each do |ch, comms|%>
+    <%post.comments.group_by(&:channel).each do |ch, _comms|%>
         <%next if ch.present? && !ch.enabled%>
         <div class="comment-header-medium"><%= ch.present? ? "#{ch.options["title"]} (#{ch.platform.title.capitalize})" : "Blog" %>:</div>
-        <%comms.each do |comm|%>
-            <%= render partial: "comments/comment", locals: { comm: comm, current_user: current_user } %> 
-        <%end%>
+        <%= comments_tree_for post.comments.where(channel: ch).order("created_at ASC").hash_tree %>
     <%end%>
 <% end %>

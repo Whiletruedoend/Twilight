@@ -1,20 +1,30 @@
+<%if parent_id.present?%>
+ <%number = parent_id%>
+<%else%>
+ <%number = 0%>
+<%end%>
 <div id="accordion" role="tablist" aria-multiselectable="true">
   <div class="card">
+    <%unless parent_id.present?%>
     <div class="card-header" role="tab" id="headingTwo">
-      <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#add" aria-expanded="false" aria-controls="add">
+      <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#add-<%=number%>" aria-expanded="false" aria-controls="add">
         <%=I18n.t("comments.add")%>
       </a>
     </div>
-    <div id="add" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+    <%end%>
+    <div id="add-<%=number%>" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
       <div class="card-block">
         <%= form_with(model: Comment, :method => 'put', :remote => true) do  |f| %>
-          <%= hidden_field(:comment, :post, { value: @current_post.uuid }) %>
+          <%if parent_id.present?%>
+            <%= hidden_field(:comment, :parent_id, { value: parent_id }) %>
+          <%end%>
+          <%= hidden_field(:post, :uuid, { value: post.uuid }) %>
           <div id="markdown" class="tab-pane in active title">
             <div class="comment-editor">
-              <%= f.text_area :content, { id: "comments_content", placeholder: "#{I18n.t("posts.text_placeholder")}" } %>
+              <%= f.text_area :text, { id: "comments_content", placeholder: "#{I18n.t("posts.text_placeholder")}" } %>
             </div>
-            <%if allowed_to?(:create_platform_comments?, @current_post)%>
-              <%telegram_channels = @current_post.published_channels.where(platform: Platform.find_by(title: "telegram"))%>
+            <%if parent_id.nil? && allowed_to?(:create_platform_comments?, post)%>
+              <%telegram_channels = post.published_channels.where(platform: Platform.find_by(title: "telegram"))%>
               <%if telegram_channels.any?%>
                 <div class="colorful-checkboxes">
                   <%telegram_channels.each do |channel|%>
@@ -29,7 +39,7 @@
             <%else%>
               <br>
             <%end%>
-            <p><%= f.submit I18n.t("channels.add")%><br></p>
+            <p class="center"><%= f.submit I18n.t("channels.add")%><br></p>
           </div>
         <%end%>
       </div>

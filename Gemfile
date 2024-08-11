@@ -81,6 +81,7 @@ gem 'active_storage_validations'
 gem 'addressable', '>= 2.8.0'
 gem "ahoy_matey"
 gem 'betterlorem'
+gem 'closure_tree'
 gem 'devise'
 gem 'dry-initializer-rails'
 gem 'easy_captcha', path: 'vendor/gems/easy_captcha'
