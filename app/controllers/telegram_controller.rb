@@ -145,8 +145,9 @@ class TelegramController < Telegram::Bot::UpdatesController
     user = check_user(message)
 
     attachment = check_attachments(message)
-    channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id').to_s }&.first
-    channel_id = @linked_group_channels_ids.find { |k,v| v == message.dig('reply_to_message', 'sender_chat', 'id') }&.first if channel_id.nil?
+    channel_id = @channel_ids.find { |k,v| v == message.dig('reply_to_message', 'chat', 'id').to_s }&.first # old: sender_chat
+    channel_id = @linked_group_channels_ids.find { |k,v| v == message.dig('reply_to_message', 'chat', 'id') }&.first if channel_id.nil? # old: sender_chat
+
     if attachment.present?
       create_attachment_comment(message, attachment, user, platform_post, channel_id)
     else

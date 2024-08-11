@@ -8,14 +8,14 @@
             <% if comment.is_edited %>
                 <i class="fa fa-pencil-square-o "></i>
             <% end %>
-            <% if current_user.present? && comment.user.present? && (current_user == comment.user)%>
+            <% if allowed_to?(:update?, comment)%>
                 | <a href="/comments/<%=comment.id%>/edit"><%= I18n.t("comments.edit") %></a>
             <% end %>
         </i>
-        <% if current_user.present? && (current_user.is_admin? || (current_user.present? && comment.user.present? && (current_user == comment.user))) %>
+        <% if allowed_to?(:destroy?, comment) %>
         <i class="comment-small right"><a href = "/comments/delete/<%=comment.id%>"><%= I18n.t("comments.delete") %></a></i>
         <% end %>
-        <% if current_user.present? %>
+        <% if allowed_to?(:comment?, comment) %>
         <a class="comment-small right collapsed" data-toggle="collapse" data-parent="#accordion" href="#add-<%=comment.id%>" aria-expanded="false" aria-controls="add"><%=I18n.t("comments.reply")%></a>
         <% end%>
     </div>
@@ -26,4 +26,6 @@
     <% end%>
 </div>
 
-<p><%= render partial: 'comments/add', locals: { post: comment.post, parent_id: comment.id } %></p>
+<% if allowed_to?(:comment?, comment) %>
+  <p><%= render partial: 'comments/add', locals: { post: comment.post, parent_id: comment.id } %></p>
+<% end%>

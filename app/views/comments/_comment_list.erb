@@ -5,6 +5,6 @@
     <%post.comments.group_by(&:channel).each do |ch, _comms|%>
         <%next if ch.present? && !ch.enabled%>
         <div class="comment-header-medium"><%= ch.present? ? "#{ch.options["title"]} (#{ch.platform.title.capitalize})" : "Blog" %>:</div>
-        <%= comments_tree_for post.comments.where(channel: ch).order("created_at ASC").hash_tree %>
+        <%= comments_tree_for(post.comments.where(channel: ch).order("created_at ASC").hash_tree, current_user) %>
     <%end%>
 <% end %>

@@ -1,7 +1,7 @@
 <br>
 <div class="comments-container comments-width">
   <%= turbo_stream_from @current_post %>
-    <div id="<%="comments_#{@current_post.id}"%>">
+    <div id="<%="comments_#{@current_post.uuid}"%>">
       <%= render partial: "comments/comment_list", locals: { post: @current_post, current_user: current_user } %>
     </div>
     <center><%= render partial: 'comments/add', locals: { post: @current_post, parent_id: nil } if current_user.present? %></center>

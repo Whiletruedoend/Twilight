@@ -1,11 +1,7 @@
-<%if parent_id.present?%>
- <%number = parent_id%>
-<%else%>
- <%number = 0%>
-<%end%>
+<%number = parent_id.present? ? parent_id : 0%>
 <div id="accordion" role="tablist" aria-multiselectable="true">
   <div class="card">
-    <%unless parent_id.present?%>
+    <%if !parent_id.present? && current_user.present? %>
     <div class="card-header" role="tab" id="headingTwo">
       <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#add-<%=number%>" aria-expanded="false" aria-controls="add">
         <%=I18n.t("comments.add")%>

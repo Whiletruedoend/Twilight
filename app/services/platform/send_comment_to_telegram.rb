@@ -64,15 +64,14 @@ class Platform::SendCommentToTelegram
       @msg = bot.send_message({ chat_id: linked_chat_id,
                                 text: text,
                                 reply_to_message_id: message_id,
-                                parse_mode: 'html',
-                                parent_id: parent_id.present? ? parent_id : nil})
+                                parse_mode: 'html'})
 
       res = { chat_id: @msg['result']['chat']['id'],
               message_id: @msg['result']['message_id']
               #date: @msg['result']['date'],
             }
-      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments,
-      channel_id: channel[:id], platform: @platform)
+
+      Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments, channel_id: channel[:id], platform: @platform, parent_id: parent_id.present? ? parent_id : nil)
     end
   rescue StandardError => e
     Rails.logger.error("Failed create telegram comment for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}")

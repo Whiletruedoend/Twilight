@@ -18,10 +18,6 @@ class Comment < ApplicationRecord
 
   acts_as_tree order: 'created_at ASC'
 
-  after_create_commit do upd_comment end
-  after_update_commit do upd_comment end
-  after_destroy_commit do upd_comment end
-
   def text_or_attachments
     return unless text.empty? && !has_attachments
 
@@ -42,9 +38,5 @@ class Comment < ApplicationRecord
   def destroy
     attachments.purge
     super
-  end
-
-  def upd_comment
-    broadcast_update_to [self.post], partial: 'comments/comment_list', locals: { post: self.post }, target: "comments_#{self.post.id}"
   end
 end

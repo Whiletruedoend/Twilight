@@ -6,7 +6,10 @@ class CommentsController < ApplicationController
   end
   
   def create
-    return redirect_to sign_in_path if current_user.nil? # No anonymous comments, sorry!
+    if current_user.nil? # No anonymous comments, sorry!
+      set_flash_message :alert, "Not allowed!"
+      return
+    end
 
     current_post = Post.find(params[:post][:uuid])
     authorize! current_post, to: :create_comments?
@@ -41,6 +44,16 @@ class CommentsController < ApplicationController
       end
 
     end
+
+    respond_to do |format|
+      if @comment.save
+        @comment.broadcast_update_to @comment.post, partial: 'comments/comment_list', target: "comments_#{@comment.post.uuid}", locals: {post: current_post, current_user: current_user}
+        format.turbo_stream
+      else # Create comments for platforms
+        redirect_to ref_url
+        # format.html { head :unprocessable_entity }
+      end
+    end
   end
 
   def edit
@@ -66,12 +79,25 @@ class CommentsController < ApplicationController
     authorize! current_comment
     ref_url = request.referrer
     
-    # TODO: Delete from platforms
-    post = current_comment.post
+    @comment = current_comment
+    post = @comment.post
 
-    DeletePlatformComments.call([current_comment])
+    DeletePlatformComments.call([@comment])
 
-    current_comment.destroy!
+    if @comment.children.any? && @comment.channel.present?
+      @comment.update!(text: "<#DELETED>", identifier: {"is_deleted": true})
+    else
+      @comment.destroy!
+    end
+
+    #respond_to do |format|
+    #  if @comment.destroyed?
+    #    @comment.broadcast_replace_to @comment.post, partial: 'comments/comment_list', target: "comments_#{@comment.post.uuid}", locals: {post: current_post, current_user: current_user}
+    #    format.turbo_stream
+    #  else
+    #    format.html { head :unprocessable_entity }
+    #  end
+    #end
 
     redirect_to ref_url
   end
