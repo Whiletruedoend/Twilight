@@ -36,10 +36,6 @@
               <%= f.label I18n.t("channels.author_identifier") %>
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @current_channel.options["author"] } %>
             </div>
-            <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
-              <%= f.check_box :enable_comments, { checked: @current_channel.options["comments_enabled"] } %>
-              <%= f.label I18n.t("channels.enable_comments") %>
-            </div>
           </div>
           <h3><%= I18n.t("channels.options") %></h3>
           <div class="row">

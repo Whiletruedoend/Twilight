@@ -32,10 +32,6 @@
               <%= f.label I18n.t("channels.author_identifier") %>
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890" } %>
             </div>
-            <div class="col-xs-8 col-sm-4 col-md-9 field">
-              <%= f.check_box :enable_comments %>
-              <%= f.label I18n.t("channels.enable_comments") %>
-            </div>
               <center><%= f.submit I18n.t("channels.add"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>
           </div>
         </div>

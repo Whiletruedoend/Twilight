@@ -70,10 +70,11 @@ class CheckChannel
 
     options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')
 
-    comments_enabled = (params[:channel][:enable_comments] == '1')
-    options[:comments_enabled] = comments_enabled
+    # Comments
 
-    if comments_enabled
+    comment_chat_id = chat.dig('result', 'linked_chat_id')
+    options[:comments_enabled] = comment_chat_id.present?
+    if comment_chat_id.present?
       comment_chat_id = chat.dig('result', 'linked_chat_id')
 
       begin
@@ -94,6 +95,8 @@ class CheckChannel
 
       options[:linked_chat_id] = comment_chat_id
     end
+
+    # Other
 
     options[:title] = chat['result']['title']
     options[:username] = chat['result']['username']

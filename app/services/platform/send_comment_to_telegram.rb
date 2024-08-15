@@ -18,6 +18,7 @@ class Platform::SendCommentToTelegram
         { id: channel.id,
           room: channel.room,
           token: channel.token,
+          user_id: channel.user_id,
           room_attachments: channel.options['room_attachments'],
           linked_chat_id: channel.options.dig('linked_chat_id'),
         }
@@ -40,6 +41,11 @@ class Platform::SendCommentToTelegram
     bot = get_tg_bot(channel)
 
     text = @params[:comment][:text]
+    send_text = text
+
+    if @current_user&.id != channel[:user_id]
+      send_text = "#{@current_user.displayed_name}:\n#{text}"
+    end
 
     has_attachments = @params.dig(:comment, :attachments)
 
@@ -62,7 +68,7 @@ class Platform::SendCommentToTelegram
       send_telegram_attachments(bot, channel)
     else
       @msg = bot.send_message({ chat_id: linked_chat_id,
-                                text: text,
+                                text: send_text,
                                 reply_to_message_id: message_id,
                                 parse_mode: 'html'})
 

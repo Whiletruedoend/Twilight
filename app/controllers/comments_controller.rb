@@ -45,6 +45,10 @@ class CommentsController < ApplicationController
 
     end
 
+    if ref_url.include?("feed")
+      return redirect_to ref_url
+    end
+
     respond_to do |format|
       if @comment.save
         @comment.broadcast_update_to @comment.post, partial: 'comments/comment_list', target: "comments_#{@comment.post.uuid}", locals: {post: current_post, current_user: current_user}

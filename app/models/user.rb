@@ -107,6 +107,15 @@ class User < ApplicationRecord
     result
   end
 
+  def displayed_name
+    if name.present?
+      name
+    else
+      login
+    end
+  end
+  
+
   def destroy
     avatar.purge
     ItemTag.where(item_type: "User", item: self).delete_all
