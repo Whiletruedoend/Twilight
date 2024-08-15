@@ -36,6 +36,10 @@
               <%= f.label I18n.t("channels.author_identifier") %>
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @current_channel.options["author"] } %>
             </div>
+            <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
+              <%= f.check_box :import_from_tg, { checked: @current_channel.options["import_from_tg"] } %>
+              <%= f.label I18n.t("channels.import_from_tg") %>
+            </div>
           </div>
           <h3><%= I18n.t("channels.options") %></h3>
           <div class="row">

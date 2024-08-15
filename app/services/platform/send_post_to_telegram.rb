@@ -117,6 +117,7 @@ class Platform::SendPostToTelegram
 
         PlatformPost.create!(identifier: { chat_id: @msg['result']['chat']['id'],
                                            message_id: @msg['result']['message_id'],
+                                           date: @msg['result']['date'],
                                            options: options }, platform: @platform,
                              post: @post, content: content, channel_id: channel[:id])
       end
@@ -163,6 +164,7 @@ class Platform::SendPostToTelegram
           options = options.merge(caption: media[i].key?(:caption))
           msg_ids.append({ chat_id: msg['result'][0]['chat']['id'],
                            message_id: msg['result'][0]['message_id'] + i,
+                           #date: msg['result']['date'],
                            file_id: media[i][:media],
                            type: media[i][:type],
                            blob_signed_id: media[i][:blob_signed_id],
@@ -226,6 +228,7 @@ class Platform::SendPostToTelegram
     PlatformPost.create!(
       identifier: { chat_id: msg['result']['chat']['id'],
                     message_id: msg['result']['message_id'],
+                    date: msg['result']['date'],
                     options: options },
       platform: @platform,
       post: @post,

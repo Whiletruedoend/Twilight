@@ -120,6 +120,7 @@ class Platform::UpdateTelegramPosts
       PlatformPost.create!(
         identifier: { chat_id: @msg['result']['chat']['id'],
                       message_id: @msg['result']['message_id'],
+                      date: @msg['result']['date'],
                       options: options },
         platform: @platform,
         post: @post,

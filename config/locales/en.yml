@@ -151,6 +151,7 @@ en:
     global: Global
     option_enable_notifications: Enable notifications?
     posts_count: Number of posts
+    import_from_tg: Automatically add posts sent via Telegram?
   manage:
     manage_admins_only: You don't have permissions to manage options!
     all_invite_codes_list: All invite codes list

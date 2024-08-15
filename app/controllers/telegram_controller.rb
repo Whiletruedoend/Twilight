@@ -40,6 +40,95 @@ class TelegramController < Telegram::Bot::UpdatesController
     check_reply_comment(message, reply_message) if reply_message.present?
   end
 
+  # Autocall when post
+  def channel_post(message)
+    from_channel = message.dig('sender_chat', 'id')
+    return if !from_channel.present? && !@channel_ids.values.include?(from_channel.to_s)
+    channel = Channel.find_by(room: from_channel)
+
+    if message.dig('new_chat_photo').present?
+      return new_chat_photo(message, channel, from_channel)
+    end
+    if message.dig('delete_chat_photo').present? && message.dig('delete_chat_photo')
+      return delete_chat_photo(channel)
+    end
+
+    import_option = channel.options.dig("import_from_tg")
+    import_from_tg(message, channel, from_channel) if import_option.present? && import_option
+  end
+
+  def import_from_tg(message, channel, from_channel)
+    Rails.logger.debug('TG: NEW POST DETECTED!'.green) if Rails.env.development?
+    attachment = check_attachments(message)
+
+    if attachment.present?
+      import_from_tg_withatt(message, channel, from_channel)
+    else
+      import_from_tg_noatt(message, channel, from_channel)
+    end
+  end
+
+  # TODO
+  def import_from_tg_withatt(message, channel, from_channel)
+    print("ATTACHMENT: #{attachment}\n".red)
+  end
+
+  def import_from_tg_noatt(message, channel, from_channel)
+    title = message.dig("entities").present? ? get_post_title(message) : nil
+
+    text = message.dig("text")
+    text = text[title.length..text.length] if title.present?
+
+    date = message.dig('date')
+    existing_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier&.dig('date') == date }
+    if existing_post.present?
+      post = existing_post.post
+    else
+      post = Post.create!(title: title, user: channel.user, privacy: 0)
+      text = text.lstrip
+    end
+
+    content = Content.create!(text: text, post: post, user: channel.user, has_attachments: false)
+    options = { "enable_notifications": true, "onlylink": false, "caption": false }
+
+    message_id = message.dig('message_id')
+    identifier = { chat_id: from_channel, message_id: message_id, options: options, date: date }
+    platform_post = PlatformPost.create!(identifier: identifier, platform: channel.platform,
+                                         post: post, content: content, channel_id: channel.id)
+  end
+
+  def get_post_title(message)
+    bold_entry = message.dig("entities").find{ |e| e["type"] == "bold" }
+    return nil if bold_entry.nil? || bold_entry["offset"] != 0
+    Rails.logger.debug('TG: POST TITLE FOUND!'.green) if Rails.env.development?
+    message.dig("text")[bold_entry["offset"]..bold_entry["length"]]
+  end
+
+  def new_chat_photo(message, channel, from_channel)
+    Rails.logger.debug('TG: NEW CHANNEL PHOTO...'.green) if Rails.env.development?
+    new_photo = message.dig('new_chat_photo').last
+    options = channel.options
+
+    if new_photo["avatar_size"] != options["avatar_size"]
+      options["avatar_size"] = new_photo["file_size"]
+      avatar = get_chat_avatar(bot, from_channel)
+
+      channel.avatar.purge if channel.avatar.present? && avatar.present?
+      file = URI.parse(avatar[:link]).open if avatar.present?
+      
+      channel.avatar.attach(io: file, filename: 'avatar.jpg', content_type: file.content_type) if avatar.present?
+      channel.update!(options: options)
+    end
+  end
+
+  def delete_chat_photo(channel)
+    Rails.logger.debug('TG: CHANNEL PHOTO DELETE...'.green) if Rails.env.development?
+    channel.avatar.purge if channel.avatar.present?
+    options = channel.options
+    options["avatar_size"] = 0
+    channel.update!(options: options)
+  end
+
   def check_linked_group(message, channel)
     linked_chat_id = channel.options.dig('linked_chat_id')
     return if linked_chat_id.present?
@@ -50,9 +139,12 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def check_platform_message(message, channel)
+    Rails.logger.debug('TG: CHECKING POST FOR LINKED CHAT...'.green) if Rails.env.development?
     chat_id = message.dig('sender_chat', 'id')
     message_id = message.dig('forward_from_message_id')
-    platform_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier["chat_id"] == chat_id && pp.identifier["message_id"] == message_id }
+    platform_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier&.dig("chat_id") == chat_id && pp.identifier&.dig("message_id") == message_id }
+    return if platform_post.nil?
+    Rails.logger.debug('TG: LINKED CHAT FOR POST FOUND!'.green) if Rails.env.development?
     identifier = platform_post.identifier
     identifier["linked_chat_message_id"] = message.dig('message_id')
     platform_post.update!(identifier: identifier)
@@ -152,7 +244,7 @@ class TelegramController < Telegram::Bot::UpdatesController
       create_attachment_comment(message, attachment, user, platform_post, channel_id)
     else
       comment_text = message['text']
-      identifier = { message_id: message['message_id'], chat_id: message['chat']['id'] }
+      identifier = { message_id: message['message_id'], chat_id: message['chat']['id'], date: message['date'] }
       Comment.create!(identifier: identifier, text: comment_text, post: platform_post.post, platform_user: user,
                       channel_id: channel_id, platform: @telegram_platform, 
                       parent_id: (platform_post.is_a?(Comment) ? platform_post.id : nil))

@@ -69,6 +69,7 @@ class CheckChannel
     options[:author] = author if author.present?
 
     options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')
+    options[:import_from_tg] = (params[:channel][:import_from_tg] == '1')
 
     # Comments
 

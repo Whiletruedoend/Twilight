@@ -50,6 +50,10 @@
               <%= f.label I18n.t("channels.api_server_address") %>
               <%= f.text_field :server, { class: "form-control", placeholder: "https://matrix.org/_matrix/", value: "https://matrix.org/_matrix/" } %>
             </div>
+            <div class="col-xs-8 col-sm-4 col-md-9 field">
+              <%= f.check_box :import_from_tg %>
+              <%= f.label I18n.t("channels.import_from_tg") %>
+            </div>
             <center><%= f.submit I18n.t("channels.add"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>
           </div>
         </div>

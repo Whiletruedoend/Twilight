@@ -151,6 +151,7 @@ ru:
     global: Глобальные
     option_enable_notifications: Включить уведомления?
     posts_count: Кол-во постов
+    import_from_tg: Автоматически добавлять посты отправленные через Telegram?
   manage:
     manage_admins_only: У вас нет прав для управления настройками!
     all_invite_codes_list: Список всех инвайт кодов

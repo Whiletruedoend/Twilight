@@ -73,8 +73,8 @@ class Platform::SendCommentToTelegram
                                 parse_mode: 'html'})
 
       res = { chat_id: @msg['result']['chat']['id'],
-              message_id: @msg['result']['message_id']
-              #date: @msg['result']['date'],
+              message_id: @msg['result']['message_id'],
+              date: @msg['result']['date']
             }
 
       Comment.create!(text: text, identifier: res, post: @current_post, user: @current_user, has_attachments: has_attachments, channel_id: channel[:id], platform: @platform, parent_id: parent_id.present? ? parent_id : nil)
