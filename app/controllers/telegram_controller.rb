@@ -8,6 +8,17 @@ class TelegramController < Telegram::Bot::UpdatesController
     @telegram_platform = Platform.find_by(title: 'telegram')
     @channel_ids = Channel.where(enabled: true, platform: @telegram_platform).map{ |ch| [ch.id, ch.room]}.to_h
     @linked_group_channels_ids = Channel.where(id: @channel_ids.keys).map{ |ch| [ch.id, ch.options.dig("linked_chat_id")] }.to_h.compact_blank
+
+    @images = ['image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/webp', 'image/svg+xml']
+    @videos = ['video/mp4', 'video/mpeg', 'video/webm', 'video/ogg']
+    @audios = ['audio/mp4',
+               'audio/aac',
+               'audio/mpeg',
+               'audio/ogg',
+               'audio/vorbis',
+               'audio/webm',
+               'audio/vnd.wave',
+               'audio/basic']
     super
   end
 
@@ -40,6 +51,8 @@ class TelegramController < Telegram::Bot::UpdatesController
     check_reply_comment(message, reply_message) if reply_message.present?
   end
 
+  ######### Import info from channel #########
+
   # Autocall when post
   def channel_post(message)
     from_channel = message.dig('sender_chat', 'id')
@@ -58,34 +71,85 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def import_from_tg(message, channel, from_channel)
-    Rails.logger.debug('TG: NEW POST DETECTED!'.green) if Rails.env.development?
+    Rails.logger.debug('TG: POSTING FROM TG DETECTED!'.green) if Rails.env.development?
     attachment = check_attachments(message)
 
     if attachment.present?
-      import_from_tg_withatt(message, channel, from_channel)
+      import_from_tg_withatt(message, channel, from_channel, attachment)
     else
       import_from_tg_noatt(message, channel, from_channel)
     end
   end
 
-  # TODO
-  def import_from_tg_withatt(message, channel, from_channel)
-    print("ATTACHMENT: #{attachment}\n".red)
+  def import_from_tg_withatt(message, channel, from_channel, attachment)
+    caption = message.dig('caption')
+    caption_entities = attachment.dig(:caption_entities)
+    title = caption_entities.present? ? get_post_title(caption_entities, caption) : nil
+
+    caption = caption[title.length..caption.length] if title.present?
+
+    date = message.dig('date')
+    existing_pp = get_existing_pp(channel, date)
+    if existing_pp.present?
+      Rails.logger.debug('TG: EXISTING POST WITH ATTACHMENTS FOUND!'.green) if Rails.env.development?
+      post = existing_pp.post
+      content = post.contents.find{ |c| c.has_attachments == true }
+      if content.nil?
+        content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true)
+      end
+    else
+      Rails.logger.debug('TG: NEW POST WITH ATTACHMENTS'.green) if Rails.env.development?
+      post = Post.create!(title: title, user: channel.user, privacy: 0)
+      caption = caption.lstrip if caption.present?
+
+      content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true)
+    end
+
+    options = { "enable_notifications": true, "onlylink": false, "caption": caption.present? }
+    file = URI.parse(attachment[:link]).open
+    content.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
+    att = content.attachments.find{ |att| att.byte_size == attachment[:file_size] }
+    blob_signed_id = att.signed_id
+
+    identifier = { chat_id: message['chat']['id'],
+                   message_id: message['message_id'],
+                   file_id: attachment[:file_id],
+                   type: get_attachment_type(att),
+                   blob_signed_id: blob_signed_id,
+                   date: message['date'],
+                   options: options
+                }
+    
+    if existing_pp.present?
+      existing_pp_identifier = existing_pp.identifier
+      if existing_pp_identifier.is_a?(Array)
+        existing_pp_identifier.append(identifier)
+        existing_pp.update!(identifier: existing_pp_identifier)
+      #elsif existing_pp_identifier.is_a?(Hash)
+      #  print("EXISTING PP ID: #{existing_pp.id}\n".red)
+      end
+    else
+      platform_post = PlatformPost.create!(identifier: [identifier], platform: channel.platform,
+                                           post: post, content: content, channel_id: channel.id)
+    end
   end
 
   def import_from_tg_noatt(message, channel, from_channel)
-    title = message.dig("entities").present? ? get_post_title(message) : nil
-
     text = message.dig("text")
+    entities = message.dig("entities")
+    title = entities.present? ? get_post_title(entities, text) : nil
+
     text = text[title.length..text.length] if title.present?
 
     date = message.dig('date')
-    existing_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier&.dig('date') == date }
-    if existing_post.present?
-      post = existing_post.post
+    existing_pp = get_existing_pp(channel, date)
+    if existing_pp.present?
+      Rails.logger.debug('TG: EXISTING POST FOUND!'.green) if Rails.env.development?
+      post = existing_pp.post
     else
+      Rails.logger.debug('TG: NEW POST'.green) if Rails.env.development?
       post = Post.create!(title: title, user: channel.user, privacy: 0)
-      text = text.lstrip
+      text = text.lstrip if text.present?
     end
 
     content = Content.create!(text: text, post: post, user: channel.user, has_attachments: false)
@@ -97,11 +161,31 @@ class TelegramController < Telegram::Bot::UpdatesController
                                          post: post, content: content, channel_id: channel.id)
   end
 
-  def get_post_title(message)
-    bold_entry = message.dig("entities").find{ |e| e["type"] == "bold" }
+  def get_existing_pp(channel, date)
+    PlatformPost.where(channel: channel).find do |pp|
+      if pp.identifier&.is_a?(Array)
+        pp.identifier&.find{ |ppp| ppp["date"] == date }
+      elsif pp.identifier&.is_a?(Hash)
+        pp.identifier&.dig('date') == date
+      end
+    end
+  end
+
+  def get_existing_pp_by_msg(channel, chat_id, message_id)
+    PlatformPost.where(channel: channel).find do |pp|
+      if pp.identifier&.is_a?(Array)
+        pp.identifier&.find{ |ppp| ppp["chat_id"] == chat_id && ppp["message_id"] == message_id }
+      elsif pp.identifier&.is_a?(Hash)
+        pp.identifier&.dig('chat_id') == chat_id && pp.identifier&.dig('message_id') == message_id
+      end
+    end
+  end
+
+  def get_post_title(entities, text)
+    bold_entry = entities.find{ |e| e["type"] == "bold" }
     return nil if bold_entry.nil? || bold_entry["offset"] != 0
     Rails.logger.debug('TG: POST TITLE FOUND!'.green) if Rails.env.development?
-    message.dig("text")[bold_entry["offset"]..bold_entry["length"]]
+    text[bold_entry["offset"]..bold_entry["length"]]
   end
 
   def new_chat_photo(message, channel, from_channel)
@@ -129,6 +213,8 @@ class TelegramController < Telegram::Bot::UpdatesController
     channel.update!(options: options)
   end
 
+  ######### Group linking #########
+
   def check_linked_group(message, channel)
     linked_chat_id = channel.options.dig('linked_chat_id')
     return if linked_chat_id.present?
@@ -142,13 +228,19 @@ class TelegramController < Telegram::Bot::UpdatesController
     Rails.logger.debug('TG: CHECKING POST FOR LINKED CHAT...'.green) if Rails.env.development?
     chat_id = message.dig('sender_chat', 'id')
     message_id = message.dig('forward_from_message_id')
-    platform_post = PlatformPost.where(channel: channel).find{ |pp| pp.identifier&.dig("chat_id") == chat_id && pp.identifier&.dig("message_id") == message_id }
-    return if platform_post.nil?
+    existing_pp = get_existing_pp_by_msg(channel, chat_id, message_id)
+    return if existing_pp.nil?
     Rails.logger.debug('TG: LINKED CHAT FOR POST FOUND!'.green) if Rails.env.development?
-    identifier = platform_post.identifier
-    identifier["linked_chat_message_id"] = message.dig('message_id')
-    platform_post.update!(identifier: identifier)
+    identifier = existing_pp.identifier
+    if identifier.is_a?(Array)
+      identifier = identifier.each { |ii| ii.merge!("linked_chat_message_id" => message.dig('message_id')) }
+    elsif identifier.is_a?(Hash)
+      identifier["linked_chat_message_id"] = message.dig('message_id')
+    end
+    existing_pp.update!(identifier: identifier)
   end
+
+  ######### Comments #########
 
   def check_edit_message(message)
     comment_channel = message.dig('reply_to_message', 'sender_chat', 'id')
@@ -256,7 +348,8 @@ class TelegramController < Telegram::Bot::UpdatesController
     identifier = { message_id: message['message_id'],
                    chat_id: message['chat']['id'],
                    file_id: attachment[:file_id],
-                   file_size: attachment[:file_size] }
+                   file_size: attachment[:file_size],
+                   date: message['date'] }
     if attachment[:media_group_id].present?
       Rails.logger.debug("MEDIA GROUP ID PRESENT... #{attachment[:media_group_id]}".green) if Rails.env.development?
       # puts(attachment)
@@ -306,6 +399,7 @@ class TelegramController < Telegram::Bot::UpdatesController
     if attachment.present?
       identifier = { message_id: message['message_id'],
                      chat_id: message['chat']['id'],
+                     date: message['date'],
                      file_id: attachment[:file_id],
                      file_size: attachment[:file_size] }
       att_id = nil
@@ -344,6 +438,8 @@ class TelegramController < Telegram::Bot::UpdatesController
       Rails.logger.debug('TG: COMMENT UPDATED!'.green) if Rails.env.development?
     end
   end
+
+  ######### PlatformUser && Other #########
 
   def check_user(message)
     tg_user = message['from']['id']
@@ -428,9 +524,23 @@ class TelegramController < Telegram::Bot::UpdatesController
 
     { link: "https://api.telegram.org/file/bot#{bot.token}/#{msg['result']['file_path']}",
       caption: message['caption'],
+      caption_entities: message.dig('caption_entities'),
       file_id: file_id,
       file_size: msg['result']['file_size'],
       file_name: msg['result']['file_path'].split('/').last,
-      media_group_id: message['media_group_id'] }
+      media_group_id: message['media_group_id'],
+      date: message['date'] }
+  end
+
+  def get_attachment_type(att)
+    if @images.include?(att.content_type)
+      'photo'
+    elsif @videos.include?(att.content_type)
+      'video'
+    elsif @audios.include?(att.content_type)
+      'audio'
+    else
+      'document'
+    end
   end
 end

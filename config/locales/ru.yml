@@ -31,8 +31,9 @@ ru:
     author: Автор
     download: Загрузить
     edit_post: Редактировать
-    delete_post: Удалить статью
-    delete_post_confirm: Вы серьёзно?
+    delete_post: Удалить
+    delete_post_local: Удалить (Локально)
+    delete_post_confirm: Вы уверены?
     read_more: Читать далее
     new_header: Новый пост
     edit_header: Редактировать пост
@@ -51,7 +52,7 @@ ru:
     tags: Тэги
     tags_not_found: Тэги не найдены!
     back: Вернуться назад
-    back_confirm: Вы серьёзно? Текущий прогресс будет потерян!
+    back_confirm: Вы уверены? Текущий прогресс будет потерян!
     privacy: Видимость
     privacy_public: Для всех
     privacy_registered: Только участники
@@ -135,7 +136,7 @@ ru:
     update: Обновить
     edit: Изменить
     delete: Удалить
-    delete_channel_confirm: Вы серьёзно?
+    delete_channel_confirm: Вы уверены?
     add_new_channel: Добавить новый канал
     channels_not_found: Каналы не найдены!
     need_more_channels: Нужно больше каналов?

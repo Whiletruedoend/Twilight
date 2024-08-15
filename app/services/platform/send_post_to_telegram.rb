@@ -149,6 +149,7 @@ class Platform::SendPostToTelegram
             options = options.merge(caption: v[i].key?(:caption))
             msg_ids.append({ chat_id: msg['result'][0]['chat']['id'],
                              message_id: msg['result'][0]['message_id'] + i,
+                             date: msg['result'][0]['date'],
                              file_id: v[i][:media],
                              type: v[i][:type],
                              blob_signed_id: v[i][:blob_signed_id],
@@ -164,7 +165,7 @@ class Platform::SendPostToTelegram
           options = options.merge(caption: media[i].key?(:caption))
           msg_ids.append({ chat_id: msg['result'][0]['chat']['id'],
                            message_id: msg['result'][0]['message_id'] + i,
-                           #date: msg['result']['date'],
+                           date: msg['result'][0]['date'],
                            file_id: media[i][:media],
                            type: media[i][:type],
                            blob_signed_id: media[i][:blob_signed_id],

@@ -31,7 +31,9 @@ en:
     author: Author
     download: Download
     edit_post: Edit
-    delete_post: Delete post
+    delete_post: Delete
+    delete_post: Delete
+    delete_post_local: Delete (Local)
     delete_post_confirm: Are you sure?
     read_more: Read more
     new_header: New post
