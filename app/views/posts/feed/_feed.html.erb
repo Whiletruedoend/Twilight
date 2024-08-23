@@ -28,7 +28,7 @@
     <%= markdown(post.text) %>
   </div>
                 
-  <%if post.content_attachments&.any?%>
+  <%if post.attachments.any?%>
     <%=display_feed_attachments(post)%>
   <%end%>
   <div class="footer">

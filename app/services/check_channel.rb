@@ -52,13 +52,14 @@ class CheckChannel
       errs << 'Channel not available! (Not found or bot access problems?)'
     end
 
-    begin
-      bot.get_chat(chat_id: params[:channel][:room_attachments])
-    rescue Telegram::Bot::Error
-      errs << 'Attachments channel not available! (Not found or bot access problems?)'
-    end
-
+    if params[:channel][:room_attachments].present? && !params[:channel][:room_attachments].empty?
+      begin
+        bot.get_chat(chat_id: params[:channel][:room_attachments])
+      rescue Telegram::Bot::Error
+        errs << 'Attachments channel not available! (Not found or bot access problems?)'
+      end
     errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == params[:channel][:room_attachments]
+    end
 
     return errors.add(:base, errs) if errs.any?
 

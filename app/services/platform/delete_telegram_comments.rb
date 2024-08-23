@@ -30,7 +30,7 @@ class Platform::DeleteTelegramComments
                              message_id: comm[:identifier]['message_id'] })
       end
     rescue StandardError # Message don't delete (if bot don't have access to message)
-      Rails.logger.error("Failed to delete telegram comments at #{Time.now.utc.iso8601}")
+      Rails.logger.error("Failed to delete telegram comments at #{Time.now.utc.iso8601}".red)
     end
   end
 end

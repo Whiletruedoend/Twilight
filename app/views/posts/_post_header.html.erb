@@ -9,7 +9,7 @@
       <% if post.is_hidden %>
         <div class="fa fa-low-vision hidden-icon"></div>
       <% end %>
-      <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+      <% if post.attachments.present? && post.attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
         <a><i class="fa fa-file right-small"></i></a>
       <% end %>
     </div>

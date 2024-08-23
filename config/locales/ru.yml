@@ -127,9 +127,9 @@ ru:
     select_platform: Пожалуйста, выберите платформу
     bot_token: Токен бота
     access_token: Токен доступа
-    channel_identifier: Идентификатор канала
-    channel_identifier_for_att: Идентификатор канала для аттачментов
-    author_identifier: Идентификатор автора (не бота)
+    channel_identifier: ID канала
+    channel_identifier_for_att: ID канала для предзагрузки вложений (Не обязательно)
+    author_identifier: ID автора (не бота)
     api_server_address: Адрес сервера API
     enable_comments: Включить комментарии?
     add: Добавить

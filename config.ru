@@ -10,6 +10,7 @@ begin
   if ActiveRecord::Base.connection.data_source_exists?('platforms') &&
      ActiveRecord::Base.connection.data_source_exists?('channels')
 
+    Platform.find_or_initialize_by(title: 'blog').save
     Platform.find_or_initialize_by(title: 'telegram').save
     Platform.find_or_initialize_by(title: 'matrix').save
 

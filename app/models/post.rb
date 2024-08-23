@@ -13,6 +13,14 @@ class Post < ApplicationRecord
 
   before_create :gen_uuid
 
+  has_many_attached :attachments do |attachable|
+    attachable.variant :thumb100, resize_to_limit: [100, 100]
+    attachable.variant :thumb150, resize_to_limit: [150, 150]
+    attachable.variant :thumb200, resize_to_limit: [200, 200]
+    attachable.variant :thumb250, resize_to_limit: [250, 250]
+    attachable.variant :thumb300, resize_to_limit: [300, 300]
+  end
+
   extend FriendlyId
   friendly_id :title, use: [:slugged, :finders]
 
@@ -63,19 +71,17 @@ class Post < ApplicationRecord
   end
 
   def text
+    platform = Platform.find_by(title: 'blog')
     text = ''
-    contents.order(:id).each do |msg|
+    contents.where(platform: platform).order(:id).each do |msg|
       text += msg[:text] if msg[:text].present?
     end
     text
   end
 
-  def content_attachments
-    Content.where(post: self).select { |c| c.attachments.any? }.map(&:attachments)[0]
-  end
-
   def destroy
     DeletePostMessages.call(self)
+    attachments.purge
     super
   end
 

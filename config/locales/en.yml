@@ -128,9 +128,9 @@ en:
     select_platform: Please, select platform
     bot_token: Bot token
     access_token: Access token
-    channel_identifier: Channel identifier
-    channel_identifier_for_att: Channel identifier for attachments
-    author_identifier: Author identifier (not bot)
+    channel_identifier: Channel ID
+    channel_identifier_for_att: Channel ID for preload attachments (Optional)
+    author_identifier: Author ID (not bot)
     api_server_address: API server address
     enable_comments: Enable comments?
     add: Add

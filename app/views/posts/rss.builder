@@ -21,7 +21,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
 
         text = post.text
 
-        attachments = post.content_attachments
+        attachments = post.attachments
         if attachments.present?
           attachments = attachments.map do |attachment|
             if attachment.image?

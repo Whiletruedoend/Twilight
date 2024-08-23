@@ -13,7 +13,7 @@ module PostsHelper
   def display_attachments(post)
     content = ''
 
-    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    documents = post.attachments&.select { |b| !b.image? && !b.video? && !b.audio? }
     if documents.any?
       documents.each do |att|
         content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
@@ -23,7 +23,7 @@ module PostsHelper
     content += '<br><br>' if documents.any?
 
     content += "<div class=\"attachments\">"
-    post.content_attachments&.each do |att|
+    post.attachments.each do |att|
       if att.image?
         content += link_to image_tag(url_for(att)), url_for(att), target: '_blank'.to_s
       elsif att.video?
@@ -44,7 +44,7 @@ module PostsHelper
   # TODO
   def display_raw_attachments(post)
     content = ''
-    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    documents = post.attachments&.select { |b| !b.image? && !b.video? && !b.audio? }
     if documents.any?
       documents.each do |att|
         content += "<br><a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
@@ -53,7 +53,7 @@ module PostsHelper
     end
     content += '<br><br>' if documents.any?
 
-    post.content_attachments&.each do |att|
+    post.attachments.each do |att|
       full_att_link = get_full_attachment_link(att)
       if att.image?
         content += link_to image_tag(full_att_link), full_att_link, target: '_blank'.to_s
@@ -66,7 +66,7 @@ module PostsHelper
         content += '<br>'
       end
     end
-    content += '<br>' if post.content_attachments&.any?
+    content += '<br>' if post.attachments.present?
     content.html_safe
   end
 
@@ -74,7 +74,7 @@ module PostsHelper
   def display_feed_attachments(post)
     content = ''
 
-    documents = post.content_attachments.select { |b| !b.image? && !b.video? && !b.audio? }
+    documents = post.attachments&.select { |b| !b.image? && !b.video? && !b.audio? }
     if documents.any?
       documents.each do |att|
         content += "<a target=\"_blank\" href=\"#{get_full_attachment_link(att)}\">
@@ -83,7 +83,7 @@ module PostsHelper
     end
 
     content += "<div class=\"attachments\">"
-    post.content_attachments&.each do |att|
+    post.attachments.each do |att|
       if att.image?
         content += image_tag url_for(att), id: 'zoom-bg'.to_s
       elsif att.video?

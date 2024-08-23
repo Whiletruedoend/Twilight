@@ -29,12 +29,12 @@
               <%= f.text_field :room, { class: "form-control", required: true, placeholder: "-0123456789000" } %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
-              <%= f.label I18n.t("channels.channel_identifier_for_att") %>
-              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options["room_attachments"] } %>
-            </div>
-            <div class="col-xs-8 col-sm-4 col-md-9">
               <%= f.label I18n.t("channels.author_identifier") %>
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @current_channel.options["author"] } %>
+            </div>
+            <div class="col-xs-8 col-sm-4 col-md-9">
+              <%= f.label I18n.t("channels.channel_identifier_for_att") %>
+              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options["room_attachments"] } %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
               <%= f.check_box :import_from_tg, { checked: @current_channel.options["import_from_tg"] } %>

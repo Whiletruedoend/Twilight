@@ -22,15 +22,26 @@ class SendPostToPlatforms
       end
   end
 
-  def create_only_site_post
-    content = Content.create!(user: @post.user, post: @post, text: params[:post][:content],
-                              has_attachments: @attachments.present?)
-    @attachments.each { |att| content.attachments.attach(att) } if @attachments.present?
-    content.upd_post if @attachments.present?
+  def create_blog_post
+    platform = Platform.find_by(title: 'blog')
+
+    if @attachments.present?
+      attachments_content = Content.create!(user: @post.user, post: @post, text: nil,
+                                            has_attachments: true, platform: platform)
+      @attachments.each { |att| @post.attachments.attach(att) }
+      attachments_content.upd_post
+    end
+
+    if params[:post][:content].present? && !params[:post][:content].empty?
+      content = Content.create!(user: @post.user, post: @post, text: params[:post][:content],
+                                has_attachments: false, platform: platform)
+      content.upd_post
+    end
   end
 
   def call
-    return create_only_site_post if params[:channels].nil? || params[:channels].values.exclude?('1')
+    create_blog_post
+    return if params[:channels].nil? || params[:channels].values.exclude?('1')
 
     channel_ids = []
     params[:channels].to_unsafe_h.select { |_k, v| v == '1' }.each do |k, _v|

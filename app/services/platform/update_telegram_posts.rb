@@ -17,7 +17,7 @@ class Platform::UpdateTelegramPosts
 
     @deleted_attachments = @params[:deleted_attachments]&.to_unsafe_h&.select { |_k, v| v == '0' }&.keys
     # need sort @deleted_attachments in the order of their posting platforms (grouping of pictures)
-    @attachments = @post.content_attachments&.map { |att| att.blob.signed_id }
+    @attachments = @post.attachments.map { |att| att.blob.signed_id }
     @deleted_attachments = @attachments&.select { |att| att.in?(@deleted_attachments) }
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
@@ -295,7 +295,7 @@ class Platform::UpdateTelegramPosts
     return if @deleted_attachments.blank?
 
     @deleted_attachments.each do |attachment|
-      @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
+      @post.attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
     end
     @post.contents.first&.upd_post if @deleted_attachments.present?
   end
@@ -348,7 +348,7 @@ class Platform::UpdateTelegramPosts
   # In an amicable way, if there are no attachments, you need to convert the media message to text, but this cannot be done
   # so the caption is removed if there are no attachments
   rescue StandardError
-    Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}")
+    Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}".red)
   end
 
   def post_options(post)

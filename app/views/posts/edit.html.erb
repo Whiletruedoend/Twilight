@@ -10,7 +10,7 @@
 
     <%= form_with(model: @current_post, local: true) do |f| %>
       <% platforms = @current_post.platforms %>
-      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }) %>
+      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }).uniq %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @current_post.title }) %>
@@ -31,7 +31,7 @@
               </div>
             </div>
           <% end %>
-          <% attachments = @current_post.content_attachments %>
+          <% attachments = @current_post.attachments %>
           <% if attachments.present? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>
@@ -60,7 +60,6 @@
           <% if channels.any? %>
             <div class="colorful-checkboxes">
               <% channels.each_with_index do |channel, index| %>
-                <% next if channels[index+1].present? && (channels[index+1].id == channel.id) # avoid matrix duplicates %>
                 <% title = channel.options&.dig("title") %>
                 <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => true })%>
                 <%= label_tag "channels_#{channel.id}", title&.capitalize %>

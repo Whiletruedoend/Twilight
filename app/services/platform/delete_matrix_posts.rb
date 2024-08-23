@@ -27,7 +27,7 @@ class Platform::DeleteMatrixPosts
           Matrix.post(server, matrix_token, method, data)
         end
       rescue StandardError
-        Rails.logger.error("Failed delete matrix messages at #{Time.now.utc.iso8601}")
+        Rails.logger.error("Failed delete matrix messages at #{Time.now.utc.iso8601}".red)
       end
     end
   end

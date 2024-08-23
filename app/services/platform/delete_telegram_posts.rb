@@ -21,7 +21,7 @@ class Platform::DeleteTelegramPosts
                              message_id: platform_post[:identifier]['message_id'] })
       end
     rescue StandardError # Message don't delete (if bot don't have access to message)
-      Rails.logger.error("Failed delete telegram messages at #{Time.now.utc.iso8601}")
+      Rails.logger.error("Failed delete telegram messages at #{Time.now.utc.iso8601}".red)
     end
   end
 end

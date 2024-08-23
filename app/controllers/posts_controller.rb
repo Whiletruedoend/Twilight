@@ -45,10 +45,10 @@ class PostsController < ApplicationController
   end
 
   def set_tags_post(current_post)
-    img_preview = current_post.content_attachments&.find{ |a| a.image? }
+    img_preview = current_post.attachments&.find{ |a| a.image? }
     img_preview_url = img_preview.present? ? "#{request.base_url}#{rails_blob_path(img_preview, only_path: true)}" : ""
 
-    video_preview = current_post.content_attachments&.find{ |a| a.video? }
+    video_preview = current_post.attachments&.find{ |a| a.video? }
     video_preview_url = video_preview.present? ? "#{request.base_url}#{rails_blob_path(video_preview, only_path: true)}" : ""
 
     title = current_post.title.present? ? current_post.title : "#{current_post.uuid} | #{Rails.configuration.credentials[:title]}"
@@ -260,7 +260,7 @@ class PostsController < ApplicationController
 
     if Rails.configuration.credentials[:fail2ban][:enabled] && user.nil? && params.key?(:token)
       ip = request.env['action_dispatch.remote_ip'] || request.env['REMOTE_ADDR']
-      Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}")
+      Rails.logger.error("Failed bypass token from #{ip} at #{Time.now.utc.iso8601}".red)
     end
 
     if params.dig("uuid").present?
