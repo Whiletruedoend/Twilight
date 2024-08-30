@@ -50,15 +50,22 @@ class Platform::SendCommentToTelegram
     has_attachments = @params.dig(:comment, :attachments)
 
     platform_post = @current_post.platform_posts.find{ |pp| pp.channel_id == channel[:id] }
-    chat_id = platform_post.identifier["chat_id"]
-    message_id = platform_post.identifier["linked_chat_message_id"]
+
+    if platform_post.identifier.is_a?(Array)
+      chat_id = platform_post.identifier[0]["chat_id"]
+      message_id = platform_post.identifier[0]["linked_chat_message_id"]
+    elsif platform_post.identifier.is_a?(Hash)
+      chat_id = platform_post.identifier["chat_id"]
+      message_id = platform_post.identifier["linked_chat_message_id"]
+    end
+
     linked_chat_id = channel[:linked_chat_id] # || get_linked_chat(bot, chat_id)
     if linked_chat_id.nil? || message_id.nil?
       return Rails.logger.error("Can't get linked group chat_id or linked message_id for channel #{channel[:id]} at #{Time.now.utc.iso8601}!".red)
     end
 
     if @params[:comment][:parent_id].to_i > 0
-      parent = current_post.comments.find_by_id(@params[:comment].delete(:parent_id))
+      parent = @current_post.comments.find_by_id(@params[:comment].delete(:parent_id))
       linked_chat_id = parent.identifier["chat_id"]
       message_id = parent.identifier["message_id"]
       parent_id = parent.id 

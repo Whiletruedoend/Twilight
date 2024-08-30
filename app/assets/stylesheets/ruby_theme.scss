@@ -48,7 +48,7 @@ $color-checkbox-focus: #1b1b1c;
 $color-feed-bg: #ffffff;
 $color-feed-bg2: #eeeeee;
 $color-feed-font: #000000;
-$color-feed-icon: #9cccfd; /* #e0e0e0; */
+$color-feed-icon: #bd6d76;
 $color-feed-time: #bbb;
 $color-feed-date: #66b1ff;
 
@@ -97,12 +97,13 @@ $color-code-bg: #222426;
 
 $font: #000000;
 $font-link: #b3b3b3;
+$comments-font: #000000;
 
 $color-white: #fcfcff;
 $color-black: #000000;
 
 @include base($bg, $color-darkpurple, $color-code-bg,
-        $font, $font-link, $color-white, $color-black,
+        $font, $font-link, $comments-font, $color-white, $color-black,
         $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
         $color-checkbox-channels-bg, $color-category-default,
         $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,

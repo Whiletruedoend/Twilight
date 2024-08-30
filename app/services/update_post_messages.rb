@@ -46,6 +46,7 @@ class UpdatePostMessages
   end
 
   def call
+    old_title = @post.title
     update_blog_posts
     return if @post.platform_posts.empty?
 
@@ -53,7 +54,7 @@ class UpdatePostMessages
       execution_context = Rails.application.executor.run!
       posted_platforms = @post.platforms
 
-      Platform::UpdateTelegramPosts.call(@post, @base_url, params) if posted_platforms['telegram']
+      Platform::UpdateTelegramPosts.call(@post, @base_url, params, old_title) if posted_platforms['telegram']
       Platform::UpdateMatrixPosts.call(@post, @base_url, params) if posted_platforms['matrix']
     ensure
       execution_context&.complete!

@@ -141,19 +141,22 @@ class PostsController < ApplicationController
       base_url = request.base_url
 
       channels_p = params['channels']&.to_unsafe_h
-      if channels_p.present?
-        channels_p.each do |k, v|
-          if v.to_i == 1 # TODO: make it? Need2fix duplicate content when creating!
-            # params["platforms"] = { k=>(v ? 1 : 0).to_s }
-            # SendPostToPlatforms.call(@post, base_url, params)
-          else
-            DeletePostMessages.call(current_post, k)
-          end
-        end
+      published_channels_list = {}
+
+      published_channels = current_post.published_channels.each{ |ch| published_channels_list.merge!("#{ch.id}" => "1") }
+      new_channels_list = channels_p.reject{|k,v| (v == "0") || (published_channels_list[k] == v) }
+      deleted_channels_list = channels_p.reject{ |k,v| (v == "1") || (published_channels_list[k] == v) }
+
+      deleted_channels_list.each do |k, v|
+        DeletePostMessages.call(current_post, k)
+      end
+
+      if new_channels_list.any?
+        SendPostToPlatforms.call(current_post, base_url, params)
       end
 
       UpdatePostMessages.call(current_post, base_url, posts_params)
-      current_post.update(title: posts_params[:post][:title], is_hidden: params[:post][:is_hidden]) # ?
+      current_post.update(title: posts_params[:post][:title], is_hidden: params[:post][:is_hidden])
 
       redirect_to current_post
     else

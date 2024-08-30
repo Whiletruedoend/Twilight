@@ -20,6 +20,8 @@ module Twilight
 
     config.active_storage.variant_processor = :mini_magick
 
+    config.active_record.yaml_column_permitted_classes = [Time] # PaperTrail fix
+
     require 'ext/string'
     require 'ext/matrix'
     require 'ext/zip_file_generator'

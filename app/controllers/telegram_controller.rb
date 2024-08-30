@@ -82,6 +82,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def import_from_tg_withatt(message, channel, from_channel, attachment)
+    blog_platform = Platform.find_by(title: 'blog')
     caption = message.dig('caption')
     caption_entities = attachment.dig(:caption_entities)
     title = caption_entities.present? ? get_post_title(caption_entities, caption) : nil
@@ -95,20 +96,26 @@ class TelegramController < Telegram::Bot::UpdatesController
       post = existing_pp.post
       content = post.contents.find{ |c| c.has_attachments == true }
       if content.nil?
-        content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true)
+        # For blog platform
+        Content.create!(text: caption, post: post, user: channel.user, has_attachments: true, platform: blog_platform)
+        # For tg
+        content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true, platform: channel.platform)
       end
     else
       Rails.logger.debug('TG: NEW POST WITH ATTACHMENTS'.green) if Rails.env.development?
       post = Post.create!(title: title, user: channel.user, privacy: 0)
       caption = caption.lstrip if caption.present?
 
-      content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true)
+      # For blog platform
+      Content.create!(text: caption, post: post, user: channel.user, has_attachments: true, platform: blog_platform)
+      # For tg
+      content = Content.create!(text: caption, post: post, user: channel.user, has_attachments: true, platform: channel.platform)
     end
 
     options = { "enable_notifications": true, "onlylink": false, "caption": caption.present? }
     file = URI.parse(attachment[:link]).open
-    content.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
-    att = content.attachments.find{ |att| att.byte_size == attachment[:file_size] }
+    post.attachments.attach(io: file, filename: attachment[:file_name], content_type: file.content_type)
+    att = post.attachments.find{ |att| att.byte_size == attachment[:file_size] }
     blob_signed_id = att.signed_id
 
     identifier = { chat_id: message['chat']['id'],
@@ -135,6 +142,7 @@ class TelegramController < Telegram::Bot::UpdatesController
   end
 
   def import_from_tg_noatt(message, channel, from_channel)
+    blog_platform = Platform.find_by(title: 'blog')
     text = message.dig("text")
     entities = message.dig("entities")
     title = entities.present? ? get_post_title(entities, text) : nil
@@ -152,7 +160,10 @@ class TelegramController < Telegram::Bot::UpdatesController
       text = text.lstrip if text.present?
     end
 
-    content = Content.create!(text: text, post: post, user: channel.user, has_attachments: false)
+    # For blog platform
+    Content.create!(text: text, post: post, user: channel.user, has_attachments: false, platform: blog_platform)
+    # For tg
+    content = Content.create!(text: text, post: post, user: channel.user, has_attachments: false, platform: channel.platform)
     options = { "enable_notifications": true, "onlylink": false, "caption": false }
 
     message_id = message.dig('message_id')

@@ -97,12 +97,13 @@ $color-code-bg: #32302f;
 
 $font: #ebdbb2;
 $font-link: #a89984;
+$comments-font: #ebdbb2;
 
 $color-white: #fbf1c7;
 $color-black: #000000;
 
 @include base($bg, $color-darkpurple, $color-code-bg,
-        $font, $font-link, $color-white, $color-black,
+        $font, $font-link, $comments-font, $color-white, $color-black,
         $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
         $color-checkbox-channels-bg, $color-category-default,
         $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,

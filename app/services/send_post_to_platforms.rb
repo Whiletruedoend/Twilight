@@ -24,6 +24,8 @@ class SendPostToPlatforms
 
   def create_blog_post
     platform = Platform.find_by(title: 'blog')
+    # return when update post && create for new channels
+    return if @post.contents.find{|c| c.platform == platform }.present?
 
     if @attachments.present?
       attachments_content = Content.create!(user: @post.user, post: @post, text: nil,

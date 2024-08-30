@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Post < ApplicationRecord
+  has_paper_trail
   # validates :title, presence: true
   belongs_to :user
   belongs_to :category, optional: true
@@ -60,7 +61,7 @@ class Post < ApplicationRecord
 
   def platforms
     platforms = {}
-    Platform.all.find_each do |platform|
+    Platform.where.not(title: "blog").find_each do |platform|
       platforms.merge!(platform.title => PlatformPost.where(platform_id: platform.id, post: self).any?)
     end
     platforms

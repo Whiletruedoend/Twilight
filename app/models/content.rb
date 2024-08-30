@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Content < ApplicationRecord
+  has_paper_trail
   # validates :text, presence: true
   belongs_to :user
   belongs_to :post
   belongs_to :platform
 
   has_many :platform_posts
-
+  
   #before_validation :check_platform_presence, on: %i[craete update]
 
   after_create_commit do upd_post end

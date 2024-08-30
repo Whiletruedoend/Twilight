@@ -77,7 +77,7 @@ $color-white: #ffffff;
 $color-black: #000000;
 */
 @mixin base($bg, $color-darkpurple, $color-code-bg,
-        $font, $font-link, $color-white, $color-black,
+        $font, $font-link, $comments-font, $color-white, $color-black,
         $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
         $color-checkbox-channels-bg, $color-category-default,
         $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,
@@ -825,7 +825,7 @@ $color-black: #000000;
   .comments-container{
     font-size: 16px;
     background-color: $color-container-bg;
-    color: $color-feed-font;
+    color: $comments-font;
     box-sizing: border-box;
     /* max-width: 60%; */
     margin: 2% auto;
@@ -1359,8 +1359,13 @@ $color-black: #000000;
         text-align: center;
       }
       .comments-container{
+        color: $color-feed-font;
         background: none;
         background-color: none;
+
+        .comment-avatar{
+          background: $color-feed-icon;
+        }
       }
       .comments-width{
         max-width: 100%;
