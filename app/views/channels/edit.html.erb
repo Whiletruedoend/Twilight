@@ -36,9 +36,13 @@
               <%= f.label I18n.t("channels.channel_identifier_for_att") %>
               <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options["room_attachments"] } %>
             </div>
-            <div class="col-xs-8 col-sm-4 col-md-9 field"><br>
-              <%= f.check_box :import_from_tg, { checked: @current_channel.options["import_from_tg"] } %>
+            <div class="col-xs-8 col-sm-4 col-md-9 field">
+              <%= f.check_box("import_from_tg", { "data-toggle" => "collapse", "data-target"=>"#import_from_tg", :class=>"colorful-checkbox", :checked => @current_channel.options.dig("import_from_tg","enabled") })%>
               <%= f.label I18n.t("channels.import_from_tg") %>
+              <div id="import_from_tg" class="collapse">
+                * <%= f.check_box("hide_by_default", { :id=> "hide_by_default", :class=>"colorful-checkbox", :checked => @current_channel.options.dig("import_from_tg","hide_by_default") })%>
+                  <%= f.label I18n.t("channels.hidden_by_default") %>
+              </div>
             </div>
           </div>
           <h3><%= I18n.t("channels.options") %></h3>

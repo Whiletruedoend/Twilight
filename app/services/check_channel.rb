@@ -70,7 +70,10 @@ class CheckChannel
     options[:author] = author if author.present?
 
     options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')
-    options[:import_from_tg] = (params[:channel][:import_from_tg] == '1')
+
+    options[:import_from_tg] = {}
+    options[:import_from_tg][:enabled] = (params[:channel][:import_from_tg] == '1')
+    options[:import_from_tg][:hide_by_default] = (params[:channel][:hide_by_default] == '1')
 
     # Comments
 

@@ -66,7 +66,7 @@ class TelegramController < Telegram::Bot::UpdatesController
       return delete_chat_photo(channel)
     end
 
-    import_option = channel.options.dig("import_from_tg")
+    import_option = channel.options.dig("import_from_tg", "enabled")
     import_from_tg(message, channel, from_channel) if import_option.present? && import_option
   end
 
@@ -103,7 +103,9 @@ class TelegramController < Telegram::Bot::UpdatesController
       end
     else
       Rails.logger.debug('TG: NEW POST WITH ATTACHMENTS'.green) if Rails.env.development?
-      post = Post.create!(title: title, user: channel.user, privacy: 0)
+      is_hidden = channel.options.dig("import_from_tg", "hide_by_default")
+      is_hidden = is_hidden.present? && is_hidden
+      post = Post.create!(title: title, user: channel.user, privacy: 0, is_hidden: is_hidden)
       caption = caption.lstrip if caption.present?
 
       # For blog platform
@@ -156,7 +158,9 @@ class TelegramController < Telegram::Bot::UpdatesController
       post = existing_pp.post
     else
       Rails.logger.debug('TG: NEW POST'.green) if Rails.env.development?
-      post = Post.create!(title: title, user: channel.user, privacy: 0)
+      is_hidden = channel.options.dig("import_from_tg", "hide_by_default")
+      is_hidden = is_hidden.present? && is_hidden
+      post = Post.create!(title: title, user: channel.user, privacy: 0, is_hidden: is_hidden)
       text = text.lstrip if text.present?
     end
 
