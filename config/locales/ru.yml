@@ -20,6 +20,7 @@ ru:
     sign_up_button: Зарегистрироваться
     sign_in_button: Войти
     remember_me: Запомнить меня?
+    first_run_user_creation: Начальное создание пользователя-администратора
   posts:
     main_page: На главную
     add_post: Добавить статью
@@ -153,6 +154,7 @@ ru:
     option_enable_notifications: Включить уведомления?
     posts_count: Кол-во постов
     import_from_tg: Автоматически добавлять посты отправленные через Telegram?
+    hidden_by_default: Добавленные посты по-умолчанию скрыты?
   manage:
     manage_admins_only: У вас нет прав для управления настройками!
     all_invite_codes_list: Список всех инвайт кодов

@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :set_tags
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :check_first_run
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
 
@@ -16,6 +17,14 @@ class ApplicationController < ActionController::Base
   rescue_from ActionPolicy::Unauthorized, with: ->(exception) { render_error(404, exception) }
 
   protected
+
+  def check_first_run
+    return if !Rails.configuration.credentials.dig(:first_run_setup)
+    return if params["controller"].include?("users")
+    if User.count.zero?
+      return redirect_to sign_up_path, notice: I18n.t("auth.first_run_user_creation")
+    end
+  end
 
   def set_tags
     set_meta_tags(title: 'Notes',

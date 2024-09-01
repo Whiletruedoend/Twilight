@@ -45,6 +45,9 @@ module Users
         options[:invite_code] = users_params[:user][:code]
         current_user.update!(options: options)
       end
+      if Rails.configuration.credentials.dig(:first_run_setup) && (User.count == 1)
+        current_user.update!(is_admin: true)
+      end
       Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
     end
 

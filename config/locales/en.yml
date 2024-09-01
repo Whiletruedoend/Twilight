@@ -20,6 +20,7 @@ en:
     sign_up_button: Sign up
     sign_in_button: Sign in
     remember_me: Remember me?
+    first_run_user_creation: Initial admin user creation
   posts:
     main_page: Main page
     add_post: Add post
@@ -154,6 +155,7 @@ en:
     option_enable_notifications: Enable notifications?
     posts_count: Number of posts
     import_from_tg: Automatically add posts sent via Telegram?
+    hidden_by_default: Added posts are hidden by default?
   manage:
     manage_admins_only: You don't have permissions to manage options!
     all_invite_codes_list: All invite codes list
