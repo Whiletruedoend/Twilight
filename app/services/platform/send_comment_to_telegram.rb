@@ -19,7 +19,6 @@ class Platform::SendCommentToTelegram
           room: channel.room,
           token: channel.token,
           user_id: channel.user_id,
-          room_attachments: channel.options['room_attachments'],
           linked_chat_id: channel.options.dig('linked_chat_id'),
         }
       end

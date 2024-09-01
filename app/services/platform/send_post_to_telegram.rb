@@ -17,7 +17,7 @@ class Platform::SendPostToTelegram
         { id: channel.id,
           room: channel.room,
           token: channel.token,
-          room_attachments: channel.options['room_attachments'] }
+          preload_attachments: channel.options['preload_attachments'] }
       end
     @attachments = @params[:post][:attachments].reverse if @params[:post][:attachments].present?
     @options = @params[:options]
@@ -66,11 +66,12 @@ class Platform::SendPostToTelegram
       text_contents = [Content.create!(user: @post.user, post: @post, 
                                        text: "", platform: @platform, has_attachments: false) ]
     end
- 
-    use_attachment_channel = (1 == 1) # TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use_attachment_channel = (params[:post]["use_preload_room"] == "1")
+
     if use_attachment_channel
       already_uploaded_media = []
-      channel_with_roomatt = @channels.find{ |ch| ch[:room_attachments].present? && !ch[:room_attachments].empty? }
+      channel_with_roomatt = @channels.find{ |ch| ch[:preload_attachments]["enabled"] && !ch[:preload_attachments]["preload_room"].empty? }
       if channel_with_roomatt.present?
         if already_uploaded_media.empty?
           media = upload_to_attachment_channel(channel_with_roomatt)
@@ -230,7 +231,7 @@ class Platform::SendPostToTelegram
   # Faster than upload to each channel, but requires attachment channel
   def upload_to_attachment_channel(channel)
     bot = get_tg_bot(channel)
-    attachment_channel = channel[:room_attachments]
+    attachment_channel = channel[:preload_attachments]["preload_room"]
     @post.attachments.order('created_at ASC').map do |att|
       blob_signed_id = att.blob.signed_id
       file = File.open(ActiveStorage::Blob.service.send(:path_for, att.blob.key))

@@ -130,7 +130,7 @@ en:
     bot_token: Bot token
     access_token: Access token
     channel_identifier: Channel ID
-    channel_identifier_for_att: Channel ID for preload attachments (Optional)
+    channel_identifier_for_att: Channel ID for preload attachments
     author_identifier: Author ID (not bot)
     api_server_address: API server address
     enable_comments: Enable comments?
@@ -156,6 +156,8 @@ en:
     posts_count: Number of posts
     import_from_tg: Automatically add posts sent via Telegram?
     hidden_by_default: Added posts are hidden by default?
+    preload_attachments: Upload attachments in individual channel?
+    preload_attachments_desc: Preloading attachments to a separate channel saves time if you send a post with attachments to multiple channels. Otherwise, each attachment would be uploaded to each channel, which can be a long process.
   manage:
     manage_admins_only: You don't have permissions to manage options!
     all_invite_codes_list: All invite codes list

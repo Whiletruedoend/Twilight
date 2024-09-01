@@ -28,16 +28,23 @@
               <%= f.label I18n.t("channels.author_identifier") %>
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890" } %>
             </div>
+
             <div class="col-xs-8 col-sm-4 col-md-9">
-              <%= f.label I18n.t("channels.channel_identifier_for_att") %>
-              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000" } %>
+              <%= f.check_box("preload_attachments", { "data-toggle" => "collapse", "data-target"=>"#preload_attachments", :class=>"colorful-checkbox", :checked => false })%>
+              <%= f.label I18n.t("channels.preload_attachments") %>
+              <div id="preload_attachments" class="collapse">
+                <p><%= I18n.t("channels.preload_attachments_desc") %></p>
+                <%= f.label I18n.t("channels.channel_identifier_for_att") %>
+                <%= f.text_field :preload_room, { class: "form-control", placeholder: "-0123456789000" } %>
+              </div>
             </div>
+
             <div class="col-xs-8 col-sm-4 col-md-9 field">
-              <%=check_box("import_from_tg", "enabled", { "data-toggle" => "collapse", "data-target"=>"#import_from_tg", :class=>"colorful-checkbox", :checked => false })%>
-              <%= label_tag "import_from_tg", I18n.t("channels.import_from_tg") %>
+              <%= f.check_box("import_from_tg", { "data-toggle" => "collapse", "data-target"=>"#import_from_tg", :class=>"colorful-checkbox", :checked => false })%>
+              <%= f.label I18n.t("channels.import_from_tg") %>
               <div id="import_from_tg" class="collapse">
-                * <%=check_box("import_from_tg", "hide_by_default", { :id=> "hide_by_default", :class=>"colorful-checkbox", :checked => false })%>
-                  <%= label_tag "hide_by_default", I18n.t("channels.hidden_by_default") %>
+                * <%= f.check_box("hide_by_default", { :id=> "hide_by_default", :class=>"colorful-checkbox", :checked => false })%>
+                  <%= f.label I18n.t("channels.hidden_by_default") %>
               </div>
             </div>
               <center><%= f.submit I18n.t("channels.add"), class: "col-md-3 btn btn-primary col-md-offset-3" %></center>

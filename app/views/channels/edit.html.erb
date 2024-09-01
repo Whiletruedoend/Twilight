@@ -33,8 +33,13 @@
               <%= f.text_field :author, { class: "form-control", placeholder: "1234567890", value: @current_channel.options["author"] } %>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9">
-              <%= f.label I18n.t("channels.channel_identifier_for_att") %>
-              <%= f.text_field :room_attachments, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options["room_attachments"] } %>
+              <%= f.check_box("preload_attachments", { "data-toggle" => "collapse", "data-target"=>"#preload_attachments", :class=>"colorful-checkbox", :checked => @current_channel.options.dig("preload_attachments","enabled") })%>
+              <%= f.label I18n.t("channels.preload_attachments") %>
+              <div id="preload_attachments" class="collapse">
+                <p><%= I18n.t("channels.preload_attachments_desc") %></p>
+                <%= f.label I18n.t("channels.channel_identifier_for_att") %>
+                <%= f.text_field :preload_room, { class: "form-control", placeholder: "-0123456789000", value: @current_channel.options.dig("preload_attachments","preload_room") } %>
+              </div>
             </div>
             <div class="col-xs-8 col-sm-4 col-md-9 field">
               <%= f.check_box("import_from_tg", { "data-toggle" => "collapse", "data-target"=>"#import_from_tg", :class=>"colorful-checkbox", :checked => @current_channel.options.dig("import_from_tg","enabled") })%>

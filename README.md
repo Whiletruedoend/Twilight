@@ -106,10 +106,6 @@ gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
   ```
     docker-compose run --rm twilight bin/rails db:migrate
   ```
-  * To make yourself an admin and configure (credentials.yml and database.yml) server, you need to enter the container with the command:
-  ```
-    docker exec -it twilight /bin/bash 
-  ```
 
 The site will now be available at: `http://localhost:3080`
 
@@ -117,12 +113,6 @@ The site will now be available at: `http://localhost:3080`
 
 [Production] Don't forget to set variable *secret_key_base* in credentials.yml:
 
-Some settings are done through the console (`rails c`), but most work anyway, provided the data is entered correctly;
-
-To be able to create posts, you need to get administrator rights:
-  ```ssh
-    User.where(login: "YOURLOGIN").update(is_admin: true)
-  ```
 ### Comments
 
 To support broadcasting comments from Telegram to a blog post, you need to:

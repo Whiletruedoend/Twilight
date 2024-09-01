@@ -129,7 +129,7 @@ ru:
     bot_token: Токен бота
     access_token: Токен доступа
     channel_identifier: ID канала
-    channel_identifier_for_att: ID канала для предзагрузки вложений (Не обязательно)
+    channel_identifier_for_att: ID канала для предзагрузки вложений
     author_identifier: ID автора (не бота)
     api_server_address: Адрес сервера API
     enable_comments: Включить комментарии?
@@ -155,6 +155,8 @@ ru:
     posts_count: Кол-во постов
     import_from_tg: Автоматически добавлять посты отправленные через Telegram?
     hidden_by_default: Добавленные посты по-умолчанию скрыты?
+    preload_attachments: Загружать вложения в отдельный канал?
+    preload_attachments_desc: Предзагрузка вложений в отдельный канал позволяет сэкономить время в случае отправки поста с вложениями в несколько каналов. В противном случае, каждое вложение будет загружаться в каждый канал, что может быть долгим процессом. 
   manage:
     manage_admins_only: У вас нет прав для управления настройками!
     all_invite_codes_list: Список всех инвайт кодов

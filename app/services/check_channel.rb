@@ -52,21 +52,30 @@ class CheckChannel
       errs << 'Channel not available! (Not found or bot access problems?)'
     end
 
-    if params[:channel][:room_attachments].present? && !params[:channel][:room_attachments].empty?
-      begin
-        bot.get_chat(chat_id: params[:channel][:room_attachments])
-      rescue Telegram::Bot::Error
-        errs << 'Attachments channel not available! (Not found or bot access problems?)'
+    options[:preload_attachments] = {}
+
+    preload_attachments_enabled = (params[:channel][:preload_attachments] == '1')
+    preload_attachments_room = params[:channel][:preload_room]
+    options[:preload_attachments][:enabled] = preload_attachments_enabled
+    options[:preload_attachments][:preload_room] = preload_attachments_room
+
+    if preload_attachments_enabled
+      if preload_attachments_room.present? && !preload_attachments_room.empty?
+        begin
+          bot.get_chat(chat_id: preload_attachments_room)
+        rescue Telegram::Bot::Error
+          errs << 'Attachments channel not available! (Not found or bot access problems?)'
+        end
+      errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == preload_attachments_room
+      else
+        errs << 'Attachments channel not specified!'
       end
-    errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == params[:channel][:room_attachments]
     end
 
     return errors.add(:base, errs) if errs.any?
 
-    room_attachments = params[:channel][:room_attachments]
     author = params[:channel][:author]
 
-    options[:room_attachments] = room_attachments if room_attachments.present?
     options[:author] = author if author.present?
 
     options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')

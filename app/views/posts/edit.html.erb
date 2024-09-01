@@ -93,6 +93,10 @@
                   <% end %>
                   <br>
                 <% end %>
+                <% if @current_user.channels.where(enabled: true).with_enabled_preload_room.any?%>
+                * <%= f.check_box("use_preload_room", { :id=> "use_preload_room", :class=>"colorful-checkbox", :checked => false }) %>
+                  <%= label_tag "use_preload_room", "Use telegram preload room for attachments (if available?)" %>
+                <% end %>
               </div>
             <% end %>
             <!-- <p><%= I18n.t("posts.channels_not_found") %></p> -->

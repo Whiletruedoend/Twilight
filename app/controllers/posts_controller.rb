@@ -348,6 +348,7 @@ class PostsController < ApplicationController
                          :new_tags_name,
                          :new_tags_enabled_by_default,
                          :is_hidden,
+                         :use_preload_room,
                          { attachments: [] }])
   end
 end

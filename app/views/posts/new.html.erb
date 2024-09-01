@@ -58,6 +58,10 @@
                 <% end %>
                 <br>
               <% end %>
+              <% if @current_user.channels.where(enabled: true).with_enabled_preload_room.any?%>
+                * <%= f.check_box("use_preload_room", { :id=> "use_preload_room", :class=>"colorful-checkbox", :checked => false }) %>
+                  <%= label_tag "use_preload_room", "Use telegram preload room for attachments (if available?)" %>
+              <% end %>
             </div>
           <% else %>
             <p><%= I18n.t("posts.channels_not_found") %></p>
@@ -68,8 +72,8 @@
             <% if @current_user.categories.any? %>
               <% categories = @current_user.categories.order(:sort).collect{ |cat| [cat.name, cat.id] } %>
               <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
-              <%= f.select(:category, categories) %>
-            <% end %><br><br>
+              <%= f.select(:category, categories) %><br><br>
+            <% end %>
             <div class="form-inline">
               <div class="form-group">
                 <%= f.text_field :category_name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("posts.new_category") %>
