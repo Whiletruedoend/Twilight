@@ -1,0 +1,7 @@
+<%from_time = Time.now%>
+<%distance = distance_of_time_in_words(from_time, notification.updated_at)%>
+<p>
+  <%=distance%> ● <%= notification.item.user.login %> posted:
+  <%= link_to notification.item.title, notification.item, class: "underline font-medium" %>
+</p>
+<!-- Unsed but may be useful -->

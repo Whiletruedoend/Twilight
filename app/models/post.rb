@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Post < ApplicationRecord
+  include Notificable
   has_paper_trail
   # validates :title, presence: true
   belongs_to :user
@@ -111,6 +112,10 @@ class Post < ApplicationRecord
   def slug_url
     slug.present? ? slug : uuid
   end
+
+  def user_ids
+    User.where.not(id: self.user_id).ids
+  end  
 
  # private
 

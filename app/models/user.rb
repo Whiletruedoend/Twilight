@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
   has_many :visits, class_name: "Ahoy::Visit"
+  has_many :notifications
 
   has_one_attached :avatar
 
@@ -62,6 +63,10 @@ class User < ApplicationRecord
 
   def email_changed?
     false
+  end
+
+  def unviewed_notifications_count
+    self.notifications.unviewed.count
   end
 
   # 'Disable' current password validation

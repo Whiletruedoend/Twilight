@@ -25,7 +25,7 @@ RSpec.describe Platform::SendPostToTelegram, type: :service do
     create(:channel, platform: platform, enabled: true, token: bot.token,
                      room: '-1001234567890',
                      options: { 'id' => bot.token.split(':')[0],
-                                'room_attachments' => '123456789',
+                                'preload_attachments=' => {'enabled' => true, 'preload_room' => '123456789'},
                                 'author' => '987654321',
                                 'notifications_enabled' => false,
                                 'comments_enabled' => false,

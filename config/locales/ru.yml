@@ -10,6 +10,7 @@ ru:
     new_post: Новый пост
     all_posts: Все посты
     please_log_in: (пожалуйста, войдите!)
+    notifications: Notifications # Turbo not work with I18n?
   auth:
     sign_up_header: Регистрация
     sign_in_header: Авторизация
@@ -243,3 +244,23 @@ ru:
               blank: Не указан текущий пароль!
             password:
               too_short: (Пароль слишком короткий!)
+  datetime:
+    distance_in_words:
+      less_than_x_minutes: # Turbo not work with I18n?
+        one: '> %{count} min'
+        other: '> %{count} min.'
+      x_seconds:
+        '%{count} s.'
+      x_minutes:
+        '%{count} min.'
+      x_hours:
+        '%{count} h.'
+      x_days:
+        one: "1 d."
+        other: "%{count} d."
+      about_x_months:
+        one: '~ %{count} mo.'
+        other: '~ %{count} mo.'
+      about_x_years:
+        one: '~ %{count} y.'
+        other: '~ %{count} y.'

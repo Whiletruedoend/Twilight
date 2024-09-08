@@ -1,0 +1,3 @@
+<%= tag.div id: :notifications_count do %>
+  <%=I18n.t('main.notifications')%>: (<%= count > 0 ? (count > 9 ? "+9" : count) : 0 %>)
+<% end %>

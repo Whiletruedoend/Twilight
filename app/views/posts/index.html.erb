@@ -1,6 +1,57 @@
 <body id="bg">
   <div class="posts-container">
 
+<!--
+  <% if user_signed_in? %>
+    <%= turbo_stream_from dom_id(current_user, :broadcast_to) %>
+  
+  <%= link_to notifications_path, class: "bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" do %>
+  <span class="sr-only">View notifications</span>
+  <%= tag.div id: :notifications_count do %>
+    <%= render "notifications/count", count: current_user.unviewed_notifications_count %>
+  <% end %>
+  <% end %>
+  <% end %>
+-->
+<!---
+  <div class="notification-window">
+    <div class="notification-header">Notifications (0):</div>
+    <div class="notify">Notify 1: bla bla bla</div>
+    <div class="notify">Notify 2 lol adas asdas as dsad asdas asdadsd!</div>
+    <div class="notify">Notify 3: 4314 214125 12 45125 12AS Esso</div>
+    <div class="notification-footer">Hide</div>
+  </div>
+-->
+  <% if user_signed_in? %>
+    <%= turbo_stream_from dom_id(current_user, :broadcast_to) %>
+    <div class="notification-window">
+      <details open class="accordion-item">
+        <summary class="accordion-trigger notification-header">
+          <span class="accordion-title">
+            <%= tag.div id: :notifications_count do %>
+              <%= render "notifications/count", count: current_user.unviewed_notifications_count %>
+            <% end %>
+          </span>
+        </summary>
+        <div class="accordion-content">
+          <%= render "notifications/notifications", noti: current_user.notifications.unviewed %>
+        </div>
+      </details>
+    </div>
+  <% end %>
+<!--
+    <div class="notification-window">
+      <div class="accordion-trigger notification-header"><span class="accordion-title">Notifications (0):</span></div>
+      <details open class="accordion-item">
+          <div class="accordion-content">
+            <div class="notify">Notify 1: bla bla bla</div>
+            <div class="notify">Notify 2 lol adas asdas as dsad asdas asdadsd!</div>
+            <div class="notify">Notify 3: 4314 214125 12 45125 12AS Esso</div>
+          </div>
+      <summary class="accordion-trigger notification-footer"><span class="accordion-title"> Hide</span></summary>
+      </details>
+    </div>
+-->
   <section>
       <%= render partial: "posts/links_header", locals: { post: nil } %>
     <br>

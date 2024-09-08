@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :notification do
+    item { nil }
+    user { nil }
+    viewed { false }
+    event { "none" }
+    status { "notice" }
+    text { nil }
+  end
+
   factory :category do
     user
     name { Faker::Book.genre }
