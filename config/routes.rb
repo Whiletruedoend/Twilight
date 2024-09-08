@@ -37,7 +37,9 @@ Rails.application.routes.draw do
   resources :invite_codes, only: [:create]
   resources :tags, only: %i[create update]
   resources :categories, only: %i[create update]
-  resources :notifications, only: [ :index ]
+  
+  #resources :notifications, only: [ :index ]
+  put '/notifications/view/:id', to: 'notifications#view', as: :view_notification
 
   get '/stats/full_users_list', to: 'pages#full_users_list', as: :full_users_list
   get '/manage/full_invite_codes_list', to: 'pages#full_invite_codes_list', as: :full_invite_codes_list

@@ -1,0 +1,17 @@
+<% if user_signed_in? %>
+  <%= turbo_stream_from dom_id(current_user, :broadcast_to) %>
+  <div class="notification-window">
+    <details open class="accordion-item">
+      <summary class="accordion-trigger notification-header">
+        <span class="accordion-title">
+          <%= tag.div id: :notifications_count do %>
+            <%= render "notifications/count", count: current_user.unviewed_notifications_count %>
+          <% end %>
+        </span>
+      </summary>
+      <div class="accordion-content">
+        <%= render "notifications/notifications", noti: current_user.notifications.unviewed %>
+      </div>
+    </details>
+  </div>
+<% end %>
