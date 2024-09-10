@@ -68,14 +68,11 @@ class CommentsController < ApplicationController
     authorize! current_comment
     ref_url = request.referrer
 
-    if current_comment.update(text: params[:comment][:content], is_edited: true)
-      if ref_url.include?("feed")
-        redirect_to ref_url
-      else
-        redirect_to post_path(current_comment.post)
-      end
+    UpdatePlatformComments.call(Comment.where(id: current_comment.id), current_user, params)
+    if ref_url.include?("feed")
+      redirect_to ref_url
     else
-      render :edit
+      redirect_to post_path(current_comment.post)
     end
   end
 

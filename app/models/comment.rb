@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Comment < ApplicationRecord
+  has_paper_trail
+  
   belongs_to :post
   belongs_to :user, optional: true # Site comment
   belongs_to :channel, optional: true # Optional if used linked channel
