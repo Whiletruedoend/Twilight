@@ -23,7 +23,7 @@ class Platform::SendPostToTelegram
     @options = @params[:options]
     if @options.present?
       @options =
-        @options&.to_unsafe_h&.inject({}) do |h, (k, v)|
+        @options&.inject({}) do |h, (k, v)|
           h[k] = (v.to_i == 1)
           h
         end
@@ -143,15 +143,17 @@ class Platform::SendPostToTelegram
                               text: text,
                               parse_mode: 'html',
                               disable_notification: !options[:enable_notifications] })
-
-    PlatformPost.create!(identifier: { chat_id: @msg['result']['chat']['id'],
-                                       message_id: @msg['result']['message_id'],
-                                       date: @msg['result']['date'],
-                                       options: options }, platform: @platform,
-                         post: @post, content: text_content, channel_id: channel[:id]
-                        )
+    
+    identifier = { chat_id: @msg['result']['chat']['id'],
+                   message_id: @msg['result']['message_id'],
+                   date: @msg['result']['date'],
+                   options: options
+                 }
+    PlatformPost.create!(identifier: identifier, platform: @platform, post: @post, content: text_content, channel_id: channel[:id])
   rescue StandardError => e
     Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.now.utc.iso8601}:\n#{e}".red)
+    error_text = "Telegram (create message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def send_telegram_attachments(bot, channel, options, has_caption, media)
@@ -208,7 +210,9 @@ class Platform::SendPostToTelegram
       PlatformPost.create!(identifier: msg_ids, platform: @platform, post: @post,
                            content: attachment_content, channel_id: channel[:id])
     rescue StandardError => e
-      Rails.logger.error("Failed create tg message (attachment) for chat #{channel[:room]} at #{Time.now.utc.iso8601}:\n#{e}".red)
+      Rails.logger.error("Failed create telegram attachment message for chat #{channel[:room]} at #{Time.now.utc.iso8601}:\n#{e}".red)
+      error_text = "Telegram (create attachment message for chat #{channel[:room]}: #{e.message})"
+      Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
     end
   end
 
@@ -249,7 +253,9 @@ class Platform::SendPostToTelegram
         { type: 'document', media: msg['result']['document']['file_id'], blob_signed_id: blob_signed_id }
       end
     rescue StandardError => e
-      Rails.logger.error("Failed upload telegram message at #{Time.now.utc.iso8601}:\n#{e}".red)
+      Rails.logger.error("Failed upload telegram message in room #{attachment_channel} at #{Time.now.utc.iso8601}:\n#{e}".red)
+      error_text = "Telegram (upload message in room #{attachment_channel}: #{e.message})"
+      Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
     end
   end
 
@@ -292,6 +298,8 @@ class Platform::SendPostToTelegram
       content: content, channel_id: channel[:id]
     )
   rescue StandardError => e
-    Rails.logger.error("Failed create telegram message for chat #{channel[:id]} at #{Time.current.utc.iso8601}:\n#{e}".red)
+    Rails.logger.error("Failed create telegram onlylink message for chat #{channel[:id]} at #{Time.current.utc.iso8601}:\n#{e}".red)
+    error_text = "Telegram (create onlylink message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 end

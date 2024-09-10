@@ -17,7 +17,7 @@ class Platform::UpdateTelegramPosts
     @new_title = params[:post][:title]
     @new_text = params[:post][:content]
 
-    @deleted_attachments = @params[:deleted_attachments]&.to_unsafe_h&.select { |_k, v| v == '0' }&.keys
+    @deleted_attachments = @params[:deleted_attachments]&.select { |_k, v| v == '0' }&.keys
     # need sort @deleted_attachments in the order of their posting platforms (grouping of pictures)
     #@attachments = @post.attachments.map { |att| att.blob.signed_id }
     #@deleted_attachments = @attachments&.select { |att| att.in?(@deleted_attachments) }
@@ -133,6 +133,10 @@ class Platform::UpdateTelegramPosts
         content: content, channel_id: channel[:id]
       )
     end
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def update_content(new_text, index)
@@ -161,7 +165,13 @@ class Platform::UpdateTelegramPosts
                               message_id: platform_post.identifier['message_id'],
                               text: text,
                               parse_mode: 'html' })
+      
+      platform_post.update(updated_at: Time.now()) # Only for notifications work!
     end
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def check_onlylink
@@ -185,6 +195,12 @@ class Platform::UpdateTelegramPosts
                             message_id: platform_post.identifier['message_id'],
                             text: onlylink_text,
                             parse_mode: 'html' })
+
+    platform_post.update(updated_at: Time.now()) # Only for notifications work!
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram onlylink message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update onlylink message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def check_caption
@@ -263,7 +279,7 @@ class Platform::UpdateTelegramPosts
     onlylink_pps = @post.platform_posts.select{ |pp| pp_onlylink(pp) }.map(&:id)
     platform_posts = @post.platform_posts.where(content: content, platform: @platform).where.not(id: onlylink_pps)
 
-    Platform::DeleteTelegramPosts.call(platform_posts)
+    Platform::DeleteTelegramPosts.call(platform_posts, @post.user)
     PlatformPost.where(platform: platform_posts, post: @post).destroy_all
 
     content.destroy
@@ -312,8 +328,10 @@ class Platform::UpdateTelegramPosts
       #@post.attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
     #end
     #@post.contents.first&.upd_post if @deleted_attachments.present?
-  rescue StandardError
+  rescue StandardError => e
     Rails.logger.error("Failed to delete telegram attachments message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (delete attachments: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def move_caption(bot, platform_post, deleted_indexes)
@@ -382,8 +400,10 @@ class Platform::UpdateTelegramPosts
                              media: media })
   # In an amicable way, if there are no attachments, you need to convert the media message to text, but this cannot be done
   # so the caption is removed if there are no attachments
-  rescue StandardError
+  rescue StandardError => e
     Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (edit caption: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def post_options(post, channel)

@@ -19,7 +19,7 @@ class Platform::SendPostToMatrix
     @options = @params[:options]
     if @options.present?
       @options =
-        @options&.to_unsafe_h&.inject({}) do |h, (k, v)|
+        @options&.inject({}) do |h, (k, v)|
           h[k] = (v.to_i == 1)
           h
         end
@@ -80,6 +80,10 @@ class Platform::SendPostToMatrix
       PlatformPost.create!(identifier: identifier, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def send_mx_attachments(content)
@@ -131,6 +135,10 @@ class Platform::SendPostToMatrix
       PlatformPost.create!(identifier: uploaded_atts, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix attachment message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send attachment message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def upload_to_matrix(channel)
@@ -212,7 +220,9 @@ class Platform::SendPostToMatrix
     identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
     PlatformPost.create!(identifier: identifier, platform: @platform, post: @post,
                          content: content, channel_id: channel[:id])
-  rescue StandardError
-    Rails.logger.error("Failed create matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix onlylink message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send onlylink message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 end

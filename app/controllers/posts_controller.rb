@@ -148,7 +148,7 @@ class PostsController < ApplicationController
       deleted_channels_list = channels_p.reject{ |k,v| (v == "1") || (published_channels_list[k] == v) }
 
       deleted_channels_list.each do |k, v|
-        DeletePostMessages.call(current_post, k)
+        DeletePostMessages.call(current_post, current_user, k)
       end
 
       if new_channels_list.any?
@@ -213,7 +213,7 @@ class PostsController < ApplicationController
 
       SendPostToPlatforms.call(@post, base_url, posts_params)
 
-      redirect_to @post
+      redirect_to post_path(@post)
     else
       render :new
     end

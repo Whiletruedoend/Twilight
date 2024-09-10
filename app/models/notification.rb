@@ -1,13 +1,13 @@
 class Notification < ApplicationRecord
   extend Enumerize
-  belongs_to :item, polymorphic: true
+  belongs_to :item, polymorphic: true, optional: true
   belongs_to :user
 
   scope :unviewed, ->{ where(viewed: false) }
   default_scope { latest }
 
   enumerize :event, in: %w[none create update delete], default: :none, scope: :having_event
-  enumerize :status, in: %w[notice success warning error], default: :notice, scope: :having_status
+  enumerize :status, in: %w[info success warning error], default: :info, scope: :having_status
   validates :event, :status, presence: true
 
   after_create_commit do 

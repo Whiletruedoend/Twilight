@@ -12,8 +12,11 @@ class Post < ApplicationRecord
   has_many :platform_posts, dependent: :delete_all
   has_many :item_tags, class_name: 'ItemTag', foreign_key: 'item_id', dependent: :delete_all
   has_many :active_tags, -> { active('Post') }, class_name: 'ItemTag', foreign_key: 'item_id'
+  has_many :notifications, :as=>:item, dependent: :destroy
+  has_many :platform_notifications, class_name: 'PlatformPost', foreign_key: 'post_id', dependent: :delete_all
 
   before_create :gen_uuid
+  around_destroy :new_destroy_notification
 
   has_many_attached :attachments do |attachable|
     attachable.variant :thumb100, resize_to_limit: [100, 100]
@@ -82,7 +85,7 @@ class Post < ApplicationRecord
   end
 
   def destroy
-    DeletePostMessages.call(self)
+    DeletePostMessages.call(self, self.user)
     attachments.purge
     super
   end
@@ -117,7 +120,16 @@ class Post < ApplicationRecord
     User.where.not(id: self.user_id).ids
   end  
 
- # private
+  private
+
+  def new_destroy_notification
+    old_post = self
+    old_post_id = self.id
+    user = self.user
+    old_post_title = self.title
+    yield
+    Notification.create!(item: old_post, user_id: user.id, event: "delete", status: "success", text: "#{old_post_title}" )
+  end
 
  # def slug_candidates
  #   [:title, [:title, :uuid]]

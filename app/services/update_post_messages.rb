@@ -6,7 +6,7 @@ class UpdatePostMessages
   attr_accessor :post, :params
 
   def initialize(post, base_url, params)
-    @params = params
+    @params = params.to_unsafe_h
     @post = post
     @base_url = base_url
 
@@ -50,14 +50,9 @@ class UpdatePostMessages
     update_blog_posts
     return if @post.platform_posts.empty?
 
-    Thread.new do
-      execution_context = Rails.application.executor.run!
-      posted_platforms = @post.platforms
+    posted_platforms = @post.platforms
 
-      Platform::UpdateTelegramPosts.call(@post, @base_url, params, old_title) if posted_platforms['telegram']
-      Platform::UpdateMatrixPosts.call(@post, @base_url, params) if posted_platforms['matrix']
-    ensure
-      execution_context&.complete!
-    end
+    UpdateTelegramPosts.perform_later(@post.id, @base_url, params, old_title) if posted_platforms['telegram']
+    UpdateMatrixPosts.perform_later(@post.id, @base_url, params) if posted_platforms['matrix']
   end
 end

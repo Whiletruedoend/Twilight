@@ -1,0 +1,75 @@
+<%from_time = Time.now%>
+<%distance = distance_of_time_in_words(from_time, notification.updated_at)%>
+<%event = notification.event%>
+<%status = notification.status%>
+<%text = notification.text || "test message"%>
+<%link = nil%>
+
+<% title = notification.item&.channel&.options&.dig("title") || "-"%>
+<% url = notification.item&.channel&.options&.dig("url")%>
+
+<%case event%>
+  <%when "none"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "create"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% link = url.present? ? "#{link_to(title, url)}" : "#{link_to("#{title} (Private)", "#")}"%>
+        <% text = "#{I18n.t('notifications.platform_post.create.success')}" %>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% link = url.present? ? "#{link_to(title, url)}" : "#{link_to("#{title} (Private)", "#")}"%>
+        <% text = "#{I18n.t('notifications.platform_post.create.warning')}" %>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{I18n.t('notifications.platform_post.create.error')}: #{text}" %>
+    <%end%>
+  <%when "update"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% link = url.present? ? "#{link_to(title, url)}" : "#{link_to("#{title} (Private)", "#")}"%>
+        <% text = "#{I18n.t('notifications.platform_post.update.success')}" %>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% link = url.present? ? "#{link_to(title, url)}" : "#{link_to("#{title} (Private)", "#")}"%>
+        <% text = "#{I18n.t('notifications.platform_post.update.warning')}" %>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{I18n.t('notifications.platform_post.update.error')}: #{text}" %>
+    <%end%>
+  <%when "delete"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% title = text %>
+        <% link = "#{link_to("#{title}", "#")}"%>
+        <% res = "#{distance} ✅ #{I18n.t('notifications.platform_post.delete.success')}"%>
+      <%when "warning"%>
+        <% title = text %>
+        <% link = "#{link_to("#{title}", "#")}"%>
+        <% res = "#{distance} ⚠️ #{I18n.t('notifications.platform_post.delete.warning')}"%>
+      <%when "error"%>
+        <% title = text %>
+        <% link = "#{link_to("#{title}", "#")}"%>
+        <% res = "#{distance} 🛑 #{I18n.t('notifications.platform_post.delete.error')}" %>
+    <%end%>
+<%end%>
+<%if link.present?%>
+  <p><%=res%>: <%=link.html_safe%></p>
+<%else%>
+  <p><%=res%></p>
+<%end%>

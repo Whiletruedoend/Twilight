@@ -78,11 +78,16 @@ class Platform::UpdateMatrixPosts
         }
       }
       Matrix.post(server, matrix_token, method, data)
+      platform_post.update(updated_at: Time.now()) # Only for notifications work!
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when update matrix message at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (update message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def delete_attachments(platform_posts)
-    attachments = @deleted_attachments.to_unsafe_h
+    attachments = @deleted_attachments
     del_att = attachments.select { |val| attachments[val] == '0' }
 
     platform_posts.joins(:content).where(contents: { has_attachments: true }).each do |platform_post|
@@ -106,6 +111,10 @@ class Platform::UpdateMatrixPosts
         new_params.present? ? platform_post.update!(identifier: new_params) : platform_post.delete
       end
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when update matrix message (delete attachments) at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (update message (delete attachments): #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def edit_mx_onlylink_post(platform_post, room_id, event_id)
@@ -134,5 +143,10 @@ class Platform::UpdateMatrixPosts
       }
     }
     Matrix.post(server, matrix_token, method, data)
+    platform_post.update(updated_at: Time.now()) # Only for notifications work!
+  rescue StandardError => e
+    Rails.logger.error("Error when update matrix onlylink message at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (update onlylink message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 end

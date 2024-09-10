@@ -6,7 +6,7 @@ class SendPostToPlatforms
   attr_accessor :post, :params
 
   def initialize(post, base_url, params)
-    @params = params
+    @params = params.to_unsafe_h
     @post = post
     @base_url = base_url
 
@@ -16,7 +16,7 @@ class SendPostToPlatforms
     return unless @options.present?
 
     @options =
-      @options&.to_unsafe_h&.inject({}) do |h, (k, v)|
+      @options&.inject({}) do |h, (k, v)|
         h[k] = (v.to_i == 1)
         h
       end
@@ -46,7 +46,7 @@ class SendPostToPlatforms
     return if params[:channels].nil? || params[:channels].values.exclude?('1')
 
     channel_ids = []
-    params[:channels].to_unsafe_h.select { |_k, v| v == '1' }.each do |k, _v|
+    params[:channels].select { |_k, v| v == '1' }.each do |k, _v|
       channel_ids.append(k)
     end
 
@@ -72,23 +72,17 @@ class SendPostToPlatforms
 
     channels = merged.sort_by { |k, _v| k }.reverse.to_h # { "telegram"=>[1, 2], "matrix"=>3 }
 
-    # Только так, иначе всё сломается!
-    Thread.new do
-      execution_context = Rails.application.executor.run!
-      channels.each do |k, v|
-        check_platforms(k, v)
-      ensure
-        execution_context&.complete!
-      end
+    channels.each do |k, v|
+      check_platforms(k, v)
     end
   end
 
   def check_platforms(platform, channel_ids)
     case platform
     when 'telegram'
-      Platform::SendPostToTelegram.call(@post, @base_url, params, channel_ids)
+      SendPostToTelegram.perform_later(@post.id, @base_url, @params, channel_ids)
     when 'matrix'
-      Platform::SendPostToMatrix.call(@post, @base_url, params, channel_ids)
+      SendPostToMatrix.perform_later(@post.id, @base_url, @params, channel_ids)
     end
   end
 end

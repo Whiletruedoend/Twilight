@@ -191,7 +191,7 @@ Bugs:
 
 * [TG] When editing attachments in comments (adding a new one and deleting an old one), the order gets lost and when you edit it again, the wrong picture is deleted;
 
-I'm too lazy to fix them, whoever wants (it would be very cool), then I will gladly accept the Pull Request; 
+If you decide to fix them, I'll gladly accept the Pull Request; 
 
 ## Schemas and screenshots
 ER-diagram(Ver. 1.0.1):

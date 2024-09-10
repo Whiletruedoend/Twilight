@@ -207,6 +207,44 @@ en:
     delete: Delete comment
   feeds:
     no_results: No results found.
+  notifications:
+    platform_post:
+      create:
+        success: The post has been successfully created on the channel
+        warning: There was a problem with a post on the channel
+        error: There was an error when creating a post on the channel
+      update:
+        success: The post was successfully updated on the channel
+        warning: Having trouble updating a post on the channel
+        error: There was an error when updating the post on the channel
+      delete:
+        success: The post was successfully deleted from the channel
+        warning: There were problems when deleting a post from the channel
+        error: There was an error when deleting a post from the channel
+    post:
+      create:
+        success: The post %{post} was successfully created
+        warning: There was a problem with the post
+        error: There was an error when creating a post
+      update:
+        success: The post %{post} has been successfully updated
+        warning: Having trouble updating the post 
+        error: There was an error when updating the post
+      delete:
+        success: The post %{post} was successfully deleted
+        warning: Having trouble deleting a post
+        error: There was an error when deleting a post
+    comment:
+      create:
+        success: "%{user} left a comment on post %{post}"
+        error: An error occurred while creating a comment
+      update:
+        success: "%{user} comment in post %{post} has been updated"
+        warning: Your comment in post %{post} has been edited
+        error: There was an error when updating a comment
+      delete:
+        success: "%{user} comment in post %{post} has been removed"
+        warning: Your comment in post %{post} has been deleted
   devise:
     registrations:
       user:
