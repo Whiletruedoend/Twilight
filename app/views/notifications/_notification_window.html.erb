@@ -1,4 +1,4 @@
-<% if user_signed_in? %>
+<% if user_signed_in? && current_user.is_notification_window_enabled%>
   <%= turbo_stream_from dom_id(current_user, :broadcast_to) %>
   <div class="notification-window">
     <details open class="accordion-item">

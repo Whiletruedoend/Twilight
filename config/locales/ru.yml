@@ -178,6 +178,7 @@ ru:
     list_invite_max_usages: Макс. Исп.
     list_invite_expires_at: Дата просрочки
     list_invite_created_at: Дата создания
+    is_notification_window_enabled: Включить панель уведомлений?
   categories:
     manage_categories: Управление категориями
     no_categories: У вас нет категорий!

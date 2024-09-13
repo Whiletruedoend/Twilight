@@ -22,6 +22,10 @@
       <br><br>
       <%= field.label "#{I18n.t("edit.locale")}:" %>
       <%= field.select :locale, [['English', 'en'], ['Russian', 'ru']], :selected => (current_user.options.dig("locale") || "Default locale")%>
+      <br><br>
+      <%nw_enabled = current_user.is_notification_window_enabled%>
+      <%= check_box_tag("user[options][notification_window][enabled]", nw_enabled, nw_enabled, { :class=>"colorful-checkbox", :name =>"user[options][notification_window][enabled]" })%>
+      <%= label "user[options][notification_window][enabled]", I18n.t("manage.is_notification_window_enabled") %>
     <% end %>
   </div>
 

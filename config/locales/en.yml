@@ -178,6 +178,7 @@ en:
     list_invite_max_usages: Max usages
     list_invite_expires_at: Expires at
     list_invite_created_at: Created at
+    is_notification_window_enabled: Turn on the notification window?
   categories:
     manage_categories: Manage categories
     no_categories: You have no categories!

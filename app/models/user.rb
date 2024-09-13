@@ -50,7 +50,7 @@ class User < ApplicationRecord
 
   def default_options
     self.options = { visible_posts_count: Rails.configuration.credentials[:rss_default_visible_posts].to_s,
-                     theme: 'default_theme' }
+                     theme: 'default_theme', notification_window: { enabled: true } }
   end
 
   def will_save_change_to_email?
@@ -118,6 +118,10 @@ class User < ApplicationRecord
     else
       login
     end
+  end
+
+  def is_notification_window_enabled
+    options.dig('notification_window', 'enabled') || false
   end
   
 
