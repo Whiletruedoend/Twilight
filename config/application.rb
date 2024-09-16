@@ -57,9 +57,5 @@ module Twilight
     ]
 
     config.action_cable.allowed_request_origins = ["http://#{ENV['HOST_URL']}", "https://#{ENV['HOST_URL']}"]
-
-    if ENV['DOCKERIZED'] == 'true'
-      config.web_console.whitelisted_ips = ENV['DOCKER_HOST_IP']
-    end
   end
 end

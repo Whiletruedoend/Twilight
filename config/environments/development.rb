@@ -76,4 +76,8 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: Rails.configuration.credentials[:host],
                                                port: Rails.configuration.credentials[:port] }
+  
+  if ENV['DOCKERIZED'] == 'true'
+    config.web_console.whitelisted_ips = ENV['DOCKER_HOST_IP']
+  end
 end
