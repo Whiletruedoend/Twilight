@@ -27,6 +27,8 @@ services:
       - "${PORT}:${PORT}"
     env_file: .env
     environment:
+      - DOCKERIZED=true
+      - HOST_URL=${HOST_URL}
       - RAILS_ENV=${RAILS_ENV}
       - PORT=${PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}

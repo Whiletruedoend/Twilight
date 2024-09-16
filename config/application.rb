@@ -46,5 +46,20 @@ module Twilight
       CURRENT_TG_BOTS = {}
     end
     # config.eager_load_paths << Rails.root.join("extras")
+
+    ## Hosts access ##
+    config.hosts = [
+      IPAddr.new("0.0.0.0/0"),
+      IPAddr.new("::/0"),
+      "localhost",
+      "twilight",
+      ENV['HOST_URL']
+    ]
+
+    config.action_cable.allowed_request_origins = ["http://#{ENV['HOST_URL']}", "https://#{ENV['HOST_URL']}"]
+
+    if ENV['DOCKERIZED'] == 'true'
+      config.web_console.whitelisted_ips = ENV['DOCKER_HOST_IP']
+    end
   end
 end
