@@ -39,7 +39,7 @@ COPY package.json yarn.lock ./
 
 # NodeJS & yarn install
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-RUN . ~/.nvm/nvm.sh && nvm install 16 && nvm alias default 16 && \ 
+RUN . ~/.nvm/nvm.sh && nvm install 20.12.2 && nvm alias default 20.12.2 && \ 
     yarn install
 
 # We're back at the base stage
@@ -67,7 +67,6 @@ COPY .  /root/app/
 
 # For EasyCaptcha install
 COPY --from=dependencies /vendor/gems/ /root/app/vendor/gems/
-
 
 WORKDIR /root/app
 

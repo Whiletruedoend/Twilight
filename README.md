@@ -38,7 +38,7 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   * Telegram:
     * Send to platforms: Yes
     * Editing, deleting: Yes
-    * Send from platform: No
+    * Send from platform to site: Yes
     * Comment support: Yes
     * Support for attachments: pictures, video, audio, files
    
@@ -91,6 +91,7 @@ gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
   ```
   git clone https://github.com/Whiletruedoend/Twilight
   cd Twilight/
+  yarn
   ```
   * (Optional) Configure .env for existing postgres database
   * Configure config/credentials.yml

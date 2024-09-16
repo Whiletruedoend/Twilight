@@ -19,7 +19,7 @@ gem 'webpacker', '>= 5.4.2'
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem 'importmap-rails'
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem 'turbo-rails'
+gem 'turbo-rails', '~> 2.0.5'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '>= 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -54,6 +54,7 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'rubocop-rspec', require: false
+  gem 'rubocop-performance'
 end
 
 group :test do
@@ -81,18 +82,18 @@ gem 'active_storage_validations'
 gem 'addressable', '>= 2.8.0'
 gem "ahoy_matey"
 gem 'betterlorem'
-gem 'closure_tree'
+gem 'closure_tree', '>= 7.4.0'
 gem 'devise'
 gem 'dry-initializer-rails'
 gem 'easy_captcha', path: 'vendor/gems/easy_captcha'
 gem 'enumerize'
-gem 'friendly_id', '~> 5.5.0'
+gem 'friendly_id', '~> 5.5.1'
 gem 'grape'
 gem 'image_processing', '>= 1.12.2'
 gem 'mini_magick'
 gem 'nokogiri', '>= 1.11.0.rc4'
 gem 'open-uri'
-gem 'paper_trail'
+gem 'paper_trail', '>= 15.1.0'
 gem 'pg'
 gem 'rake', '>= 13.2.1'
 gem 'redcarpet'
