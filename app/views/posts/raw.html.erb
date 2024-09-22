@@ -2,8 +2,8 @@
 <pre>
 <%= @current_post.title %>
 
-<% if @current_post.content_attachments.present? %>
-<% att = display_attachments(@current_post) %>
+<% if @current_post.attachments.present? %>
+<% att = display_raw_attachments(@current_post) %>
 <%= ReverseMarkdown.convert(@markdown.render(att), unknown_tags: :pass_through) %>
 <% end %>
 <%= ReverseMarkdown.convert(@markdown.render(@current_post.text), unknown_tags: :pass_through) %>

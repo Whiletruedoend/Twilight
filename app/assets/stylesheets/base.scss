@@ -5,6 +5,9 @@
 @import "dropzone";
 @import "fonts";
 
+$small: 400px;
+$medium: 1000px;
+
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -74,18 +77,23 @@ $color-white: #ffffff;
 $color-black: #000000;
 */
 @mixin base($bg, $color-darkpurple, $color-code-bg,
-        $font, $font-link, $color-white, $color-black,
+        $font, $font-link, $comments-font, $color-white, $color-black,
         $color-link-light,$color-link,$color-link-dark,$color-avatar-bg,$color-avatar-border,
         $color-checkbox-channels-bg, $color-category-default,
         $color-wrapper, $color-border, $color-nav-focus-bg,$color-gray, $color-form-textarea-bg,
         $color-checkbox-focus, $color-container-bg, $color-scrollbar-light, $color-scrollbar-dark,
         $color-checkbox-bg, $color-checkbox-border, $color-checkbox-checked-bg, $color-checkbox-checked-border,
-        $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me,
+        $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me, $color-hidden,
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link,
-        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text){
+        $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
+        $color-feed-filters-search-bg, $color-feed-filters-search-font, $color-feed-filters-search-border, $color-feed-filters-icon,
+        $color-feed-filters-bg, $color-feed-filters-bg2, $color-feed-filters-font, $color-feed-filters-border,
+        $color-feed-filters-badge-font, $color-feed-badge-bg, $color-feed-music-bg, $color-feed-music-icon,
+        $color-feed-platform-tg, $color-feed-platform-mx, $color-feed-pages-bg, $color-feed-pages-font, $color-feed-pages-active-bg,
+        $color-feed-pages-active-font){
   @include dropzone($color-border, $color-form-textarea-bg);
   code{
     /* #cc241d */
@@ -223,7 +231,14 @@ $color-black: #000000;
     color: $font;
   }
 
-  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs li a:hover, .nav-tabs > li.active > a:focus{ color: $color-link-light; background-color: $color-nav-focus-bg; }
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs li a:hover, .nav-tabs > li.active > a:focus{
+    color: $color-link-light;
+    background-color: $color-nav-focus-bg;
+    border-left-color: $font;
+    border-top-color: $font;
+    border-right-color: $font;
+  }
+  .nav-tabs { border-bottom: 1px solid $font;}
 
   .tab-content{
     font-family: 'Roboto', sans-serif;
@@ -371,17 +386,20 @@ $color-black: #000000;
       margin-bottom: 0;
     }
 
+    /*
     article img{
       padding-right: 10px;
     }
+    */
 
     .right-small{
       float: right;
       font-size: 65%;
+      margin-right: 0.5%;
     }
 
-    .comments{
-      margin-left: 1%;
+    h1 .right-small:not(:first-child) {
+      margin-right: 0.5%;
     }
 
     .tags{
@@ -410,6 +428,60 @@ $color-black: #000000;
   .blue-icon { color: $color-privacy-registered-p; }
   .twilight-icon{ color: $color-privacy-me; }
   .red-icon { color: $color-privacy-me-p; }
+
+  .hidden-icon{ color: $color-hidden; }
+
+  /* attachments */
+
+  .attachments{
+    display: grid;
+    /* grid-template-columns: repeat(3, 1fr); */
+    grid-gap: 1%;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+    img{
+      width: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .audio-cover{
+      background-color: $color-feed-music-bg;
+      min-width: 200px;
+      min-height: 200px;
+      max-width: 220px;
+      max-height: 220px;
+      background-size: cover;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .fa-music::before{
+        font-size: 50px;
+        color: $color-feed-music-icon;
+      }
+
+      .audio-title{
+        position: absolute;
+     /* min-height: 95%;
+        max-width: 95%; */
+        margin-bottom: 70%;
+        display: flex;
+        justify-content: center;
+        color: $color-feed-music-icon;
+        font-size: 12px;
+      }
+
+      audio{
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+      }
+    }
+    .vsc-controller{ /* wtf */
+      display: none;
+    }
+  }
 
   /* channels */
 
@@ -552,7 +624,15 @@ $color-black: #000000;
     transition: transform .3s cubic-bezier(.2,0,.2,1) !important;
     padding-right: 5px;
   }
+  
+  .dropdown-menu{
+    color: $color-feed-font;
+    background-color: $color-feed-bg;
+  }
 
+  .center{
+    text-align: center;
+  }
   /* WTF */
 
   .tooltip {
@@ -609,7 +689,7 @@ $color-black: #000000;
     }
 
     .colorful-checkbox {
-      position: absolute;
+      position: fixed;
       z-index: -1;
       opacity: 0;
     }
@@ -745,7 +825,7 @@ $color-black: #000000;
   .comments-container{
     font-size: 16px;
     background-color: $color-container-bg;
-    color: $font;
+    color: $comments-font;
     box-sizing: border-box;
     /* max-width: 60%; */
     margin: 2% auto;
@@ -755,6 +835,10 @@ $color-black: #000000;
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: normal;
+
+    @media screen and (max-width: $medium) {
+      font-size: 14px;
+    }
 
     .comment-editor{
       padding-top: 20px;
@@ -776,12 +860,22 @@ $color-black: #000000;
 
     .comment-header{
       font-size: 25px;
+      @media screen and (max-width: $medium) {
+        font-size: 21px;
+      }
+    }
+
+    .comment-header-medium{
+      font-size: 20px;
+      @media screen and (max-width: $medium) {
+        font-size: 17px;
+      }
     }
 
     .comment{
       position: relative;
-      margin-top: 1%;
-      margin-bottom: 2%;
+      margin-top: 0.5%;
+      margin-bottom: 0.5%;
 
       .wrapper {
         width: 300px;
@@ -790,6 +884,34 @@ $color-black: #000000;
       }
 
       .comment-avatar{
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        float:left; /* Выравнивание по левому краю */
+        margin: 0px 7px 0 0; /* Отступы вокруг картинки */
+        position: static;
+        width: 75px;
+        height: 75px;
+
+        background: $color-avatar-bg;
+        border: 1px solid $color-avatar-border;
+        box-sizing: border-box;
+        border-radius: 90px;
+
+        img{
+          height: 100%;
+          width: auto;
+        }
+
+        @media screen and (max-width: $medium) {
+          width: 35px;
+          height: 35px;
+        }
+      }
+
+      .channel-avatar{
         overflow: hidden;
         display: flex;
         justify-content: center;
@@ -818,10 +940,26 @@ $color-black: #000000;
         font-size: 20px;
         margin-bottom: 10px;
 
-        .comment-small{ font-size: 16px; }
+        @media screen and (max-width: $medium) {
+          font-size: 17px;
+        }
+
+        .comment-small{
+          font-size: 16px;
+          @media screen and (max-width: $medium) {
+            font-size: 13px;
+          }
+        }
         .right{
           float: right;
           margin-right: 1%;
+        }
+      }
+      .comment-text p{
+        font-size: 16px;
+        @media screen and (max-width: $medium) {
+          font-size: 14px;
+          margin: 12px 0px 0px 12px; /* WTF bypass */
         }
       }
     }
@@ -847,7 +985,24 @@ $color-black: #000000;
     tr:hover td {
       color: $color-table-tr-hover;
     }
+
+    /* Platforms in comments */
+    .colorful-checkboxes{
+      text-align: left;
+      margin: 1% 1% auto 1%;
+    }
   }
+
+  /* comment replies */
+  .replies { 
+    display: grid;
+    margin-left: 75px; /* avatar size */
+    @media screen and (max-width: $medium) {
+      margin-left: 35px; /* avatar size */
+    }
+  }
+  /* 7 levels nesting */
+  .replies .replies .replies .replies .replies .replies .replies {margin-left: 0;}
 
   .user-avatar{
     overflow: hidden;
@@ -966,12 +1121,24 @@ $color-black: #000000;
       overflow: scroll;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+
+      a:hover {
+        color: $color-feed-tags-list-item;
+        background-color: $color-feed-tags-list;
       }
+    }
 
     .list-group-item{
       margin-top: .5rem;
+      color: $color-feed-tags-list-item;
+      background-color: $color-feed-filters-bg;
+      border-color: $color-feed-filters-border;
+      .badge{
+        color: $color-feed-filters-badge-font;
+        background-color: $color-feed-badge-bg;
+      }
     }
-    
+
     .filters-group{
       margin-bottom: 10px;
       display: table;
@@ -982,6 +1149,13 @@ $color-black: #000000;
         font-size: 0;
         white-space: nowrap;
         vertical-align: middle;
+        .btn{
+          color: $color-feed-filters-search-font;
+          background-color: $color-feed-filters-search-bg;
+        }
+        .btn-primary{
+          border-color: $color-feed-filters-search-border;
+        }
       }
     }
     .btn-danger{
@@ -994,6 +1168,38 @@ $color-black: #000000;
       .previous_page, .next_page {
         display: none;
       }
+    }
+    .form-control{
+      color: $color-feed-filters-font;
+      background-color: $color-feed-filters-bg;
+      border-color: $color-feed-filters-border;
+    }
+    .input-group-addon{
+      color: $color-feed-filters-icon;
+      background-color: $color-feed-filters-bg2;
+      border-color: $color-feed-filters-border;
+    }
+    
+    /* feeds pages */
+    .pagination{
+      li > a, span {
+        color: $color-feed-pages-font;
+        background-color: $color-feed-pages-bg;
+        border: 1px solid $color-feed-pages-active-bg;
+      }
+      .active > {
+        a {
+          color: $color-feed-pages-active-font;
+          background-color: $color-feed-pages-active-bg;
+          text-decoration: underline;
+      
+          &:hover, &:focus {
+            color: $color-feed-date;
+            background-color: $color-feed-pages-active-bg;
+            text-decoration: underline;
+          }
+        }
+      }    
     }
   }
 
@@ -1033,6 +1239,13 @@ $color-black: #000000;
     padding: 1rem;
     margin-top: 15px;
 
+    .category{
+      height: 5px;
+      /* background-color: $color-category-default; */
+      margin-bottom: 1%;
+      opacity: 70%;
+    }
+
     .user{
       display: flex;
       align-items: center;
@@ -1065,11 +1278,16 @@ $color-black: #000000;
       .createdAt{
         color: $color-feed-time;
         margin-right: 5px;
+        margin-left: 5px;
 
         a, a:hover{
           color: $color-feed-time;
           background-color: $color-feed-bg;
         }
+      }
+      .views{
+        cursor: pointer;
+        color: $color-feed-time;
       }
     }
 
@@ -1107,15 +1325,138 @@ $color-black: #000000;
       margin: revert;
     }
 
-    .media-list{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-  
-      img{
-        width: 100%;
-        object-fit: cover;
-        object-position: top;
+    .footer{
+      margin-top: 1.5%;
+
+      .platform-tg{
+        border: 2px solid $color-feed-platform-tg;
+        border-radius: 8px;
+        margin: 3px 5px;
+        padding: 5px;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+
+      .platform-mx{
+        border: 2px solid $color-feed-platform-mx;
+        border-radius: 8px;
+        margin: 3px 5px;
+        padding: 5px;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+      
+      .platforms{
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .item-right{
+        margin-right: 5px;
+        float: right;
+      }
+      .item-center{
+        text-align: center;
+      }
+      .comments-container{
+        color: $color-feed-font;
+        background: none;
+        background-color: none;
+
+        .comment-avatar{
+          background: $color-feed-icon;
+        }
+      }
+      .comments-width{
+        max-width: 100%;
       }
     }
+  }
+
+  /*               */
+
+  details[open] summary ~ * {
+    animation: open .5s ease-in-out;
+  }
+  
+  @keyframes sweep {
+    0%    {opacity: 0; margin-left: -10px}
+    100%  {opacity: 1; margin-left: 0px}
+  }
+
+  /*               */
+
+  .notification-window{
+    position: absolute;
+    
+    left: 81%;
+    background: $color-container-bg;
+    width: 18%;
+
+    /*display: flex;
+    flex-direction: column; */
+    line-height: 1.5rem;
+    font-size: 13px;
+
+    margin: 1% auto;
+
+    li p{
+      margin: 0px 8px 0px 0px;
+    }
+
+    p{
+      margin: 0 0 16px;
+    }
+
+    .notification-header{
+      height: 20px;
+      margin-top: 10px;
+      padding-left: 5%;
+      border-bottom: 1.5px solid $font;
+    }
+
+    .notification-list{
+      padding: 0;
+      list-style-type: none;
+      margin-top: 0;
+      margin-bottom: 1px;
+    }
+  
+    .notify{
+        display: block;
+        position: relative;
+        box-sizing: border-box;
+        padding: 3% 5% 3% 5%;
+        background: $color-form-textarea-bg;
+        border-bottom: 1px dashed $font;
+        list-style-type: none;
+    }
+
+    .close {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      right: 0%;
+      padding: 12px 12px;
+      transform: translate(0%, -50%);
+      font-size: 22px;
+      color: $font;
+    }
+    
+    /* .close:hover {background: #bbb;} */
+
+    /*
+    .notify:last-child {
+      border-bottom: none;
+    }
+    
+    .notification-footer{
+        box-sizing: border-box;
+        border-top: 1.5px solid $font;
+        text-align: center;
+        align-content: center;
+        padding: 3%;
+    }
+    */
   }
 }

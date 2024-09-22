@@ -10,6 +10,7 @@ ru:
     new_post: Новый пост
     all_posts: Все посты
     please_log_in: (пожалуйста, войдите!)
+    notifications: Notifications # Turbo not work with I18n?
   auth:
     sign_up_header: Регистрация
     sign_in_header: Авторизация
@@ -20,6 +21,7 @@ ru:
     sign_up_button: Зарегистрироваться
     sign_in_button: Войти
     remember_me: Запомнить меня?
+    first_run_user_creation: Начальное создание пользователя-администратора
   posts:
     main_page: На главную
     add_post: Добавить статью
@@ -31,8 +33,9 @@ ru:
     author: Автор
     download: Загрузить
     edit_post: Редактировать
-    delete_post: Удалить статью
-    delete_post_confirm: Вы серьёзно?
+    delete_post: Удалить
+    delete_post_local: Удалить (Локально)
+    delete_post_confirm: Вы уверены?
     read_more: Читать далее
     new_header: Новый пост
     edit_header: Редактировать пост
@@ -51,7 +54,7 @@ ru:
     tags: Тэги
     tags_not_found: Тэги не найдены!
     back: Вернуться назад
-    back_confirm: Вы серьёзно? Текущий прогресс будет потерян!
+    back_confirm: Вы уверены? Текущий прогресс будет потерян!
     privacy: Видимость
     privacy_public: Для всех
     privacy_registered: Только участники
@@ -65,6 +68,7 @@ ru:
     no_category: Без категории
     new_category: "*Не обязательно* Название"
     new_tags: "*Не обязательно* тэг1,тэг2,тэг3"
+    is_hidden: "Статья скрыта? (в ленте)"
   tags:
     manage_tags: Управление тэгами
     tags_header: Новые тэги
@@ -112,6 +116,7 @@ ru:
     name: Отображаемое имя 
     tags: Тэги
     copy: Скопировать
+    copy_url: Скопировать URL
     main_information: Основная Информация
     personal_tags: Персональные Тэги
     avatar: Аватар
@@ -124,16 +129,16 @@ ru:
     select_platform: Пожалуйста, выберите платформу
     bot_token: Токен бота
     access_token: Токен доступа
-    channel_identifier: Идентификатор канала
-    channel_identifier_for_att: Идентификатор канала для аттачментов
-    author_identifier: Идентификатор автора (не бота)
+    channel_identifier: ID канала
+    channel_identifier_for_att: ID канала для предзагрузки вложений
+    author_identifier: ID автора (не бота)
     api_server_address: Адрес сервера API
     enable_comments: Включить комментарии?
     add: Добавить
     update: Обновить
     edit: Изменить
     delete: Удалить
-    delete_channel_confirm: Вы серьёзно?
+    delete_channel_confirm: Вы уверены?
     add_new_channel: Добавить новый канал
     channels_not_found: Каналы не найдены!
     need_more_channels: Нужно больше каналов?
@@ -148,6 +153,11 @@ ru:
     local: Локальные
     global: Глобальные
     option_enable_notifications: Включить уведомления?
+    posts_count: Кол-во постов
+    import_from_tg: Автоматически добавлять посты отправленные через Telegram?
+    hidden_by_default: Добавленные посты по-умолчанию скрыты?
+    preload_attachments: Загружать вложения в отдельный канал?
+    preload_attachments_desc: Предзагрузка вложений в отдельный канал позволяет сэкономить время в случае отправки поста с вложениями в несколько каналов. В противном случае, каждое вложение будет загружаться в каждый канал, что может быть долгим процессом. 
   manage:
     manage_admins_only: У вас нет прав для управления настройками!
     all_invite_codes_list: Список всех инвайт кодов
@@ -168,6 +178,7 @@ ru:
     list_invite_max_usages: Макс. Исп.
     list_invite_expires_at: Дата просрочки
     list_invite_created_at: Дата создания
+    is_notification_window_enabled: Включить панель уведомлений?
   categories:
     manage_categories: Управление категориями
     no_categories: У вас нет категорий!
@@ -192,10 +203,49 @@ ru:
     blog: Блог
     telegram: Telegram
     add: Добавить комментарий
+    reply: Ответить
     edit: Редактировать
     delete: Удалить
   feeds:
     no_results: Поиск не дал результатов.
+  notifications:
+    platform_post:
+      create:
+        success: Пост успешно создан на канале
+        warning: Возникли проблемы с постом на канале
+        error: Произошла ошибка при создании поста на канале
+      update:
+        success: Пост успешно обновлён на канале
+        warning: Возникли проблемы при обновлении поста на канале
+        error: Произошла ошибка при обновлении поста на канале
+      delete:
+        success: Пост успешно удалён с канала
+        warning: Возникли проблемы при удалении поста с канала
+        error: Произошла ошибка при удалении поста с канала
+    post:
+      create:
+        success: Пост %{post} успешно создан
+        warning: Возникли проблемы с постом
+        error: Произошла ошибка при создании поста
+      update:
+        success: Пост %{post} успешно обновлён
+        warning: Возникли проблемы при обновлении поста 
+        error: Произошла ошибка при обновлении поста
+      delete:
+        success: Пост %{post} успешно удалён
+        warning: Возникли проблемы при удалении поста
+        error: Произошла ошибка при удалении поста
+    comment:
+      create:
+        success: "%{user} оставил(а) комментарий к посту %{post}"
+        error: Произошла ошибка при создании комментария
+      update:
+        success: "Комментарий пользователя %{user} в посте %{post} был обновлён"
+        warning: Ваш комметарий в посте %{post} был изменён
+        error: Произошла ошибка при обновлении комментария
+      delete:
+        success: Комментарий пользователя %{user} в посте %{post} был удалён
+        warning: Ваш комметарий в посте %{post} был удалён
   devise:
     registrations:
       user:
@@ -208,6 +258,7 @@ ru:
         signed_in: Вы успешно авторизовались!
         signed_up: Вы успешно зарегистрировались!
         signed_out: Вы успешно вышли из аккаунта!
+        wrong_captcha: Неверный проверочный код
     failure:
       user:
         unauthenticated: Необходима авторизация
@@ -232,3 +283,29 @@ ru:
               blank: Не указан текущий пароль!
             password:
               too_short: (Пароль слишком короткий!)
+  datetime:
+    distance_in_words:
+      less_than_x_minutes: # Turbo not work with I18n?
+        one: '> %{count} min'
+        other: '> %{count} min.'
+      x_seconds:
+        '%{count} s.'
+      x_minutes:
+        '%{count} min.'
+      x_hours:
+        '%{count} h.'
+      x_days:
+        one: "1 d."
+        other: "%{count} d."
+      about_x_hours:
+        one: '~ %{count} h.'
+        other: '~ %{count} h.'
+      about_x_days:
+        one: '~ %{count} d.'
+        other: '~ %{count} d.'
+      about_x_months:
+        one: '~ %{count} mo.'
+        other: '~ %{count} mo.'
+      about_x_years:
+        one: '~ %{count} y.'
+        other: '~ %{count} y.'

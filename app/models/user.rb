@@ -11,9 +11,10 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :invite_codes, dependent: :delete_all
   has_many :categories, dependent: :delete_all
-  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item,
-                                 dependent: :delete_all # Not working deletion with SQLite!
+  has_and_belongs_to_many :tags, class_name: 'Tag', join_table: 'item_tags', as: :item
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
+  has_many :visits, class_name: "Ahoy::Visit"
+  has_many :notifications
 
   has_one_attached :avatar
 
@@ -49,7 +50,7 @@ class User < ApplicationRecord
 
   def default_options
     self.options = { visible_posts_count: Rails.configuration.credentials[:rss_default_visible_posts].to_s,
-                     theme: 'default_theme' }
+                     theme: 'default_theme', notification_window: { enabled: true } }
   end
 
   def will_save_change_to_email?
@@ -62,6 +63,10 @@ class User < ApplicationRecord
 
   def email_changed?
     false
+  end
+
+  def unviewed_notifications_count
+    self.notifications.unviewed.count
   end
 
   # 'Disable' current password validation
@@ -107,9 +112,33 @@ class User < ApplicationRecord
     result
   end
 
+  def displayed_name
+    if name.present?
+      name
+    else
+      login
+    end
+  end
+
+  def is_notification_window_enabled
+    options.dig('notification_window', 'enabled') || false
+  end
+  
+
   def destroy
     avatar.purge
-    ItemTag.where(item: self).delete_all
-    super
+    ItemTag.where(item_type: "User", item: self).delete_all
+    ids = ItemTag.select { |i| i.item_type == "Post" && i.item.present? && i.item.user == self }
+    ItemTag.where(id: ids).delete_all if ids.present?
+    InviteCode.where(user: self).delete_all
+    Comment.where(user: self).destroy_all
+    Post.where(user: self).destroy_all
+    Content.where(user: self).destroy_all
+    Channel.where(user: self).destroy_all
+    Category.where(user: self).destroy_all
+    Ahoy::Event.where(user: self).update(user: nil)
+    Ahoy::Visit.where(user: self).update(user: nil)
+    self.delete
+    #super # TODO: Fix it
   end
 end

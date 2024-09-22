@@ -3,6 +3,12 @@
 class ChannelsController < ApplicationController
   before_action :authenticate_user!
 
+  def set_tags
+    set_meta_tags(title: 'Channels',
+                  description: 'Manage your channels',
+                  keywords: 'Twilight, Notes, channels')
+  end
+
   def edit
     authorize! current_channel, to: :update?
   end
@@ -63,7 +69,8 @@ class ChannelsController < ApplicationController
     token = current_channel.token
     bot = Twilight::Application::CURRENT_TG_BOTS&.dig(token.to_s, :client)
     Platform::ManageTelegramPollers.call(bot, 'delete') if bot.present?
-    current_channel.delete
+    current_channel.platform_posts.destroy_all
+    current_channel.destroy
 
     redirect_to edit_user_path
   end

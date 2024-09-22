@@ -4,7 +4,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :set_locale
+  before_action :set_tags
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :check_first_run
   # reset captcha code after each request for security
   after_action :reset_last_captcha_code!
 
@@ -16,8 +18,22 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def check_first_run
+    return if !Rails.configuration.credentials.dig(:first_run_setup)
+    return if params["controller"].include?("users")
+    if User.count.zero?
+      return redirect_to sign_up_path, notice: I18n.t("auth.first_run_user_creation")
+    end
+  end
+
+  def set_tags
+    set_meta_tags(title: 'Notes',
+                  description: 'My useful notes',
+                  keywords: 'Twilight, Notes')
+  end
+
   def current_post
-    @current_post ||= Post.find(params[:id])
+    @current_post ||= Post.find_with_slug(params[:uuid])
   end
 
   def current_comment
@@ -26,6 +42,10 @@ class ApplicationController < ActionController::Base
 
   def current_channel
     @current_channel ||= Channel.find(params[:id])
+  end
+
+  def current_notification
+    @current_notification ||= current_user.notifications.find(params[:id])
   end
 
   def configure_permitted_parameters

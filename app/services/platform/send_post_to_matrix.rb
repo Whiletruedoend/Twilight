@@ -5,18 +5,21 @@ class Platform::SendPostToMatrix
 
   attr_accessor :post, :params, :channel_ids
 
-  def initialize(post, params, channel_ids)
+  def initialize(post, base_url, params, channel_ids)
     @params = params
     @post = post
+    @base_url = base_url
+    @platform = Platform.find_by(title: 'matrix')
+
     @channels =
       Channel.where(id: channel_ids).map do |channel|
         { id: channel.id, room: channel.room, matrix_token: channel.token, server: channel.options['server'] }
       end
-    @attachments = @params[:post][:attachments].reverse if @params[:post][:attachments].present?
+    #@attachments = @params[:post][:attachments].reverse if @params[:post][:attachments].present?
     @options = @params[:options]
     if @options.present?
       @options =
-        @options&.to_unsafe_h&.inject({}) do |h, (k, v)|
+        @options&.inject({}) do |h, (k, v)|
           h[k] = (v.to_i == 1)
           h
         end
@@ -39,37 +42,21 @@ class Platform::SendPostToMatrix
   end
 
   def call
-    unless @post.text.present? || (@post.text.blank? && @post.content_attachments.present?) # Content not created!
-      content_text = params[:post][:content]
+    title = @post.title
 
-      attachment_content = Content.create!(user: @post.user, post: @post, has_attachments: true) if @attachments.present?
-      @attachments.each { |att| attachment_content.attachments.attach(att) } if attachment_content.present?
-      Content.create!(user: @post.user, post: @post, text: content_text, has_attachments: false) if content_text.present?
-    end
+    text = @post.text.present? ? @post.text : ''
+    text = @markdown.render(text)
+    text = text.replace_html_to_mx_markdown
+    text.delete_suffix!("<br>")
+    send_text = title.present? ? "<b>#{title}</b><br><br>#{text}" : text.to_s
 
-    # No content - no post :\
-    Content.where(post: @post).order(:id).each do |content|
-      title = @post.title
+    attachment_content = Content.create!(post: @post, user: @post.user, 
+                                         platform: @platform, has_attachments: true) if @post.attachments.present?
+    content = Content.create!(post: @post, user: @post.user, platform: @platform, 
+                              text: text, has_attachments: false)
 
-      if content.text.present?
-        content_text =
-          if Content.where(post: @post, has_attachments: false).count >= 2 # Already upload in tg, also check down below
-            @markdown.render(@post.text)
-          else # Tg has 1 content or no contents
-            @markdown.render(content.text)
-          end
-        content_text = content_text.replace_html_to_mx_markdown
-      end
-      text = title.present? ? "<b>#{title}</b><br><br>#{content_text}" : content_text.to_s
-
-      if content.has_attachments?
-        send_mx_attachments(content)
-      elsif content_text.present?
-        send_mx_content(content, text)
-        break # If posts exists && content count >2, then for matrix PlatformPost content has first content id
-      end
-      next if Content.where(post: @post, has_attachments: false).count >= 2
-    end
+    send_mx_attachments(attachment_content) if attachment_content.present?
+    send_mx_content(content, send_text) #unless send_text.empty? # Reserve empty text block for future text edit
   end
 
   def send_mx_content(content, text)
@@ -77,9 +64,8 @@ class Platform::SendPostToMatrix
       options = channel_options(channel)
 
       if options[:onlylink]
-        post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
-        full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
-        text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
+        send_mx_onlylink_post(content, channel, options) #unless Content.where(post: @post, platform: @platform, has_attachments: true).present?
+        next
       end
 
       method = "rooms/#{channel[:room]}/send/m.room.message"
@@ -91,22 +77,27 @@ class Platform::SendPostToMatrix
       }
       msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
       identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
-      PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
+      PlatformPost.create!(identifier: identifier, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def send_mx_attachments(content)
-    atts = upload_to_matrix(content)
+    # atts = upload_to_matrix_onechannel # Not used
     # TODO: ENCRYPTED FILE UPLOAD SUPPORT
     @channels.each do |channel|
+      atts = upload_to_matrix(channel)
       uploaded_atts = []
 
       # Only link publish (for 'attachments' method lol)
       options = channel_options(channel)
 
       if options[:onlylink]
-        send_mx_onlylink_post(channel, options)
+      #  send_mx_onlylink_post(content, channel, options) # because we always have 1 reserve text content
         next
       end
 
@@ -141,24 +132,50 @@ class Platform::SendPostToMatrix
                                type: type,
                                blob_signed_id: uploaded_attachment[:blob_signed_id] })
       end
-      PlatformPost.create!(identifier: uploaded_atts, platform: Platform.find_by(title: 'matrix'), post: @post,
+      PlatformPost.create!(identifier: uploaded_atts, platform: @platform, post: @post,
                            content: content, channel_id: channel[:id])
     end
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix attachment message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send attachment message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
-  def upload_to_matrix(content)
+  def upload_to_matrix(channel)
     atts = []
     # Upload attachment to matrix servers
-    content.attachments.each do |attachment|
+    @post.attachments.each do |attachment|
       filename = attachment.blob.filename.to_s
       content_type = attachment.blob.content_type
       data = File.read(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key))
-      # КОСТЫЛЬ! Ну даже если разные токены, какая разница куда предварительно загружать?
-      # Главное чтобы серверы одианковые были, или даже просто связь между ними
-      # Ну ладно это угроза безопасности, но если у человека и так есть 2 токена, то не всё ли равно?
-      # Разве что что-то заапложенное обнаружит человек у которого есть один токен, то нет второго.
-      # Ну не знаю, это специфический случай. Возможно когда-нибудь сделаю его фикс. Когда-нибудь.
-      # Возможно.
+      msg = Matrix.upload(channel[:server], channel[:matrix_token], filename, content_type,
+                          data)
+      content_uri = JSON.parse(msg)['content_uri']
+      width = attachment.blob[:metadata][:width].to_i
+      height = attachment.blob[:metadata][:height].to_i
+      blob_signed_id = attachment.blob.signed_id
+      size = attachment.blob.byte_size
+      next if msg.blank?
+
+      atts.append({ content_uri: content_uri,
+                    filename: filename,
+                    size: size,
+                    content_type: content_type,
+                    width: width,
+                    height: height,
+                    blob_signed_id: blob_signed_id })
+    end
+    atts
+  end
+
+  # Not used. Faster than upload to each channel
+  def upload_to_matrix_onechannel
+    atts = []
+    # Upload attachment to matrix servers
+    @post.attachments.each do |attachment|
+      filename = attachment.blob.filename.to_s
+      content_type = attachment.blob.content_type
+      data = File.read(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key))
       msg = Matrix.upload(@channels.first[:server], @channels.first[:matrix_token], filename, content_type,
                           data)
       content_uri = JSON.parse(msg)['content_uri']
@@ -186,10 +203,11 @@ class Platform::SendPostToMatrix
     { enable_notifications: notification, onlylink: onlylink, caption: caption }
   end
 
-  def send_mx_onlylink_post(channel, options)
-    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+  def send_mx_onlylink_post(content, channel, options)
+    post_link = "#{@base_url}/posts/#{@post.slug_url}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
-    text = @post.title.present? ? "<b>#{@post.title}</b><br>#{full_post_link}" : full_post_link.to_s
+    text = @post.title.present? ? "<b>#{@post.title}</b><br><br>#{full_post_link}" : full_post_link.to_s
+    text.delete_suffix!("<br>")
 
     method = "rooms/#{channel[:room]}/send/m.room.message"
     data = {
@@ -200,9 +218,11 @@ class Platform::SendPostToMatrix
     }
     msg = Matrix.post(channel[:server], channel[:matrix_token], method, data)
     identifier = { event_id: JSON.parse(msg)['event_id'], room_id: channel[:room], options: options }
-    PlatformPost.create!(identifier: identifier, platform: Platform.find_by(title: 'matrix'), post: @post,
+    PlatformPost.create!(identifier: identifier, platform: @platform, post: @post,
                          content: content, channel_id: channel[:id])
-  rescue StandardError
-    Rails.logger.error("Failed create matrix message for chat #{channel[:id]} at #{Time.now.utc.iso8601}")
+  rescue StandardError => e
+    Rails.logger.error("Error when send matrix onlylink message for chat #{channel[:id]} at #{Time.now.utc.iso8601}".red)
+    error_text = "Matrix (send onlylink message for chat #{channel[:id]}: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 end

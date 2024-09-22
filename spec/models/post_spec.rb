@@ -45,17 +45,17 @@ RSpec.describe Post, type: :model do
     end
   end
 
-  describe '#content_attachments' do
-    context 'when content has no attachments' do
-      let!(:content) { create(:content, post: post) }
-      it { expect(subject.content_attachments).to eq(nil) }
-    end
+  #describe '#content_attachments' do
+  #  context 'when content has no attachments' do
+  #    let!(:content) { create(:content, post: post) }
+  #    it { expect(subject.content_attachments).to eq(nil) }
+  #  end
 
-    context 'when content has attachments' do
-      let!(:content_with_att) { create(:content, :with_attachment, post: post) }
-      it { expect(subject.content_attachments.attachments.last).to eq(content_with_att.attachments.last) } # wtf
-    end
-  end
+  #  context 'when content has attachments' do
+  #    let!(:content_with_att) { create(:content, :with_attachment, post: post) }
+  #    it { expect(subject.content_attachments.attachments.last).to eq(content_with_att.attachments.last) } # wtf
+  #  end
+  #end
 
   # describe '#get_posts' do
   # end

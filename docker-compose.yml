@@ -1,37 +1,34 @@
-version: '3.4'
+version: '3.8'
 
 services:
-#  redis:
-#    image: "redis:7-alpine"
-#    ports:
-#      - 6379
-#    volumes:
-#      - ./tmp/redis_data:/var/lib/redis/data
+  redis:
+    image: "redis:7-alpine"
+    volumes:
+      - ./tmp/redis_data:/var/lib/redis/data
+    networks:
+      - twilightnet
 
-  db:
+  twilight_db:
     image: postgres
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-    expose:
-      - ${POSTGRES_PORT}
+    container_name: twilight_db
     env_file: 
       - .env
     volumes:
       - .db-data:/var/lib/postgresql/pgdata
+    networks:
+      - twilightnet
 
-  web:
-    build: .
-    #command: > 
-    #    /bin/bash -c
-    #    "rm -f /tmp/server.pid
-    #    && bin/rails db:create
-    #    && rails db:migrate
-    #    && bundle exec rake assets:precompile
-    #    && bundle exec rails server -e ${ENV} -b 0.0.0.0 -p ${PORT} -P /tmp/server.pid"
+  twilight:
+    #build: .
+    image: twilight:latest
+    container_name: twilight
+    restart: on-failure
     ports:
       - "${PORT}:${PORT}"
     env_file: .env
     environment:
+      - DOCKERIZED=true
+      - HOST_URL=${HOST_URL}
       - RAILS_ENV=${RAILS_ENV}
       - PORT=${PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
@@ -39,16 +36,37 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    # Traefik example
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.port=${PORT}"
+
+#      - "traefik.http.services.twilight.loadbalancer.server.port=${PORT}"
+#      - "traefik.http.routers.twilight.rule=Host(`twilight.example.com`)" # change this
+#      - "traefik.http.routers.twilight.entrypoints=http"
+#      - "traefik.http.routers.twilight.middlewares=twilight-secure-redirect"
+
+#      - "traefik.http.middlewares.twilight-secure-redirect.redirectscheme.scheme=https"
+
+#      - "traefik.http.routers.twilight-secure.rule=Host(`twilight.example.com`)" # change this
+#      - "traefik.http.routers.twilight-secure.entrypoints=https"
+#      - "traefik.http.routers.twilight-secure.tls=true"
     depends_on:
-      - db
-#      - redis
+      - twilight_db
+      - redis
     links:
-      - db:db
+      - twilight_db:twilight_db
     volumes:
-      - .:/home/app
+      - ./config:/root/app/config
+      - .env:/root/app/.env
     tty: true
     stdin_open: true
+    networks:
+      - twilightnet
 
+networks:
+  twilightnet:
+    external: false
 volumes:
   db-data:
     external: false

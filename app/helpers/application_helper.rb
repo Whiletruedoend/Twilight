@@ -14,7 +14,16 @@ module ApplicationHelper
     redcarpet.render(text).html_safe
   end
 
+  def asset_exist?(path)
+    if Rails.configuration.assets.compile
+      Rails.application.precompiled_assets.include? path
+    else
+      Rails.application.assets_manifest.assets[path].present?
+    end
+  end  
+
   def current_theme
+    return "#{params[:theme]}_theme" if params.dig('theme').present? && asset_exist?("#{params[:theme]}_theme.css")
     current_user&.options&.dig('theme') || 'default_theme'
   end
 end

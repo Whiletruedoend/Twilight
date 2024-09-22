@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe SendPostToPlatforms, type: :service do
-  subject(:service) { described_class.new(post, params) }
+  subject(:service) { described_class.new(post, "http://localhost:3080", params) }
 
   let(:post) { create(:post, title: 'Post title') }
   let(:params) do
@@ -42,7 +42,7 @@ RSpec.describe SendPostToPlatforms, type: :service do
 
       it 'post has no attachments' do
         subject
-        expect(post.reload.content_attachments).to eq(nil)
+        expect(post.reload.attachments).to eq(nil)
       end
 
       it 'post has no platform posts' do

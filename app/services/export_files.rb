@@ -20,12 +20,13 @@ class ExportFiles
     # ![p](...%20=..x..) => ![p](... =..x..)
     text = text.gsub(/!\[[^>]+\]\([^>]+(%20)=[0-9]+x[0-9]+\)/) { |m| m.gsub!('%20', ' ') }
 
-    post_dir = "tmp/export/#{@post.id}"
+    post_dir = "tmp/export/#{@post.uuid}"
 
     metadata = <<~TW_METADATA
       \n\n<TW_METADATA>
         <DATE>#{@post.updated_at}</DATE>
         <PRIVACY>#{@post.privacy}</PRIVACY>
+        <IS_HIDDEN>#{@post.is_hidden ? 1 : 0}</IS_HIDDEN>
         <CATEGORY>#{@post.category_id}</CATEGORY>
         <TAGS>#{ItemTag.where(enabled: true, item: @post).map { |item_tag| item_tag.tag.name.to_s }.join(',')}</TAGS>
       </TW_METADATA>
@@ -35,25 +36,25 @@ class ExportFiles
 
     FileUtils.mkdir_p(post_dir) unless File.directory?(post_dir)
 
-    File.open("#{post_dir}/#{@post.id}.md", 'w') do |f|
+    File.open("#{post_dir}/#{@post.uuid}.md", 'w') do |f|
       f.truncate(0) # delete old content if exists
       f.write(text)
     end
 
-    if @post.content_attachments.present?
-      @post.content_attachments.each do |attachment|
+    if @post.attachments.present?
+      @post.attachments.each do |attachment|
         filename = attachment.blob.filename.to_s
         FileUtils.cp(ActiveStorage::Blob.service.send(:path_for, attachment.blob.key), "#{post_dir}/#{filename}")
       end
     end
 
-    if @post.content_attachments.present?
-      output_file = "tmp/export/#{@post.id}.zip"
+    if @post.attachments.present?
+      output_file = "tmp/export/#{@post.uuid}.zip"
       zf = ZipFileGenerator.new(post_dir, output_file)
       zf.write
-      { path: output_file, filename: "#{@post.id}.zip", type: 'application/zip' }
+      { path: output_file, filename: "#{@post.uuid}.zip", type: 'application/zip' }
     else
-      { path: "#{post_dir}/#{@post.id}.md", filename: "#{@post.id}.md", type: 'text/markdown' }
+      { path: "#{post_dir}/#{@post.uuid}.md", filename: "#{@post.uuid}.md", type: 'text/markdown' }
     end
   end
 end

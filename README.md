@@ -14,9 +14,7 @@
   + [Production](#Production)
 * [Current features](#Current-features)
 * [Bugs and some features](#Bugs-and-some-features)
-* [Security question](#Security-question)
 * [Schemas and screenshots](#Schemas-and-screenshots)
-* [Contribution](#Contribution)
 * [Contact](#Contact)
 
  <img src="https://i.imgur.com/j6FCqsv.png"></img>
@@ -40,7 +38,7 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   * Telegram:
     * Send to platforms: Yes
     * Editing, deleting: Yes
-    * Send from platform: No
+    * Send from platform to site: Yes
     * Comment support: Yes
     * Support for attachments: pictures, video, audio, files
    
@@ -56,14 +54,14 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   
   ### Manual
  
-  * Install ruby (2.7.7):
+  * Install ruby (3.3.2):
     * For [rvm](https://rvm.io/):
     ```ssh
-     rvm install ruby-2.7.7
+     rvm install ruby-3.3.2
     ```
     * For [rbenv](https://github.com/rbenv/rbenv):
     ```ssh
-     rbenv install 2.7.7
+     rbenv install 3.3.2
     ```
   * Install yarn: [Windows](https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.msi) | [Linux](https://www.ubuntupit.com/how-to-install-and-configure-yarn-on-linux-distributions/);
   * Install redis: [Windows](https://github.com/tporadowski/redis/releases) | [Linux](https://redis.io/docs/getting-started/);
@@ -82,30 +80,32 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
   * Setting up: `config/credentials.yml`
   * Run server with command: `rails s`
 
+  **Windows gem install fixes**:
+  ```
+gem install pg -- --with-pg-dir="C:\Program Files\PostgreSQL\15" (insert your path)
+gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
+  ```
+
 ### Docker
 
-  * Download project:
   ```
   git clone https://github.com/Whiletruedoend/Twilight
   cd Twilight/
+  yarn
   ```
-  * (Optional) Configure .env for existing postgres database, or change to sqlite3 in config/database.yml
+  * (Optional) Configure .env for existing postgres database
   * Configure config/credentials.yml
   * Run:
   ```
-    docker-compose build web
+    docker build -t twilight .
   ```
   * After a successful build, run:
   ```
-    docker-compose up web
+    docker-compose up twilight
   ```
   * (If you need make migrations, use):
   ```
-    docker-compose run --rm web bin/rails db:migrate
-  ```
-  * To make yourself an admin and configure (credentials.yml and database.yml) server, you need to enter the container with the command:
-  ```
-    docker exec -it twilight-web-1 /bin/bash 
+    docker-compose run --rm twilight bin/rails db:migrate
   ```
 
 The site will now be available at: `http://localhost:3080`
@@ -114,12 +114,6 @@ The site will now be available at: `http://localhost:3080`
 
 [Production] Don't forget to set variable *secret_key_base* in credentials.yml:
 
-Some settings are done through the console (`rails c`), but most work anyway, provided the data is entered correctly;
-
-To be able to create posts, you need to get administrator rights:
-  ```ssh
-    User.where(login: "YOURLOGIN").update(is_admin: true)
-  ```
 ### Comments
 
 To support broadcasting comments from Telegram to a blog post, you need to:
@@ -189,30 +183,19 @@ For the production, do not forget to recompile the assets:
 
 ## Bugs and some features
 Features:
-* [TG] If there is a title, but there is no post text, then the title is not sent;
-* [TG] When you delete a post from any channel, all comments are deleted, incl. and tied to other posts. This is due to the fact that comments are tied to the post, not to the platform, otherwise, when viewing the post, you would have to show different versions of the text (for each channel) with different comments. And it is understood that the post is one (the same), just on several channels;
+* [ANY] If you delete a channel and then delete a post, then the post will not be deleted from the platforms (no tokens - no deletion, it seems logical);
 * [TG] If a post in telegram had text and attachments, and when editing, remove all attachments, then the post will be completely deleted. This is a feature of the cart, I cannot turn the capture into text, I need to create a new post;
 * [TG] If you send several attachments of different types and use a caption, the attachments will be grouped into groups, the first group will be of the same type as the first attachment, and the caption will be attached to it;
 * [TG] If a post was created with <= 4096 characters and when the post is updated its length will exceed 4096 characters, then a new message will be created, which may be at a far distance from the first one (for example, if there were more posts, it will go after them). I cannot move the message up, so I advise you to use the onlylink option in such cases; 
-* [ANY] If you delete a channel and then delete a post, then the post will not be deleted from the platforms (no tokens - no deletion, it seems logical);
 
 Bugs:
 
 * [TG] When editing attachments in comments (adding a new one and deleting an old one), the order gets lost and when you edit it again, the wrong picture is deleted;
 
-I'm too lazy to fix them, whoever wants (it would be very cool), then I will gladly accept the Pull Request; 
+If you decide to fix them, I'll gladly accept the Pull Request; 
 
-### Security question
-
-Now it turns out that if a user has several channels, then even having several authorization tokens, only one (the very first specified) is used to preload pictures (attachments).
-
-But let's say this situation: the user has 2 channels (2 tones, respectively), and there is a second person who knows the first token, but does not know the second. Then, proceeding from the logic that all attachments are loaded into a temporary channel from the first token, he can simply intercept the information that was intended for the second token.
-
-Only the information from the first token is identical to the information from the second token (after all, the content is uploaded to different channels the same!), So even by intercepting this information, a conditional attacker will receive the same result.
-
-Therefore, this does not seem to carry a serious threat. But just in case, he warned that there were no questions. 
 ## Schemas and screenshots
-ER-diagram:
+ER-diagram(Ver. 1.0.1):
 <img src="https://i.imgur.com/RQQCRpa.jpeg"></img>
 Main page (configurating):
  * Version 0 (standalone page):
@@ -233,13 +216,8 @@ Article creation (Default theme):
 <img src="https://i.imgur.com/3QStroz.png"></img>
 Specific article:
 <img src="https://i.imgur.com/9F0W2Nr.png"></img>
-## Contribution
 
-  1) Fork tis project;
-  2) Make changes to the forked project;
-  3) On the page of this repository, poke Pull Requests and make a Pull Request by selecting your fork in the right list; 
-  
 ## Contact
-If you have any ideas or your own developments, or just questions about the performance of the code, then you can always contact me at the following addresses: 
+If you have any ideas or your own developments, then you can always contact me at the following addresses: 
 
 - [Matrix](https://matrix.to/#/@whiletruedoend:matrix.org)

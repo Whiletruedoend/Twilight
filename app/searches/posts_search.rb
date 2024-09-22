@@ -3,9 +3,10 @@
 require 'dry-initializer'
 
 class PostsSearch < ApplicationSearch
-  option :current_user
+  option :current_user, optional: true
   # option :user_tags, optional: true
   option :id, optional: true
+  option :uuid, optional: true
   option :user_id, optional: true
   option :limit, optional: true
   option :strict_tags, optional: true
@@ -18,7 +19,9 @@ class PostsSearch < ApplicationSearch
     @query = posts
     @query = reduce_by_privacy
     @query = reduce_by_id if id.present?
+    @query = reduce_by_uuid if uuid.present?
     @query = reduce_by_user if user_id.present?
+    @query = reduce_by_hidden
     # @query = reduce_by_user_tags #if user_tags
     @query = reduce_by_strict_tags if strict_tags.present?
     @query = reduce_by_tags if tags
@@ -57,8 +60,17 @@ class PostsSearch < ApplicationSearch
     @query.where('posts.id=?', id)
   end
 
+  def reduce_by_uuid
+    @query.where('posts.uuid=?', uuid)
+  end
+
   def reduce_by_user
     @query.where('posts.user_id=?', user_id)
+  end
+
+  # Todo: display for feed?
+  def reduce_by_hidden
+      @query.where('posts.uuid=? OR posts.is_hidden=false', uuid)
   end
 
   def reduce_by_title

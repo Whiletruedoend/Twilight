@@ -1,0 +1,75 @@
+<%from_time = Time.now%>
+<%distance = distance_of_time_in_words(from_time, notification.updated_at)%>
+<%event = notification.event%>
+<%status = notification.status%>
+<%text = notification.text || "test message"%>
+<%link = nil%>
+
+<%post_url = notification.item&.post%>
+<%user = notification.item&.user&.displayed_name || "-"%>
+<%post_title = notification.item&.post&.title || "-"%>
+
+<%case event%>
+  <%when "none"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "create"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% linkk = post_url.present? ? link_to(post_title, post_url) : link_to(post_title, "#") %>
+        <% text = "#{I18n.t('notifications.comment.create.success', user: user, post: linkk)}" %>
+        <% res = "#{distance} ✅ #{text}".html_safe %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "update"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% linkk = post_url.present? ? link_to(post_title, post_url) : link_to(post_title, "#") %>
+        <% text = "#{I18n.t('notifications.comment.update.success', user: user, post: linkk)}" %>
+        <% res = "#{distance} ✅ #{text}".html_safe %>
+      <%when "warning"%>
+        <% linkk = post_url.present? ? link_to(post_title, post_url) : link_to(post_title, "#") %>
+        <% text = "#{I18n.t('notifications.comment.update.warning', post: linkk)}" %>
+        <% res = "#{distance} ⚠️ #{text}".html_safe %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "delete"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% text = text.split('@@')%>
+        <% post_url = Post.find_by(id: text[0])%>
+        <% post_title = post_url&.title || "-"%>
+        <% linkk = post_url.present? ? link_to(post_title, post_url) : link_to(post_title, "#") %>
+        <% res = "#{distance} ✅ #{I18n.t('notifications.comment.delete.success', user: text[1], post: linkk)}".html_safe %>
+      <%when "warning"%>
+        <% post_url = Post.find_by(id: text)%>
+        <% post_title = post_url&.title || "-"%>
+        <% linkk = post_url.present? ? link_to(post_title, post_url) : link_to(post_title, "#") %>
+        <% res = "#{distance} ⚠️ #{I18n.t('notifications.comment.delete.warning', post: linkk)}".html_safe %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+<%end%>
+<%if link.present?%>
+  <p><%=res%>: <%=link.html_safe%></p>
+<%else%>
+  <p><%=res%></p>
+<%end%>

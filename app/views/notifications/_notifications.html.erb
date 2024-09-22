@@ -1,0 +1,7 @@
+<ul class="notification-list" id="notifications">
+  <%noti.unviewed.first(9).each do |notification|%>
+    <li class="notify py-4" id="<%= dom_id(notification) %>">
+      <%= render "notifications/#{notification.item_type.downcase}", notification: notification %><%=link_to "&times;".html_safe, view_notification_path(notification), class: "close", method: :put %>
+    </li>
+  <%end%>
+</ul>

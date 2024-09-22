@@ -10,6 +10,7 @@ en:
     new_post: New post
     all_posts: All posts
     please_log_in: (please, sign in)
+    notifications: Notifications
   auth:
     sign_up_header: Sign up
     sign_in_header: Sign in
@@ -20,6 +21,7 @@ en:
     sign_up_button: Sign up
     sign_in_button: Sign in
     remember_me: Remember me?
+    first_run_user_creation: Initial admin user creation
   posts:
     main_page: Main page
     add_post: Add post
@@ -31,7 +33,8 @@ en:
     author: Author
     download: Download
     edit_post: Edit
-    delete_post: Delete post
+    delete_post: Delete
+    delete_post_local: Delete (Local)
     delete_post_confirm: Are you sure?
     read_more: Read more
     new_header: New post
@@ -65,6 +68,7 @@ en:
     no_category: No category
     new_category: "*Optional* New category"
     new_tags: "*Optional* tag1,tag2,tag3"
+    is_hidden: "Post is hidden (from posts list)?"
   tags:
     manage_tags: Manage tags
     tags_header: New tags
@@ -112,6 +116,7 @@ en:
     name: Display name
     tags: Tags
     copy: Copy
+    copy_url: Copy URL
     main_information: Main Information
     personal_tags: Personal Tags
     avatar: Avatar
@@ -124,9 +129,9 @@ en:
     select_platform: Please, select platform
     bot_token: Bot token
     access_token: Access token
-    channel_identifier: Channel identifier
-    channel_identifier_for_att: Channel identifier for attachments
-    author_identifier: Author identifier (not bot)
+    channel_identifier: Channel ID
+    channel_identifier_for_att: Channel ID for preload attachments
+    author_identifier: Author ID (not bot)
     api_server_address: API server address
     enable_comments: Enable comments?
     add: Add
@@ -148,6 +153,11 @@ en:
     local: Local
     global: Global
     option_enable_notifications: Enable notifications?
+    posts_count: Number of posts
+    import_from_tg: Automatically add posts sent via Telegram?
+    hidden_by_default: Added posts are hidden by default?
+    preload_attachments: Upload attachments in individual channel?
+    preload_attachments_desc: Preloading attachments to a separate channel saves time if you send a post with attachments to multiple channels. Otherwise, each attachment would be uploaded to each channel, which can be a long process.
   manage:
     manage_admins_only: You don't have permissions to manage options!
     all_invite_codes_list: All invite codes list
@@ -168,6 +178,7 @@ en:
     list_invite_max_usages: Max usages
     list_invite_expires_at: Expires at
     list_invite_created_at: Created at
+    is_notification_window_enabled: Turn on the notification window?
   categories:
     manage_categories: Manage categories
     no_categories: You have no categories!
@@ -192,10 +203,49 @@ en:
     blog: Blog
     telegram: Telegram
     add: Add new comment
+    reply: Reply
     edit: Edit
     delete: Delete comment
   feeds:
     no_results: No results found.
+  notifications:
+    platform_post:
+      create:
+        success: The post has been successfully created on the channel
+        warning: There was a problem with a post on the channel
+        error: There was an error when creating a post on the channel
+      update:
+        success: The post was successfully updated on the channel
+        warning: Having trouble updating a post on the channel
+        error: There was an error when updating the post on the channel
+      delete:
+        success: The post was successfully deleted from the channel
+        warning: There were problems when deleting a post from the channel
+        error: There was an error when deleting a post from the channel
+    post:
+      create:
+        success: The post %{post} was successfully created
+        warning: There was a problem with the post
+        error: There was an error when creating a post
+      update:
+        success: The post %{post} has been successfully updated
+        warning: Having trouble updating the post 
+        error: There was an error when updating the post
+      delete:
+        success: The post %{post} was successfully deleted
+        warning: Having trouble deleting a post
+        error: There was an error when deleting a post
+    comment:
+      create:
+        success: "%{user} left a comment on post %{post}"
+        error: An error occurred while creating a comment
+      update:
+        success: "%{user} comment in post %{post} has been updated"
+        warning: Your comment in post %{post} has been edited
+        error: There was an error when updating a comment
+      delete:
+        success: "%{user} comment in post %{post} has been removed"
+        warning: Your comment in post %{post} has been deleted
   devise:
     registrations:
       user:
@@ -208,6 +258,7 @@ en:
         signed_in: You have successfully logged in!
         signed_up: You have successfully registered!
         signed_out: You have successfully signed out!
+        wrong_captcha: Wrong captcha
     failure:
       user:
         unauthenticated: Authorization required
@@ -232,3 +283,29 @@ en:
               blank: Current password not specified!
             password:
               too_short: (Password too short!)
+  datetime:
+    distance_in_words:
+      less_than_x_minutes:
+        one: '> %{count} min'
+        other: '> %{count} min.'
+      x_seconds:
+        '%{count} s.'
+      x_minutes:
+        '%{count} min.'
+      x_hours:
+        '%{count} h.'
+      x_days:
+        one: "1 d."
+        other: "%{count} d."
+      about_x_hours:
+        one: '~ %{count} h.'
+        other: '~ %{count} h.'
+      about_x_days:
+        one: '~ %{count} d.'
+        other: '~ %{count} d.' 
+      about_x_months:
+        one: '~ %{count} mo.'
+        other: '~ %{count} mo.'
+      about_x_years:
+        one: '~ %{count} y.'
+        other: '~ %{count} y.'

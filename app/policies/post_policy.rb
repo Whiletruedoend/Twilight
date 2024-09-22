@@ -35,4 +35,8 @@ class PostPolicy < ApplicationPolicy
   def create_comments?
     allowed_to?(:privacy?, record) || record&.is_admin?
   end
+
+  def create_platform_comments?
+    (allowed_to?(:privacy?, record) && record&.user == user) || user&.is_admin?
+  end
 end

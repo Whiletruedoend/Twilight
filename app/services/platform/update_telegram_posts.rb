@@ -3,21 +3,24 @@
 class Platform::UpdateTelegramPosts
   prepend SimpleCommand
 
-  attr_accessor :post, :params
+  attr_accessor :post, :params, :old_title
 
-  def initialize(post, params)
+  def initialize(post, base_url, params, old_title)
     @params = params
     @post = post
+    @base_url = base_url
 
     @platform = Platform.find_by(title: 'telegram')
 
+    #@old_title = @post.versions.any? ? (@post.versions.last.reify&.title).to_s : @post.title
+    @old_title = old_title
     @new_title = params[:post][:title]
     @new_text = params[:post][:content]
 
-    @deleted_attachments = @params[:deleted_attachments]&.to_unsafe_h&.select { |_k, v| v == '0' }&.keys
+    @deleted_attachments = @params[:deleted_attachments]&.select { |_k, v| v == '0' }&.keys
     # need sort @deleted_attachments in the order of their posting platforms (grouping of pictures)
-    @attachments = @post.content_attachments&.map { |att| att.blob.signed_id }
-    @deleted_attachments = @attachments&.select { |att| att.in?(@deleted_attachments) }
+    #@attachments = @post.attachments.map { |att| att.blob.signed_id }
+    #@deleted_attachments = @attachments&.select { |att| att.in?(@deleted_attachments) }
 
     @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, no_intra_emphasis: false, fenced_code_blocks: false,
                                                                  disable_indented_code_blocks: true, autolink: false,
@@ -27,9 +30,9 @@ class Platform::UpdateTelegramPosts
   def call
     delete_attachments if @deleted_attachments.present?
 
-    old_text = @post.text.to_s
+    old_text = telegram_text().to_s
 
-    old_max_first_post_length = @post.title.present? ? (4096 - "<b>#{@post.title}</b>\n\n".length) : 4096
+    old_max_first_post_length = @old_title.present? ? (4096 - "<b>#{@old_title}</b>\n\n".length) : 4096
     new_max_first_post_length = @new_title.present? ? (4096 - "<b>#{@new_title}</b>\n\n".length) : 4096
 
     old_post_text_blocks = text_blocks(old_text, old_max_first_post_length)
@@ -39,23 +42,18 @@ class Platform::UpdateTelegramPosts
     return if new_post_text_blocks.nil? && old_post_text_blocks.nil?
 
     # Something changed
-    if ((new_post_text_blocks != old_post_text_blocks) || (@new_title.length != @post.title.length)) && check_caption
+    if ((new_post_text_blocks != old_post_text_blocks) || (@new_title.length != @old_title.length)) && check_caption
       return # false if no caption or new length > 1024 (to create contents)
     end
 
     # If, during caption check the new text length exceeded 1024 characters, then we deleted the content
     # So the old text also needs to be updated;
-    if old_text != @post.text.to_s
-      old_text = @post.text.to_s
+    if old_text != telegram_text().to_s
+      old_text = telegram_text().to_s
       old_post_text_blocks = text_blocks(old_text, old_max_first_post_length)
     end
 
     if new_post_text_blocks.nil?
-      options = post_options(@post)
-      if options[:onlylink]
-        @post.contents.where(has_attachments: false).destroy_all
-        return
-      end
       degree_index = 0
       old_post_text_blocks.each_with_index do |_old_block, i|
         remove_content(i - degree_index)
@@ -65,7 +63,7 @@ class Platform::UpdateTelegramPosts
       new_post_text_blocks.each_with_index { |new_block, i| add_content(new_block, i) if new_block.present? }
     elsif new_post_text_blocks.count >= old_post_text_blocks.count
       new_post_text_blocks.each_with_index do |new_block, i|
-        next if (new_block == old_post_text_blocks[i]) && (@new_title == @post.title)
+        next if (new_block == old_post_text_blocks[i]) && (@new_title == @old_title)
 
         update_content(new_block, i) if old_post_text_blocks[i].present?
         add_content(new_block, i) if old_post_text_blocks[i].nil?
@@ -74,7 +72,7 @@ class Platform::UpdateTelegramPosts
       degree_index = 0
       old_post_text_blocks.each_with_index do |old_block, i|
         degree_index += 1
-        next if (old_block == new_post_text_blocks[i]) && (@new_title == @post.title)
+        next if (old_block == new_post_text_blocks[i]) && (@new_title == @old_title)
 
         degree_index -= i if degree_index == i
 
@@ -82,6 +80,7 @@ class Platform::UpdateTelegramPosts
         remove_content(i - degree_index) if new_post_text_blocks[i].nil?
       end
     end
+    check_empty_content()
   end
 
   def text_blocks(text, length)
@@ -97,19 +96,27 @@ class Platform::UpdateTelegramPosts
   end
 
   def add_content(new_block, index)
-    content = Content.create!(user: @post.user, post: @post, text: new_block)
-
-    options = post_options(@post)
-    return if options[:onlylink]
+    content = Content.create!(user: @post.user, post: @post, text: new_block, platform: @platform, has_attachments: false)
 
     @post.published_channels.where(platform: @platform).each do |channel|
+      options = post_options(@post, channel)
+      next if options[:onlylink]
+
       bot = get_tg_bot(channel)
 
       first_message = (index == 0)
 
       new_block = @markdown.render(new_block) if new_block.present?
       new_block = new_block.html_to_tg_markdown if new_block.present?
-      new_block = "<b>#{@new_title}</b>\n\n#{new_block}" if first_message && @new_title.present? && new_block.present?
+
+      if first_message && @new_title.present?
+        if new_block.present?
+          new_block = "<b>#{@new_title}</b>\n\n#{new_block}" 
+        else
+          new_block = "#{@new_title}"
+        end
+      end
+      #new_block = "<b>#{@new_title}</b>\n\n#{new_block}" if first_message && @new_title.present? && new_block.present?
 
       @msg = bot.send_message({ chat_id: channel[:room],
                                 text: new_block,
@@ -119,22 +126,25 @@ class Platform::UpdateTelegramPosts
       PlatformPost.create!(
         identifier: { chat_id: @msg['result']['chat']['id'],
                       message_id: @msg['result']['message_id'],
+                      date: @msg['result']['date'],
                       options: options },
         platform: @platform,
         post: @post,
         content: content, channel_id: channel[:id]
       )
     end
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def update_content(new_text, index)
-    content = @post.contents.where(has_attachments: false).order(:id)[index]
+    content = @post.contents.where(platform: @platform, has_attachments: false).order(:id)[index]
     content.update!(text: new_text)
 
-    options = post_options(@post)
-    return if options[:onlylink]
-
     @post.platform_posts.where(content: content, platform: @platform).each do |platform_post|
+      next if pp_onlylink(platform_post)
       bot = get_tg_bot(platform_post)
 
       first_message = (index == 0)
@@ -142,34 +152,42 @@ class Platform::UpdateTelegramPosts
       new_text = @markdown.render(new_text) if new_text.present?
       new_text = new_text.html_to_tg_markdown if new_text.present?
       text = new_text.to_s
-      text = "<b>#{@new_title}</b>\n\n#{new_text}" if first_message && @new_title.present? && new_text.present?
+
+      if first_message && @new_title.present?
+        if text.present?
+          text = "<b>#{@new_title}</b>\n\n#{text}" 
+        else
+          text = "#{@new_title}"
+        end
+      end
 
       bot.edit_message_text({ chat_id: platform_post.identifier['chat_id'],
                               message_id: platform_post.identifier['message_id'],
                               text: text,
                               parse_mode: 'html' })
+      
+      platform_post.update(updated_at: Time.now()) # Only for notifications work!
     end
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def check_onlylink
-    options = post_options(@post)
-    return false unless options[:onlylink]
-
-    # It is assumed that the onlylink option will not have 2+ posts or 4096+ characters -
-    # and there will be no extra post platforms, respectively;
-    if @new_title != @post.title
+    if @new_title != @old_title
       platform_posts = PlatformPost.where(post: @post, platform: @platform)
       platform_posts.each do |platform_post|
-        bot = get_tg_bot(platform_post)
-        update_onlylink(bot, platform_post)
+        if pp_onlylink(platform_post)
+          bot = get_tg_bot(platform_post)
+          update_onlylink(bot, platform_post)
+        end
       end
     end
-
-    options[:onlylink]
   end
 
   def update_onlylink(bot, platform_post)
-    post_link = "http://#{Rails.configuration.credentials[:host]}:#{Rails.configuration.credentials[:port]}/posts/#{@post.id}"
+    post_link = "#{@base_url}/posts/#{@post.slug_url}"
     full_post_link = "<a href=\"#{post_link}\">#{post_link}</a>"
     onlylink_text = @new_title.present? ? "<b>#{@new_title}</b>\n\n#{full_post_link}" : full_post_link
 
@@ -177,10 +195,16 @@ class Platform::UpdateTelegramPosts
                             message_id: platform_post.identifier['message_id'],
                             text: onlylink_text,
                             parse_mode: 'html' })
+
+    platform_post.update(updated_at: Time.now()) # Only for notifications work!
+  rescue StandardError => e
+    Rails.logger.error("Failed to update telegram onlylink message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (update onlylink message: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def check_caption
-    content_with_att = @post.contents.select(&:has_attachments?)&.first
+    content_with_att = @post.contents.where(platform: @platform).select(&:has_attachments?)&.first
     has_platform_post_with_caption = false
 
     if content_with_att.present?
@@ -220,7 +244,7 @@ class Platform::UpdateTelegramPosts
       end
       # Remove all contents where is no platform posts (in caption case its all contents where is no attachments).
       # It eliminates next content creation errors. Not perfect solution but works.
-      @post.contents.where(has_attachments: false).destroy_all
+      @post.contents.where(platform: @platform, has_attachments: false).destroy_all
       # Make contents, just run further
       false
     # Length looks good
@@ -230,7 +254,14 @@ class Platform::UpdateTelegramPosts
 
       text = @markdown.render(@new_text) if @new_text.present?
       text = text.html_to_tg_markdown if text.present?
-      text = "<b>#{@new_title}</b>\n\n#{text}" if @new_title.present? && text.present?
+
+      if @new_title.present?
+        if text.present?
+          text = "<b>#{@new_title}</b>\n\n#{text}" 
+        else
+          text = "#{@new_title}"
+        end
+      end
 
       @post.platform_posts.where(content: content_with_att, platform: @platform).each do |platform_post|
         bot = get_tg_bot(platform_post)
@@ -243,11 +274,12 @@ class Platform::UpdateTelegramPosts
   end
 
   def remove_content(index)
-    content = @post.contents.where(has_attachments: false).order(:id)[index]
+    content = @post.contents.where(platform: @platform, has_attachments: false).order(:id)[index]
 
-    platform_posts = @post.platform_posts.where(content: content, platform: @platform)
+    onlylink_pps = @post.platform_posts.select{ |pp| pp_onlylink(pp) }.map(&:id)
+    platform_posts = @post.platform_posts.where(content: content, platform: @platform).where.not(id: onlylink_pps)
 
-    Platform::DeleteTelegramPosts.call(platform_posts)
+    Platform::DeleteTelegramPosts.call(platform_posts, @post.user)
     PlatformPost.where(platform: platform_posts, post: @post).destroy_all
 
     content.destroy
@@ -290,11 +322,16 @@ class Platform::UpdateTelegramPosts
       new_identifier.empty? ? platform_post.delete : platform_post.update!(identifier: new_identifier)
     end
 
-    return if @deleted_attachments.blank?
+    #return if @deleted_attachments.blank?
 
-    @deleted_attachments.each do |attachment|
-      @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
-    end
+    #@deleted_attachments.each do |attachment|
+      #@post.attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment).id).purge
+    #end
+    #@post.contents.first&.upd_post if @deleted_attachments.present?
+  rescue StandardError => e
+    Rails.logger.error("Failed to delete telegram attachments message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (delete attachments: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
   def move_caption(bot, platform_post, deleted_indexes)
@@ -329,7 +366,7 @@ class Platform::UpdateTelegramPosts
       end
     future_identifier = platform_post.identifier[future_identifier_index]
 
-    text = @post.title.present? ? "<b>#{@post.title}</b>\n\n#{@post.text}" : @post.text.to_s
+    text = @new_title.present? ? "<b>#{@new_title}</b>\n\n#{@post.text}" : @post.text.to_s
     markdown_text = @markdown.render(text)
     markdown_text = markdown_text.html_to_tg_markdown
 
@@ -337,31 +374,71 @@ class Platform::UpdateTelegramPosts
     future_identifier
   end
 
+  def check_empty_content
+    if @deleted_attachments.present?
+      att_content = @post.contents.find{ |c| c.platform == @platform && c.has_attachments }
+      if att_content.present? && att_content.platform_posts.count.zero? && @post.attachments.count.zero?
+        att_content.destroy
+      end
+    end
+    #contents = @post.contents.select{ |c| c.platform == @platform && !c.has_attachments }
+    #  contents.each do |content|
+    #  if content.platform_posts.count.zero?
+    #    content.destroy
+    #  end
+    #end
+  end
+
   def edit_media_caption(bot, identifier, text)
-    media = { type: identifier['type'], media: identifier['file_id'], caption: text, parse_mode: 'html' } # photo type ???
+    media = { type: identifier['type'], media: identifier['file_id'], parse_mode: 'html' } # photo type ???
+    if text.present? && !text.empty?
+      media.merge!(caption: text)
+    end
+
     bot.edit_message_media({ chat_id: identifier['chat_id'],
                              message_id: identifier['message_id'],
                              media: media })
   # In an amicable way, if there are no attachments, you need to convert the media message to text, but this cannot be done
   # so the caption is removed if there are no attachments
-  rescue StandardError
-    Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}")
+  rescue StandardError => e
+    Rails.logger.error("Failed edit caption for telegram message at #{Time.now.utc.iso8601}".red)
+    error_text = "Telegram (edit caption: #{e.message})"
+    Notification.create!(item_type: PlatformPost, user_id: @post.user.id, event: "create", status: "error", text: error_text)
   end
 
-  def post_options(post)
+  def post_options(post, channel)
     # Get last platform post options if exists
-    platform_post = post.platform_posts.select { |p| p.platform == @platform }&.last
+    platform_post = post.platform_posts.select { |p| p.platform == @platform && p.channel == channel }&.last
     platform_identifier = platform_post&.identifier.is_a?(Array) ? platform_post&.identifier&.first : platform_post&.identifier
     platform_options = platform_identifier&.dig('options')
 
     notification = platform_options&.dig('enable_notifications') || false
-    onlylink = platform_options&.dig('onlylink') || false
+    onlylink = pp_onlylink(platform_post) #platform_options&.dig('onlylink') || false
     { enable_notifications: notification, onlylink: onlylink, caption: false }
+  end
+
+  def pp_onlylink(platform_post)
+    is_onlylink = false
+    ident = platform_post.identifier
+    if ident.is_a?(Array)
+      is_onlylink = true if ident.find{ |i| i.dig('options', 'onlylink') }.present?
+    elsif ident.is_a?(Hash)
+      is_onlylink = true if ident.dig('options', 'onlylink')
+    end
+    is_onlylink
   end
 
   # PlatformPost or Channel support
   def get_tg_bot(object)
     object = object.channel if object.is_a?(PlatformPost)
     Twilight::Application::CURRENT_TG_BOTS&.dig(object.token.to_s, :client)
+  end
+
+  def telegram_text
+    text = ''
+    @post.contents.where(platform: @platform).order(:id).each do |msg|
+      text += msg[:text] if msg[:text].present?
+    end
+    text
   end
 end

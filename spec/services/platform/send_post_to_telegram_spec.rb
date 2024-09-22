@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Platform::SendPostToTelegram, type: :service do
-  subject(:service) { described_class.new(post, params, channel_ids) }
+  subject(:service) { described_class.new(post, "http://localhost:3080", params, channel_ids) }
   let(:platform) { create(:platform, title: 'Telegram') }
 
   let(:post) { create(:post, title: 'Post title') }
@@ -25,7 +25,7 @@ RSpec.describe Platform::SendPostToTelegram, type: :service do
     create(:channel, platform: platform, enabled: true, token: bot.token,
                      room: '-1001234567890',
                      options: { 'id' => bot.token.split(':')[0],
-                                'room_attachments' => '123456789',
+                                'preload_attachments=' => {'enabled' => true, 'preload_room' => '123456789'},
                                 'author' => '987654321',
                                 'notifications_enabled' => false,
                                 'comments_enabled' => false,

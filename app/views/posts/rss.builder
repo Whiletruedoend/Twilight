@@ -8,7 +8,7 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
     xml.link root_url
     xml.language 'ru'
     xml.tag! 'atom:link', rel: 'self', type: 'application/rss+xml',
-                          href: "#{host_link}/rss?rss_token=#{params.key?(:rss_token) && User.find_by(rss_token: params[:rss_token].to_s).present? ? params[:rss_token] : (current_user&.rss_token || 'none')}"
+                          href: "#{request.base_url}/rss?token=#{params.key?(:token) && User.find_by(rss_token: params[:token].to_s).present? ? params[:token] : (current_user&.rss_token || 'none')}"
     xml.ttl '60'
 
     @posts.each do |post|
@@ -16,12 +16,12 @@ xml.rss version: '2.0', 'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
         if post.title.present?
           xml.title @markdown.render(post.title)
         else
-          xml.title "##{post.id}"
+          xml.title "##{post.uuid}"
         end
 
         text = post.text
 
-        attachments = post.content_attachments
+        attachments = post.attachments
         if attachments.present?
           attachments = attachments.map do |attachment|
             if attachment.image?

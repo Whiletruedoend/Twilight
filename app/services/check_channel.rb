@@ -52,28 +52,43 @@ class CheckChannel
       errs << 'Channel not available! (Not found or bot access problems?)'
     end
 
-    begin
-      bot.get_chat(chat_id: params[:channel][:room_attachments])
-    rescue Telegram::Bot::Error
-      errs << 'Attachments channel not available! (Not found or bot access problems?)'
-    end
+    options[:preload_attachments] = {}
 
-    errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == params[:channel][:room_attachments]
+    preload_attachments_enabled = (params[:channel][:preload_attachments] == '1')
+    preload_attachments_room = params[:channel][:preload_room]
+    options[:preload_attachments][:enabled] = preload_attachments_enabled
+    options[:preload_attachments][:preload_room] = preload_attachments_room
+
+    if preload_attachments_enabled
+      if preload_attachments_room.present? && !preload_attachments_room.empty?
+        begin
+          bot.get_chat(chat_id: preload_attachments_room)
+        rescue Telegram::Bot::Error
+          errs << 'Attachments channel not available! (Not found or bot access problems?)'
+        end
+      errs << 'Channel ID == Attachment Channel ID' if params[:channel][:room] == preload_attachments_room
+      else
+        errs << 'Attachments channel not specified!'
+      end
+    end
 
     return errors.add(:base, errs) if errs.any?
 
-    room_attachments = params[:channel][:room_attachments]
     author = params[:channel][:author]
 
-    options[:room_attachments] = room_attachments if room_attachments.present?
     options[:author] = author if author.present?
 
     options[:notifications_enabled] = (params[:channel][:enable_notifications] == '1')
 
-    comments_enabled = (params[:channel][:enable_comments] == '1')
-    options[:comments_enabled] = comments_enabled
+    options[:import_from_tg] = {}
+    options[:import_from_tg][:enabled] = (params[:channel][:import_from_tg] == '1')
+    options[:import_from_tg][:hide_by_default] = (params[:channel][:hide_by_default] == '1')
 
-    if comments_enabled
+    # Comments
+
+    comment_chat_id = chat.dig('result', 'linked_chat_id')
+    options[:comments_enabled] = comment_chat_id.present?
+    if comment_chat_id.present?
       comment_chat_id = chat.dig('result', 'linked_chat_id')
 
       begin
@@ -92,11 +107,14 @@ class CheckChannel
         return errors.add(:base, errs) if errs.any?
       end
 
-      options[:room_comments] = comment_chat_id
+      options[:linked_chat_id] = comment_chat_id
     end
+
+    # Other
 
     options[:title] = chat['result']['title']
     options[:username] = chat['result']['username']
+    options[:invite_link] = chat['result']['invite_link']
 
     avatar = get_chat_avatar(bot, params[:channel][:room])
     if avatar.present?
@@ -178,6 +196,9 @@ class CheckChannel
     else
       options[:avatar_size] = 0
     end
+
+    #Channel URL (via matrix.to)
+    options[:url] = "https://matrix.to/#/#{room}"
 
     @channel.options = options
   end

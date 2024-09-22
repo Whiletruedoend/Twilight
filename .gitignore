@@ -7,6 +7,7 @@
 .vscode
 .idea
 .db-data
+.devbox
 .cache
 /config/credentials.yml
 /db/schema.rb
@@ -49,3 +50,9 @@ yarn-debug.log*
 config/database.yml
 Gemfile.lock
 .env
+gemset.nix
+flake.lock
+flake.nix
+devbox.d
+devbox.lock
+dump.rdb

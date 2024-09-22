@@ -5,43 +5,54 @@ class UpdatePostMessages
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
-    @params = params
+  def initialize(post, base_url, params)
+    @params = params.to_unsafe_h
     @post = post
+    @base_url = base_url
 
     @attachments = @params[:post][:attachments]
     @deleted_attachments = @params[:deleted_attachments]
   end
 
-  def update_only_site_posts
+  def update_blog_posts
+    platform = Platform.find_by(title: 'blog')
+    att_content = @post.contents.find{ |c| c.platform == platform && c.has_attachments }
+
     if @attachments.present?
-      content = @post.contents.first # first content contains images
-      @attachments.each { |image| content.attachments.attach(image) }
-      content.update(has_attachments: true) unless content.has_attachments
+      if att_content.nil?
+        att_content = Content.create!(user: @post.user, post: @post, text: nil,
+                                      has_attachments: true, platform: platform)
+      end
+      @attachments.each { |image| @post.attachments.attach(image) }
+      att_content.upd_post
     end
+
     if @deleted_attachments.present?
       @deleted_attachments.each do |attachment|
         if attachment[1] == '0'
-          @post.content_attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge
+          @post.attachments.find_by(blob_id: ActiveStorage::Blob.find_signed!(attachment[0]).id).purge
         end
       end
+      att_content.upd_post
     end
-    # fix if platform was deleted, but content still exist
-    @post.contents.last(@post.contents.count - 1).each(&:delete) if @post.contents.count > 1
-    @post.contents.update(text: params[:post][:content], has_attachments: @post.content_attachments.present?)
+
+    text_content = @post.contents.find{ |c| c.platform == platform && !c.has_attachments }
+    if text_content.nil?
+      Content.create!(user: @post.user, post: @post, text: params[:post][:content],
+                      has_attachments: false, platform: platform)
+    elsif text_content.present? && (text_content.text != params[:post][:content])
+      text_content.update!(text: params[:post][:content])
+    end
   end
 
   def call
-    return update_only_site_posts if @post.platform_posts.empty?
+    old_title = @post.title
+    update_blog_posts
+    return if @post.platform_posts.empty?
 
-    Thread.new do
-      execution_context = Rails.application.executor.run!
-      posted_platforms = @post.platforms
+    posted_platforms = @post.platforms
 
-      Platform::UpdateTelegramPosts.call(@post, params) if posted_platforms['telegram']
-      Platform::UpdateMatrixPosts.call(@post, params) if posted_platforms['matrix']
-    ensure
-      execution_context&.complete!
-    end
+    UpdateTelegramPosts.perform_later(@post.id, @base_url, params, old_title) if posted_platforms['telegram']
+    UpdateMatrixPosts.perform_later(@post.id, @base_url, params) if posted_platforms['matrix']
   end
 end

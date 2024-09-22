@@ -18,6 +18,10 @@ module Twilight
     config.time_zone = config.credentials[:time_zone]
     config.i18n.default_locale = config.credentials[:locale]
 
+    config.active_storage.variant_processor = :mini_magick
+
+    config.active_record.yaml_column_permitted_classes = [Time] # PaperTrail fix
+
     require 'ext/string'
     require 'ext/matrix'
     require 'ext/zip_file_generator'
@@ -42,5 +46,16 @@ module Twilight
       CURRENT_TG_BOTS = {}
     end
     # config.eager_load_paths << Rails.root.join("extras")
+
+    ## Hosts access ##
+    config.hosts = [
+      IPAddr.new("0.0.0.0/0"),
+      IPAddr.new("::/0"),
+      "localhost",
+      "twilight",
+      ENV['HOST_URL']
+    ]
+
+    config.action_cable.allowed_request_origins = ["http://#{ENV['HOST_URL']}", "https://#{ENV['HOST_URL']}"]
   end
 end

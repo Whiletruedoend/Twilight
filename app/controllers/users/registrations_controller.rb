@@ -11,6 +11,18 @@ module Users
     # super
     # end
 
+    def set_tags
+      if params['action'].nil? || params['action'] == 'new'
+        set_meta_tags(title: 'Sign up',
+                      description: 'Sign up to view posts and manage preferences',
+                      keywords: 'Twilight, Notes, signup')
+      elsif params['action'] == 'edit'
+        set_meta_tags(title: 'Profile',
+                      description: 'Manage your profile',
+                      keywords: 'Twilight, Notes, profile')
+      end
+    end
+
     def after_sign_in_path_for(_resource)
       edit_user_path
     end
@@ -32,6 +44,9 @@ module Users
         options = current_user.options
         options[:invite_code] = users_params[:user][:code]
         current_user.update!(options: options)
+      end
+      if Rails.configuration.credentials.dig(:first_run_setup) && (User.count == 1)
+        current_user.update!(is_admin: true)
       end
       Tag.all.each { |tag| ItemTag.create!(item: current_user, tag: tag, enabled: tag.enabled_by_default) }
     end

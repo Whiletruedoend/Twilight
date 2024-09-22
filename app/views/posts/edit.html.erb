@@ -10,7 +10,7 @@
 
     <%= form_with(model: @current_post, local: true) do |f| %>
       <% platforms = @current_post.platforms %>
-      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }) %>
+      <% channels = Channel.joins(:platform_posts).where(platform_posts: { post: @current_post }).uniq %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
           <%= f.text_field(:title, { class: 'form-control', placeholder: "#{I18n.t("posts.title_placeholder")}", value: @current_post.title }) %>
@@ -31,7 +31,7 @@
               </div>
             </div>
           <% end %>
-          <% attachments = @current_post.content_attachments %>
+          <% attachments = @current_post.attachments %>
           <% if attachments.present? %>
             <div class="content-attachments">
             <% attachments.each do |att| %>
@@ -60,40 +60,74 @@
           <% if channels.any? %>
             <div class="colorful-checkboxes">
               <% channels.each_with_index do |channel, index| %>
-                <% next if channels[index+1].present? && (channels[index+1].id == channel.id) # avoid matrix duplicates %>
                 <% title = channel.options&.dig("title") %>
                 <%=check_box("channels", channel.id, { :class=>"colorful-checkbox", :checked => true })%>
                 <%= label_tag "channels_#{channel.id}", title&.capitalize %>
               <% end %>
             </div>
           <% else %>
-            <p><%= I18n.t("posts.channels_not_found") %></p>
+            <% if (platforms.empty? || platforms.values.exclude?(true)) && @current_user.channels.where(enabled: true).any? %>
+              <div class="colorful-checkboxes">
+                <% @current_user.channels.where(enabled: true).each do |channel| %>
+                  <% title = channel.options&.dig("title") %>
+                  <% if channel.platform.title == "telegram" %>
+                    <%=check_box("channels", channel.id, { "data-toggle" => "collapse", "data-target"=>"#options-#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                    <div id="options-<%=channel.id%>" class="collapse">
+                      * <%=check_box("options", "enable_notifications_#{channel.id}", { :id=> "enable_notifications_#{channel.id}", :class=>"colorful-checkbox", :checked => channel.options["notifications_enabled"] })%>
+                      <%= label_tag "enable_notifications_#{channel.id}", "Enable notifications?" %>
+
+                      * <%=check_box("options", "onlylink_#{channel.id}", { :id=> "onlylink_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                      <%= label_tag "onlylink_#{channel.id}", "Publish only link?" %>
+
+                      * <%=check_box("options", "caption_#{channel.id}", { :id=> "caption_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                      <%= label_tag "caption_#{channel.id}", "Text is caption (if available?)" %>
+                    </div>
+                    <% else %>
+                    <%=check_box("channels", channel.id, { "data-toggle" => "collapse", "data-target"=>"#options-#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                    <%= label_tag "channels_#{channel.id}", title&.capitalize %>
+                    <div id="options-<%=channel.id%>" class="collapse">
+                      * <%=check_box("options", "onlylink_#{channel.id}", { :id=> "onlylink_#{channel.id}", :class=>"colorful-checkbox", :checked => false })%>
+                      <%= label_tag "onlylink_#{channel.id}", "Publish only link?" %>
+                    </div>
+                  <% end %>
+                  <br>
+                <% end %>
+                <% if @current_user.channels.where(enabled: true).with_enabled_preload_room.any?%>
+                * <%= f.check_box("use_preload_room", { :id=> "use_preload_room", :class=>"colorful-checkbox", :checked => false }) %>
+                  <%= label_tag "use_preload_room", "Use telegram preload room for attachments (if available?)" %>
+                <% end %>
+              </div>
+            <% end %>
+            <!-- <p><%= I18n.t("posts.channels_not_found") %></p> -->
           <% end %>
 
-          <% if Rails.configuration.credentials[:enable_categories] %>
-            <div class="form-group">
-              <h3><%= I18n.t("posts.category") %></h3>
-              <% if @current_user.categories.any? %>
-                  <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
-                  <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
-                <% if @current_post.category.present? %>
-                  <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
-                <% else %>
-                  <%= f.select(:category, categories) %>
-                <% end %>
-              <% end %><br><br>
-              <div class="form-inline">
-                <div class="form-group">
-                  <%= f.text_field :category_name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("posts.new_category") %>
-                  <%= f.color_field :category_color, class: "color-picker" %>
-                </div>
+          <div class="form-group">
+            <h3><%= I18n.t("posts.category") %></h3>
+            <% if @current_user.categories.any? %>
+                <% categories = @current_user.categories.collect{ |cat| [cat.name, cat.id] } %>
+                <% categories.unshift(["-- #{I18n.t("posts.no_category")} --", nil])%>
+              <% if @current_post.category.present? %>
+                <%= f.select(:category, categories, :selected=>[@current_post.category.name, @current_post.category.id]) %>
+              <% else %>
+                <%= f.select(:category, categories) %>
+              <% end %>
+            <% end %><br><br>
+            <div class="form-inline">
+              <div class="form-group">
+                <%= f.text_field :category_name, size: 20, class: "form-control", autofocus: true, placeholder: I18n.t("posts.new_category") %>
+                <%= f.color_field :category_color, class: "color-picker" %>
               </div>
             </div>
-          <% end %>
+          </div>
 
           <div class="form-group">
             <h3><%= I18n.t("posts.privacy") %></h3>
             <%= f.select(:privacy, [[I18n.t("posts.privacy_public"), 0], [I18n.t("posts.privacy_registered"), 1], [I18n.t("posts.privacy_onlyme"), 2]], required: true) %>
+          </div>
+          <div class="colorful-checkboxes" style="display: inherit">
+            <%= f.check_box(:is_hidden, { :class=>"colorful-checkbox", :checked => @current_post.is_hidden }) %>
+            <%= f.label :is_hidden, I18n.t("posts.is_hidden") %>
           </div>
           <div class="tags">
             <h3><%= I18n.t("posts.tags") %></h3>

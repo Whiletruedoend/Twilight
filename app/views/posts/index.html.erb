@@ -1,6 +1,6 @@
 <body id="bg">
+  <%= render "notifications/notification_window" %>
   <div class="posts-container">
-
   <section>
       <%= render partial: "posts/links_header", locals: { post: nil } %>
     <br>
@@ -15,10 +15,10 @@
     <% @posts.each do |post| %>
     <article>
        <%= render partial: "posts/post_header", locals: { post: post } %>
-      <%= display_attachments(post) if post.content_attachments.present? %>
+      <%= display_attachments(post) if post.attachments.present? %>
       <div class="posts-content"><% if post.text.length > 512 %>
           <%= markdown(truncate(post.text, length: 512)) %>
-          <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.id}", class: "read-more-#{post.id}" %>
+          <%= link_to "...#{I18n.t("posts.read_more")}", "posts/#{post.slug_url}", class: "read-more-#{post.uuid}" %>
         <% else %>
           <%= markdown(post.text) %>
         <% end %>

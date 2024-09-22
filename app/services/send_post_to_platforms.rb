@@ -5,32 +5,48 @@ class SendPostToPlatforms
 
   attr_accessor :post, :params
 
-  def initialize(post, params)
-    @params = params
+  def initialize(post, base_url, params)
+    @params = params.to_unsafe_h
     @post = post
+    @base_url = base_url
+
     @attachments = @params[:post][:attachments].reverse if @params[:post][:attachments].present?
     @options = @params[:options]
 
     return unless @options.present?
 
     @options =
-      @options&.to_unsafe_h&.inject({}) do |h, (k, v)|
+      @options&.inject({}) do |h, (k, v)|
         h[k] = (v.to_i == 1)
         h
       end
   end
 
-  def create_only_site_post
-    content = Content.create!(user: @post.user, post: @post, text: params[:post][:content],
-                              has_attachments: @attachments.present?)
-    @attachments.each { |att| content.attachments.attach(att) } if @attachments.present?
+  def create_blog_post
+    platform = Platform.find_by(title: 'blog')
+    # return when update post && create for new channels
+    return if @post.contents.find{|c| c.platform == platform }.present?
+
+    if @attachments.present?
+      attachments_content = Content.create!(user: @post.user, post: @post, text: nil,
+                                            has_attachments: true, platform: platform)
+      @attachments.each { |att| @post.attachments.attach(att) }
+      attachments_content.upd_post
+    end
+
+    if params[:post][:content].present? && !params[:post][:content].empty?
+      content = Content.create!(user: @post.user, post: @post, text: params[:post][:content],
+                                has_attachments: false, platform: platform)
+      content.upd_post
+    end
   end
 
   def call
-    return create_only_site_post if params[:channels].nil? || params[:channels].values.exclude?('1')
+    create_blog_post
+    return if params[:channels].nil? || params[:channels].values.exclude?('1')
 
     channel_ids = []
-    params[:channels].to_unsafe_h.select { |_k, v| v == '1' }.each do |k, _v|
+    params[:channels].select { |_k, v| v == '1' }.each do |k, _v|
       channel_ids.append(k)
     end
 
@@ -56,23 +72,17 @@ class SendPostToPlatforms
 
     channels = merged.sort_by { |k, _v| k }.reverse.to_h # { "telegram"=>[1, 2], "matrix"=>3 }
 
-    # Только так, иначе всё сломается!
-    Thread.new do
-      execution_context = Rails.application.executor.run!
-      channels.each do |k, v|
-        check_platforms(k, v)
-      ensure
-        execution_context&.complete!
-      end
+    channels.each do |k, v|
+      check_platforms(k, v)
     end
   end
 
   def check_platforms(platform, channel_ids)
     case platform
     when 'telegram'
-      Platform::SendPostToTelegram.call(@post, params, channel_ids)
+      SendPostToTelegram.perform_later(@post.id, @base_url, @params, channel_ids)
     when 'matrix'
-      Platform::SendPostToMatrix.call(@post, params, channel_ids)
+      SendPostToMatrix.perform_later(@post.id, @base_url, @params, channel_ids)
     end
   end
 end

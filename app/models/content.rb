@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
 class Content < ApplicationRecord
+  has_paper_trail
   # validates :text, presence: true
   belongs_to :user
   belongs_to :post
+  belongs_to :platform
 
-  # TODO: Если было изменено содержимое контента, то оно не всегда почему-то хочет отображать изменения.
-  after_create_commit do
-    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
-  end
-  after_update_commit do
-    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
-  end
-  after_destroy_commit do
-    broadcast_update_to [post], partial: 'posts/post', locals: { post: post }, target: "post_#{post.id}"
-  end
+  has_many :platform_posts
+  
+  #before_validation :check_platform_presence, on: %i[craete update]
 
-  has_many_attached :attachments do |attachable|
-    attachable.variant :thumb100, resize_to_limit: [100, 100]
-    attachable.variant :thumb150, resize_to_limit: [150, 150]
-    attachable.variant :thumb200, resize_to_limit: [200, 200]
-    attachable.variant :thumb250, resize_to_limit: [250, 250]
-    attachable.variant :thumb300, resize_to_limit: [300, 300]
+  after_create_commit do upd_post end
+  after_update_commit do upd_post end
+  after_destroy_commit do upd_post end
+
+  def upd_post
+    broadcast_update_to [self.post], partial: 'posts/post', locals: { post: self.post }, target: "post_#{self.post.id}"
   end
 
-  def destroy
-    attachments.purge
-    super
-  end
+  #private
+
+  #def check_platform_presence
+  #  set_blog_platform if platform.nil?
+  #end
+
+  #def set_blog_platform
+  #  self.platform = Platform.find_by(title: 'blog')
+  #end
 end

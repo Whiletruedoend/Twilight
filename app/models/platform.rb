@@ -5,4 +5,5 @@ class Platform < ApplicationRecord
   has_many :platform_posts
   has_many :platform_users
   has_many :channels
+  has_many :contents
 end

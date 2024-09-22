@@ -1,0 +1,60 @@
+<%from_time = Time.now%>
+<%distance = distance_of_time_in_words(from_time, notification.updated_at)%>
+<%event = notification.event%>
+<%status = notification.status%>
+<%text = notification.text || "test message"%>
+<%link = nil%>
+
+<%case event%>
+  <%when "none"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "create"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "update"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% res = "#{distance} ✅ #{text}" %>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+  <%when "delete"%>
+    <%case status%>
+      <%when "info"%>
+        <% res = "#{distance} ⓘ #{text}" %>
+      <%when "success"%>
+        <% title = text %>
+        <% linkk = "#{link_to("#{title}", "#")}"%>
+        <% res = "#{distance} ✅ #{I18n.t('notifications.post.delete.success', post: linkk)}".html_safe%>
+      <%when "warning"%>
+        <% res = "#{distance} ⚠️ #{text}" %>
+      <%when "error"%>
+        <% res = "#{distance} 🛑 #{text}" %>
+    <%end%>
+<%end%>
+<%if link.present?%>
+  <p><%=res%>: <%=link.html_safe%></p>
+<%else%>
+  <p><%=res%></p>
+<%end%>

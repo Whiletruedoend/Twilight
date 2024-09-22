@@ -50,6 +50,16 @@ class ImportFiles
       privacy = 2
     end
 
+    # Parse post privacy
+    is_hidden = text.match('<IS_HIDDEN>([^\\D>]+)<\\/IS_HIDDEN>')
+    is_hidden = is_hidden.captures.first if is_hidden.present?
+
+    begin
+      is_hidden = !is_hidden.to_i.zero? if is_hidden.present?
+    rescue StandardError
+      is_hidden = false
+    end
+
     # Parse post category
     category = text.match('<CATEGORY>([^\\D>]+)<\\/CATEGORY>')
     category = category.captures.first if category.present?
@@ -57,8 +67,8 @@ class ImportFiles
     category = nil if @current_user.categories.find_by(id: category).blank?
 
     # Create post, lol
-    post = Post.create!(user: @current_user, title: content_title, privacy: privacy, category_id: category,
-                        created_at: date)
+    post = Post.create!(user: @current_user, title: content_title, privacy: privacy, is_hidden: is_hidden,
+                        category_id: category, created_at: date)
 
     # Parse post tags
     tags = text.match('<TAGS>([^\\>]+)<\\/TAGS>')

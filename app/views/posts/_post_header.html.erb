@@ -1,47 +1,52 @@
 <header>
   <h1>
-    <i class="fa fa-commenting-o right-small comments"> <%= post.comments.count %></i>
-    <% if Rails.configuration.credentials[:enable_categories] %>
-      <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
-        <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
-        <%= render "privacy-icons", object: post %>
-        <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
-          <a><i class="fa fa-file right-small"></i></a>
-        <% end %>
-       </div>
-    <% else %>
-      <a href="/posts/<%= post.id %>"><%= render_title(post) %> </a>
+    <!-- <i class="fa fa-bookmark right-small"></i> -->
+    <i class="fa fa-light fa-eye right-small"> <%= post.views %></i>
+    <i class="fa fa-commenting-o right-small"> <%= post.comments.count %></i>
+    <div class="category" style="<%="border-left: 5px solid #{post.category.color};" if post.category.present? %>">
+      <a href="/posts/<%= post.slug_url %>"><%= render_title(post) %> </a>
       <%= render "privacy-icons", object: post %>
-      <% if post.content_attachments.present? && post.content_attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
+      <% if post.is_hidden %>
+        <div class="fa fa-low-vision hidden-icon"></div>
+      <% end %>
+      <% if post.attachments.present? && post.attachments.select{ |b| !b.image? && !b.video? && !b.audio? }.any? %>
         <a><i class="fa fa-file right-small"></i></a>
       <% end %>
-    <% end %>
+    </div>
     <h1 class="dashed-line"></h1>
   </h1>
   <p class="metadata"><i class="fa fa-clock-o"> <%= I18n.t("posts.publish_date") %>: <%= post.created_at.strftime("%Y.%m.%d %H:%M") %></i></p>
   <p class="metadata">
-    <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="posts?user=<%=post.user.id%>"><%= display_name(post.user) %></a>
+    <i class="fa fa-user-circle"> <%= I18n.t("posts.author") %>: <a href="/posts/?user=<%=post.user.id%>"><%= display_name(post.user) %></a>
       <% if allowed_to?(:update?, post) %>
-          | <a href="/posts/<%=post.id%>/edit"><%= I18n.t("posts.edit_post") %></a>
-          | <a href="/posts/delete/<%=post.id%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
+          | <a href="/posts/<%=post.slug_url%>/edit"><%= I18n.t("posts.edit_post") %></a>
+          | <a href="/posts/delete/<%=post.slug_url%>" data-confirm="<%= I18n.t("posts.delete_post_confirm") %>"><%= I18n.t("posts.delete_post") %></a>
       <% end %>
     </i>
   </p>
   <p class="metadata">
-    <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.id%>"><%= I18n.t("posts.raw") %></a>
+    <i class="fa fa-gear"> <%= I18n.t("posts.options") %>: <a href="/posts/raw/<%=post.slug_url%>"><%= I18n.t("posts.raw") %></a>
       <% if allowed_to?(:export?, post) %>
-        | <a href="/posts/export/<%=post.id%>"><%= I18n.t("posts.export") %></a>
+        | <a href="/posts/export/<%=post.slug_url%>"><%= I18n.t("posts.export") %></a>
       <% end %>
     </i>
   </p>
+  <% if post.platform_posts.any? %>
+  <% r = render_published_platforms(post) %>
+    <% unless r.empty? %>
+    <p class="metadata">
+      <i class="fa fa-tasks">
+        <%= r %>
+      </i>
+    </p>
+    <% end %>
+  <% end %>
 
   <% if params[:action] == "show" %>
-    <% if Rails.configuration.credentials[:enable_categories] %>
-      <% if post.category&.name.present? %>
-        <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=post.category.id%>"><%= post.category.name %></a></i></p>
-      <% else %>
-        <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
-      <% end %>
+    <% if post.category&.name.present? %>
+      <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <a href="/posts?category=<%=post.category.id%>"><%= post.category.name %></a></i></p>
+    <% else %>
+      <p class="metadata"><i class="fa fa-folder-open-o"> <%= I18n.t("posts.category") %>: <%= I18n.t("posts.no_category") %></i></p>
     <% end %>
   <% end %>
 </header>
