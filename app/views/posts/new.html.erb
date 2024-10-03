@@ -9,7 +9,7 @@
       <li><a data-toggle="tab" href="#file-explorer"><%= "File explorer" %></a></li>
     </ul>
 
-    <%= form_with(model: Post.new(user: @current_user), remote: true, data: { turbo: false }, format: :js) do |f| %>
+    <%= form_with(model: Post.new(user: @current_user), remote: true, data: { turbo: false }) do |f| %>
       <%= render 'shared/custom_errors', flash: flash %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
@@ -130,7 +130,7 @@
         </div>
     <% end %>
         <div id="file-explorer" class="tab-pane">
-          <%= render template: "uploads/file_explorer" %>
+          <%= render partial: "uploads/file_explorer", locals: {current_url: "#{current_user.id}"} %>
           <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
         </div>
     </div>

@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_upload
-    @current_upload ||= current_user.uploads.find_with_slug(params[:id])
+    @current_upload ||= Upload.find_with_slug(params[:id])
   end
 
   def configure_permitted_parameters

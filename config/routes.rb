@@ -38,14 +38,11 @@ Rails.application.routes.draw do
   resources :tags, only: %i[create update]
   resources :categories, only: %i[create update]
 
-  #resources :uploads, except: [:destroy], param: :path
-
   post '/uploads/file', to: 'uploads#create', as: :create_upload
-  delete '/uploads/:id', to: 'uploads#destroy' #constraints: { id: /.+/ }
-  put '/uploads/:path', to: 'uploads#rename', constraints: { path: /.+/ }
+  get '/uploads/:id', to: 'uploads#show'
+  delete '/uploads/:id', to: 'uploads#destroy', as: :destroy_upload
+  put '/uploads/:id', to: 'uploads#rename', as: :rename_upload
   get '/uploads/', to: 'uploads#index'
-  get '/uploads/:id', to: 'uploads#show' #constraints: { id: /.+/ }
-  #get 'uploads/', to: 'uploads#index'
 
   #resources :notifications, only: [ :index ]
   put '/notifications/view/:id', to: 'notifications#view', as: :view_notification
