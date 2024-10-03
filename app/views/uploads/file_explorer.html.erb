@@ -1,0 +1,53 @@
+<div id="upload-form" class="upload-form"><div id="form_msg"></div></div>
+<%= turbo_frame_tag 'preference' do %>
+  <%= form_with id: 'upload_form', model: Upload.new, url: create_upload_path, :multipart => true, remote: true, data: { turbo: true } do |f| %>
+      <div class="form-group">
+        <%= f.file_field :file, { id: "ajax_file_upload"} %>
+      </div>
+      <%= f.submit "Submit", class: 'btn btn-primary btn-lg' %>
+   <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th>Filename</th>
+        <th>Size</th>
+        <th>Date</th>
+        <th>Rename</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% upload_dirs.each do |entry| %>
+      <% next if entry[:type] == :directory # Not support navigating through directories %>
+      <tr>
+        <td class="name">
+          <%= link_to "/#{entry[:relative]}", class: entry[:type].to_s, target: :_blank do %>
+            <%= fa_icon (entry[:type] == :file ? 'file' : 'folder') %>
+            <span class="filename"><%= entry[:entry] %></span>
+          <% end %>
+        </td>
+        <td>
+          <%= entry[:size] %>
+        </td>
+        <td class="date">
+          <%= entry[:date] %>
+        </td>
+        <td>
+          <% if entry[:entry] != './' && entry[:entry] != '../' %>
+            <%= link_to '#', class: 'delete', onclick: "rename('#{entry[:relative]}')" do %>
+              <%= fa_icon 'i-cursor' %> Rename
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <% if entry[:entry] != './' && entry[:entry] != '../' %>
+            <%= link_to "/#{entry[:relative]}", method: :delete, class: 'delete', data: { confirm: "Are you sure you want to delete `#{entry[:absolute]}`?" } do %>
+              <%= fa_icon 'trash' %> Delete
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

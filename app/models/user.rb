@@ -15,6 +15,7 @@ class User < ApplicationRecord
   has_many :active_tags, -> { active('User') }, class_name: 'ItemTag', foreign_key: 'item_id'
   has_many :visits, class_name: "Ahoy::Visit"
   has_many :notifications
+  has_many :uploads
 
   has_one_attached :avatar
 

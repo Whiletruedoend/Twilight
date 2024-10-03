@@ -246,6 +246,14 @@ $color-black: #000000;
     font-weight: normal;
     font-size: 16px;
 
+    .control-buttons{
+      font-family: 'Hack', monospace;
+      letter-spacing: -0.010em;
+      font-size: 14px;
+      line-height: 1.4rem;
+      padding-top: 0.5%;
+    }
+
     .chars{
       float: right;
     }
@@ -256,7 +264,9 @@ $color-black: #000000;
 
     .title{
       margin-top: 20px;
-      opacity: 75%;
+      .form-control, .markdown-editor, .chars{
+        opacity: 75%;
+      }
     }
     .form-control{
       height: 100%;

@@ -6,9 +6,10 @@
       <li class="active"><a data-toggle="tab" href="#markdown"><%= I18n.t("posts.markdown") %></a></li>
       <li><a data-toggle="tab" href="#attachments"><%= I18n.t("posts.attachments") %></a></li>
       <li><a data-toggle="tab" href="#other"><%= I18n.t("posts.other") %></a></li>
+      <li><a data-toggle="tab" href="#file-explorer"><%= "File explorer" %></a></li>
     </ul>
 
-    <%= form_with(model: Post.new(user: @current_user)) do |f| %>
+    <%= form_with(model: Post.new(user: @current_user), remote: true, data: { turbo: false }, format: :js) do |f| %>
       <%= render 'shared/custom_errors', flash: flash %>
       <div class="tab-content">
         <div id="markdown" class="tab-pane in active title">
@@ -18,6 +19,10 @@
             <div id="preview" class="preview"></div>
           </div>
           <p id="chars" class="chars">0 chars</p>
+          <div class="control-buttons">
+            <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+            <center><%= f.submit %> </center>
+          </div>
         </div>
         <div id="attachments" class="tab-pane">
           <div class="dropzone dropzone-default dz-clickable" data-controller="dropzone" data-dropzone-max-file-size="<%=Rails.configuration.credentials[:max_file_size]%>" data-dropzone-max-files="<%=Rails.configuration.credentials[:max_upload_files]%>">
@@ -26,6 +31,10 @@
               <h3 class="dropzone-msg-title"><%= I18n.t("posts.attachments_msg_title") %></h3>
               <span class="dropzone-msg-desc text-sm"><%= "#{I18n.t("posts.attachments_msg_max_size")}: #{Rails.configuration.credentials[:max_file_size]} MB;  #{I18n.t("posts.attachments_msg_max_count")}: #{Rails.configuration.credentials[:max_upload_files]}" %></span>
             </div>
+          </div>
+          <div class="control-buttons">
+            <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+            <center><%= f.submit %> </center>
           </div>
         </div>
         <div id="other" class="tab-pane">
@@ -114,11 +123,17 @@
               </div>
             </div>
           </div>
+          <div class="control-buttons">
+            <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+            <center><%= f.submit %> </center>
+          </div>
         </div>
-      </div>
-      <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
-      <center><%= f.submit %> </center>
     <% end %>
+        <div id="file-explorer" class="tab-pane">
+          <%= render template: "uploads/file_explorer" %>
+          <%= link_to "<--- #{I18n.t("posts.back")}", posts_path, data: { confirm: "#{I18n.t("posts.back_confirm")}" }%>
+        </div>
+    </div>
   </div>
 </body>
 
