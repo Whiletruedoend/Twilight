@@ -137,6 +137,7 @@ class User < ApplicationRecord
     Content.where(user: self).destroy_all
     Channel.where(user: self).destroy_all
     Category.where(user: self).destroy_all
+    Notification.where(user: self).destroy_all
     Ahoy::Event.where(user: self).update(user: nil)
     Ahoy::Visit.where(user: self).update(user: nil)
     self.delete
