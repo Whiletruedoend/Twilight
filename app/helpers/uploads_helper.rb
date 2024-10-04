@@ -48,4 +48,34 @@ module UploadsHelper
       '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
     end
   end
+
+  def used_space(absolute_path, max_available_space)
+    used_space = 0
+    if Dir.exist?(absolute_path)
+      Dir.foreach(absolute_path) do |filename|
+        next if filename == '.' || filename == '..'
+  
+        file_path = File.join(absolute_path, filename)
+  
+        if File.file?(file_path)
+          used_space += ((File.size(file_path).to_f) / 1024) / 1024
+        end
+      end
+    else
+      used_space = max_available_space
+    end
+    used_space
+  end
+
+  def percent_of_fill(current_user)
+    
+    path = "#{current_user.id}/"
+    absolute_path = check_path_exist(path)
+    max_available_space = Rails.configuration.credentials[:max_upload_space].to_f || 0
+
+    used_space = used_space(absolute_path, max_available_space)
+    percent = used_space.to_f / max_available_space.to_f * 100.0
+
+    { percent: percent.round(2), used_space: used_space.round(2), max_space: max_available_space}
+  end
 end

@@ -44,6 +44,7 @@ ru:
     current_attachments: Текущие вложения
     no_attachments: У поста нет вложений!
     other: Другое
+    file-explorer: Файловый менеджер
     title_placeholder: Введите заголовок...
     text_placeholder: Введите текст...
     attachments_msg_title: Перетащите сюда некоторые файлы
@@ -179,6 +180,20 @@ ru:
     list_invite_expires_at: Дата просрочки
     list_invite_created_at: Дата создания
     is_notification_window_enabled: Включить панель уведомлений?
+  upload:
+    submit: Загрузить
+    filename: Имя файла
+    size: Размер
+    date: Дата
+    actions: Действия
+    rename: Переименовать
+    delete: Удалить
+    copy: Скопировать
+    copy_md: Скопировать MD
+    delete_confirm: "Вы действительно хотите удалить `%{entry_name}`?"
+    download: Скачать
+    free_space: Использовано места
+    mb: МБ
   categories:
     manage_categories: Управление категориями
     no_categories: У вас нет категорий!

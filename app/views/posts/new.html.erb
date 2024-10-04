@@ -1,3 +1,5 @@
+<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
+
 <body id="bg">
   <div class="container">
     <h2><%= I18n.t("posts.new_header") %></h2>
@@ -6,7 +8,7 @@
       <li class="active"><a data-toggle="tab" href="#markdown"><%= I18n.t("posts.markdown") %></a></li>
       <li><a data-toggle="tab" href="#attachments"><%= I18n.t("posts.attachments") %></a></li>
       <li><a data-toggle="tab" href="#other"><%= I18n.t("posts.other") %></a></li>
-      <li><a data-toggle="tab" href="#file-explorer"><%= "File explorer" %></a></li>
+      <li><a data-toggle="tab" href="#file-explorer"><%= I18n.t("posts.file-explorer") %></a></li>
     </ul>
 
     <%= form_with(model: Post.new(user: @current_user), remote: true, data: { turbo: false }) do |f| %>
@@ -137,6 +139,5 @@
   </div>
 </body>
 
-<%= javascript_include_tag 'application.js', "data-turbo-track": "reload" %>
 <%= javascript_include_tag 'showdown.min.js', "data-turbo-track": "reload" %>
 <%= javascript_include_tag 'run_showdown.js' %>

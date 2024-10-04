@@ -44,6 +44,7 @@ en:
     current_attachments: Current attachments
     no_attachments: Post has no attachments!
     other: Other
+    file-explorer: File explorer
     title_placeholder: Enter title...
     text_placeholder: Enter some text...
     attachments_msg_title: Drag here to upload or click here to browse
@@ -179,6 +180,20 @@ en:
     list_invite_expires_at: Expires at
     list_invite_created_at: Created at
     is_notification_window_enabled: Turn on the notification window?
+  upload:
+    submit: Upload
+    filename: Filename
+    size: Size
+    date: Date
+    actions: Actions
+    rename: Rename
+    delete: Delete
+    copy: Copy
+    copy_md: Copy MD
+    delete_confirm: "Are you sure want to delete `%{entry_name}`?"
+    download: Download
+    free_space: Used space
+    mb: MB
   categories:
     manage_categories: Manage categories
     no_categories: You have no categories!

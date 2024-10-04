@@ -3,17 +3,17 @@
     <div class="form-group">
         <%= f.file_field :file, { class: "file_upload"} %>
     </div>
-    <%= f.submit "Upload", class: 'btn-medium' %>
+    <%= f.submit I18n.t("upload.submit"), class: 'btn-medium' %>
   <% end %>
   <table>
     <thead>
       <tr>
-        <th>Filename</th>
-        <th>Size</th>
-        <th>Date</th>
-        <th>Copy link</th>
-        <th>Rename</th>
-        <th>Delete</th>
+        <th><%=I18n.t("upload.filename")%></th>
+        <th><%=I18n.t("upload.size")%></th>
+        <th><%=I18n.t("upload.date")%></th>
+        <th><%=I18n.t("upload.actions")%></th>
+        <th><%=I18n.t("upload.rename")%></th>
+        <th><%=I18n.t("upload.delete")%></th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +23,7 @@
         <td class="name">
           <%= link_to "/#{entry[:relative]}", class: entry[:type].to_s, target: :_blank do %>
             <%= fa_icon (entry[:type] == :file ? 'file' : 'folder') %>
-            <span class="filename"><%= entry[:entry] %></span>
+            <span class="filename"><% if entry[:entry].length > 50 %><%= truncate(entry[:entry], length: 50) %><% else %><%= entry[:entry] %><% end %></span>
           <% end %>
         </td>
         <td>
@@ -33,20 +33,20 @@
           <%= entry[:date] %>
         </td>
         <td class="copylink">
-          <%= submit_tag I18n.t("edit.copy"), type: 'button', onclick: "copy_upload_url(`#{entry[:slug]}`)", class: "btn-medium" %>
-          <%= submit_tag "Copy MD", type: 'button', onclick: "copy_upload_md(`#{entry[:name]}`, `#{entry[:slug]}`)", class: "btn-medium" %>
+          <%= submit_tag I18n.t("upload.copy"), type: 'button', onclick: "copy_upload_url(`#{entry[:slug]}`)", class: "btn-medium" %>
+          <%= submit_tag I18n.t("upload.copy_md"), type: 'button', onclick: "copy_upload_md(`#{entry[:name]}`, `#{entry[:slug]}`)", class: "btn-medium" %>
         </td>
         <td>
           <% if entry[:entry] != './' && entry[:entry] != '../' %>
             <%= link_to "/uploads/#{entry[:uuid]}", method: :put, onclick: "rename(`#{entry[:name]}`, `#{entry[:uuid]}`)", id: "rename", class: 'delete' do %>
-              <%= fa_icon 'i-cursor' %> Rename
+              <%= fa_icon 'i-cursor' %> <%=I18n.t("upload.rename")%>
             <% end %>
           <% end %>
         </td>
         <td>
           <% if entry[:entry] != './' && entry[:entry] != '../' %>
-            <%= link_to destroy_upload_path(entry[:uuid]), method: :delete, data: { turbo_method: :delete, confirm:"Are you sure you want to delete `#{entry[:name]}`?" }, class: 'delete' do %>
-              <%= fa_icon 'trash' %> Delete
+            <%= link_to destroy_upload_path(entry[:uuid]), method: :delete, data: { turbo_method: :delete, confirm: I18n.t("upload.delete_confirm", entry_name: entry[:name])}, class: 'delete' do %>
+              <%= fa_icon 'trash' %> <%=I18n.t("upload.delete")%>
             <% end %>
           <% end %>
         </td>
@@ -54,6 +54,11 @@
       <% end %>
     </tbody>
   </table>
+  <%fill = percent_of_fill(current_user)%>
+  <%if fill[:max_space] != 0 %>
+    <div class="progressbar"><span class="progress" style="width:<%=fill[:percent]%>%;"></span></div>
+    <div class="progress-desc"><%=I18n.t("upload.free_space")%>: <%=fill[:used_space]%>/<%=fill[:max_space]%> <%=I18n.t("upload.mb")%></div>
+  <% end %>
 </div>
 
 <script>
@@ -63,10 +68,10 @@
   }
   function copy_upload_md(slug, uuid){
     var url = window.location.protocol + '//' + window.location.host + '/uploads/' + uuid;
-    navigator.clipboard.writeText('!['+slug+']('+url+')');
+    navigator.clipboard.writeText('['+slug+']('+url+')');
   }
   function rename(name, uuid) {
-    var new_name = prompt("Enter the new name for this element.", name);
+    var new_name = prompt("Enter the new name of file:", name);
     if (new_name != null) {
       var xmlHttp = new XMLHttpRequest();
       xmlHttp.open("PUT", '/uploads/' + uuid, false);

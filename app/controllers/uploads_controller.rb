@@ -65,10 +65,17 @@ class UploadsController < ApplicationController
     input_file = params[:upload][:file]
     if input_file
       filename = input_file.original_filename#.html_safe
-      upload = Upload.find_by(path: filename)
-      Upload.create!(path: filename, user: current_user) unless upload.present?
-      File.open(Rails.root.join(absolute_path, input_file.original_filename), 'wb') do |file|
-        file.write(input_file.read)
+      full_file_path = Rails.root.join(absolute_path, filename)
+      begin
+        return if !check_limits(absolute_path, params[:upload][:file].size)
+        upload = Upload.find_by(path: filename)
+        Upload.create!(path: filename, user: current_user) unless upload.present?
+          File.open(full_file_path, 'wb') do |file|
+            file.write(input_file.read)
+          end
+      rescue Errno::ENAMETOOLONG => e
+        return
+        #return flash[:alert] = "File name too long!"
       end
     end
   end
@@ -94,5 +101,20 @@ class UploadsController < ApplicationController
       head 204
     end
     current_upload.update!(path: params[:new_name])
+  end
+
+  def check_limits(absolute_path, size)
+    size_per_file = Rails.configuration.credentials[:max_file_size].to_f || 0
+    max_available_space = Rails.configuration.credentials[:max_upload_space].to_f || 0
+    used_space = 0
+    size = ((size).to_f / 1024) / 1024 # Convert to MB
+
+    return false if ((size_per_file != 0) && (size > size_per_file))
+
+    if max_available_space != 0
+      used_space = helpers.used_space(absolute_path, max_available_space)
+      return false if ((used_space+size) > max_available_space)
+    end
+    true
   end
 end

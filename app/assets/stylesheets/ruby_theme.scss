@@ -45,6 +45,9 @@ $color-checkbox-unchecked-bg: #d72134;
 $color-checkbox-text-unchecked: #d72134;
 $color-checkbox-focus: #1b1b1c;
 
+$color-progress-bar: #d3d3d3;
+$color-progress-bar-filled: #d72134;
+
 $color-feed-bg: #ffffff;
 $color-feed-bg2: #eeeeee;
 $color-feed-font: #000000;
@@ -112,6 +115,7 @@ $color-black: #000000;
         $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me, $color-hidden,
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
+        $color-progress-bar, $color-progress-bar-filled,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border, $color-feed-link,
         $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
