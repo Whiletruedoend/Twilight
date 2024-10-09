@@ -86,6 +86,7 @@ $color-black: #000000;
         $color-privacy-registered-p, $color-privacy-registered, $color-privacy-me-p, $color-privacy-me, $color-hidden,
         $color-checkbox-text-checked, $color-checkbox-process_checking, $color-checkbox-unchecked-bg, $color-checkbox-text-unchecked,
         $color-button-bg, $color-button-text, $color-table-th, $color-table-th-border, $color-table-td, $color-table-tr-hover,
+        $color-progress-bar, $color-progress-bar-filled,
         $color-feed-bg, $color-feed-bg2, $color-feed-font, $color-feed-icon, $color-feed-time, $color-feed-date,
         $color-feed-menu-active, $color-feed-tags-list, $color-feed-tags-list-item, $color-feed-tags-border,$color-feed-link,
         $color-alert-danger, $color-alert-danger-text, $color-alert-success, $color-alert-success-text,
@@ -246,6 +247,14 @@ $color-black: #000000;
     font-weight: normal;
     font-size: 16px;
 
+    .control-buttons{
+      font-family: 'Hack', monospace;
+      letter-spacing: -0.010em;
+      font-size: 14px;
+      line-height: 1.4rem;
+      padding-top: 0.5%;
+    }
+
     .chars{
       float: right;
     }
@@ -256,7 +265,9 @@ $color-black: #000000;
 
     .title{
       margin-top: 20px;
-      opacity: 75%;
+      .form-control, .markdown-editor, .chars{
+        opacity: 75%;
+      }
     }
     .form-control{
       height: 100%;
@@ -480,6 +491,57 @@ $color-black: #000000;
     }
     .vsc-controller{ /* wtf */
       display: none;
+    }
+  }
+
+  /* file-explorer */
+
+  .file-explorer{
+    .file_upload{
+      padding: 1%;
+      margin-top: 2%;
+      background: $color-form-textarea-bg;
+      border: 2px dashed $color-border;
+      border-radius: 0px;
+    }
+    table{
+      border-collapse: collapse;
+      white-space: nowrap;
+      text-align: left;
+      min-width: 50%;
+      max-width: 100%;
+      margin: 1% 0 2% 0;
+      thead tr th{
+        padding: 0 20px 0 20px;
+        text-align: center;
+      }
+      tbody tr td{
+        padding: 0 20px 0 20px;
+      }
+    }
+    .progressbar {
+      position: relative;
+      max-width: 500px;
+      width: 100%;
+      margin: 30px auto 0;
+      height: 25px;
+      background: $color-progress-bar;
+      overflow: hidden;
+    }
+    .progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      height: 25px;
+      background: $color-progress-bar-filled;
+      transition: all .3s;
+      border-radius: 0;
+    }
+    .progress-desc{
+      text-align: center;
+      padding: 1%;
     }
   }
 

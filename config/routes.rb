@@ -37,7 +37,13 @@ Rails.application.routes.draw do
   resources :invite_codes, only: [:create]
   resources :tags, only: %i[create update]
   resources :categories, only: %i[create update]
-  
+
+  post '/uploads/file', to: 'uploads#create', as: :create_upload
+  get '/uploads/:id', to: 'uploads#show'
+  delete '/uploads/:id', to: 'uploads#destroy', as: :destroy_upload
+  put '/uploads/:id', to: 'uploads#rename', as: :rename_upload
+  get '/uploads/', to: 'uploads#index'
+
   #resources :notifications, only: [ :index ]
   put '/notifications/view/:id', to: 'notifications#view', as: :view_notification
 

@@ -1,0 +1,6 @@
+<%= link_to "/#{@relative_path}?download=true", class: 'download' do %>
+  <%= fa_icon 'download' %> <%=I18n.t("upload.download")%>
+<% end %>
+<pre>
+<%= @file %>
+</pre>

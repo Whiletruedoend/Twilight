@@ -1,0 +1,16 @@
+<script>
+//const token = document.getElementsByName("csrf-token")[0].content;
+  alert('success!');
+  
+    function submitForm(form, e) {
+        e.preventDefault();
+
+        // Process form prior to submitting (like validation)
+
+        // This is the magic line
+        Rails.handleRemote.call(form, e);
+    }
+
+    //$(document.getElementById("form_msg").textContent = "Your message has been sent!");
+    //$(alert("HELLO"));
+</script>

@@ -48,6 +48,10 @@ class ApplicationController < ActionController::Base
     @current_notification ||= current_user.notifications.find(params[:id])
   end
 
+  def current_upload
+    @current_upload ||= Upload.find_with_slug(params[:id])
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up) do |user_params|
       user_params.permit(:login, :password, :password_confirmation, :captcha)

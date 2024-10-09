@@ -32,7 +32,7 @@ module.exports = function(api) {
           useBuiltIns: 'entry',
           corejs: 3,
           modules: false,
-          loose: true,
+          loose: false,
           exclude: ['transform-typeof-symbol']
         }
       ]
@@ -66,7 +66,11 @@ module.exports = function(api) {
           async: false
         }
       ],
-      ["@babel/plugin-transform-private-methods", { "loose": true }]
+      ["@babel/plugin-transform-private-methods", 
+        { 
+          loose: true 
+        }
+      ]
     ].filter(Boolean)
   }
 }

@@ -1,12 +1,16 @@
 <% if flash.any? %>
   <div class="alert alert-danger" id="error_explanation">
     <h2><%= I18n.t("errors.messages.not_saved") %></h2>
-    <% flash.each do |type, message| %>
-      <% message.each do |msg| %>
-        <% msg.each do |m| %>
-          <ul>
-            <li><%= m %></li>
-          </ul>
+    <%unless flash.is_a?(String)%>
+      <% flash.each do |type, message| %>
+        <%unless message.is_a?(String)%>
+          <% message.each do |msg| %>
+            <% msg.each do |m| %>
+              <ul>
+                <li><%= m %></li>
+              </ul>
+            <% end %>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>

@@ -1,0 +1,93 @@
+<div class="file-explorer">
+  <%= form_with id: 'upload_form', model: Upload.new, url: create_upload_path, :multipart => true, remote: true, data: { turbo: true } do |f| %>
+    <div class="form-group">
+        <%= f.file_field :file, { class: "file_upload"} %>
+    </div>
+    <%= f.submit I18n.t("upload.submit"), class: 'btn-medium' %>
+  <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th><%=I18n.t("upload.filename")%></th>
+        <th><%=I18n.t("upload.size")%></th>
+        <th><%=I18n.t("upload.date")%></th>
+        <th><%=I18n.t("upload.actions")%></th>
+        <th><%=I18n.t("upload.rename")%></th>
+        <th><%=I18n.t("upload.delete")%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% upload_dirs(current_url).each do |entry| %>
+      <% next if entry[:type] == :directory # Not support navigating through directories %>
+      <tr>
+        <td class="name">
+          <%= link_to "/#{entry[:relative]}", class: entry[:type].to_s, target: :_blank do %>
+            <%= fa_icon (entry[:type] == :file ? 'file' : 'folder') %>
+            <span class="filename"><% if entry[:entry].length > 50 %><%= truncate(entry[:entry], length: 50) %><% else %><%= entry[:entry] %><% end %></span>
+          <% end %>
+        </td>
+        <td>
+          <%= entry[:size] %>
+        </td>
+        <td class="date">
+          <%= entry[:date] %>
+        </td>
+        <td class="copylink">
+          <%= submit_tag I18n.t("upload.copy"), type: 'button', onclick: "copy_upload_url(`#{entry[:slug]}`)", class: "btn-medium" %>
+          <%= submit_tag I18n.t("upload.copy_md"), type: 'button', onclick: "copy_upload_md(`#{entry[:name]}`, `#{entry[:slug]}`)", class: "btn-medium" %>
+        </td>
+        <td>
+          <% if entry[:entry] != './' && entry[:entry] != '../' %>
+            <%= link_to "/uploads/#{entry[:uuid]}", method: :put, onclick: "rename(`#{entry[:name]}`, `#{entry[:uuid]}`)", id: "rename", class: 'delete' do %>
+              <%= fa_icon 'i-cursor' %> <%=I18n.t("upload.rename")%>
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <% if entry[:entry] != './' && entry[:entry] != '../' %>
+            <%= link_to destroy_upload_path(entry[:uuid]), method: :delete, data: { turbo_method: :delete, confirm: I18n.t("upload.delete_confirm", entry_name: entry[:name])}, class: 'delete' do %>
+              <%= fa_icon 'trash' %> <%=I18n.t("upload.delete")%>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%fill = percent_of_fill(current_user)%>
+  <%if fill[:max_space] != 0 %>
+    <div class="progressbar"><span class="progress" style="width:<%=fill[:percent]%>%;"></span></div>
+    <div class="progress-desc"><%=I18n.t("upload.free_space")%>: <%=fill[:used_space]%>/<%=fill[:max_space]%> <%=I18n.t("upload.mb")%></div>
+  <% end %>
+</div>
+
+<script>
+  function copy_upload_url(uuid){
+    var url = window.location.protocol + '//' + window.location.host + '/uploads/' + uuid;
+    navigator.clipboard.writeText(url);
+  }
+  function copy_upload_md(slug, uuid){
+    var url = window.location.protocol + '//' + window.location.host + '/uploads/' + uuid;
+    navigator.clipboard.writeText('['+slug+']('+url+')');
+  }
+  function rename(name, uuid) {
+    var new_name = prompt("Enter the new name of file:", name);
+    if (new_name != null) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("PUT", '/uploads/' + uuid, false);
+      var data = new FormData();
+      data.append("new_name", new_name);
+      var csrf_token = document
+        .querySelector("meta[name='csrf-token']")
+        .getAttribute("content");
+      var csrf_param = document
+        .querySelector("meta[name='csrf-param']")
+        .getAttribute("content");
+      if (csrf_token && csrf_param) {
+        data.append(csrf_param, csrf_token);
+      }
+      xmlHttp.send(data);
+    }
+      // return false;
+  }
+</script>

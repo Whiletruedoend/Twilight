@@ -144,8 +144,9 @@ class PostsController < ApplicationController
       published_channels_list = {}
 
       published_channels = current_post.published_channels.each{ |ch| published_channels_list.merge!("#{ch.id}" => "1") }
-      new_channels_list = channels_p.reject{|k,v| (v == "0") || (published_channels_list[k] == v) }
-      deleted_channels_list = channels_p.reject{ |k,v| (v == "1") || (published_channels_list[k] == v) }
+      
+      new_channels_list = channels_p&.reject{|k,v| (v == "0") || (published_channels_list[k] == v) } || []
+      deleted_channels_list = channels_p&.reject{ |k,v| (v == "1") || (published_channels_list[k] == v) } || []
 
       deleted_channels_list.each do |k, v|
         DeletePostMessages.call(current_post, current_user, k)
