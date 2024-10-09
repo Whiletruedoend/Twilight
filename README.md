@@ -11,7 +11,6 @@
   + [Matrix](#matrix)
   + [fail2ban](#fail2ban)
   + [Themes](#Themes)
-  + [Production](#Production)
 * [Current features](#Current-features)
 * [Bugs and some features](#Bugs-and-some-features)
 * [Schemas and screenshots](#Schemas-and-screenshots)
@@ -74,6 +73,8 @@ Analyzing various blog sites and the platforms adjacent to them (where the repos
      cd Twilight/
      yarn install --check-files
      bundle install
+     NODE_OPTIONS=--openssl-legacy-provider bundle exec rake webpacker:compile
+     NODE_OPTIONS=--openssl-legacy-provider bundle exec rake assets:precompile
      rails db:migrate
     ```
      
@@ -109,10 +110,6 @@ gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
   ```
 
 The site will now be available at: `http://localhost:3080`
-
-## Setting up
-
-[Production] Don't forget to set variable *secret_key_base* in credentials.yml:
 
 ### Comments
 

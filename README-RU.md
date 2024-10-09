@@ -74,6 +74,8 @@ P.S. Список последних изменений можно посмот�
      cd Twilight/
      yarn install --check-files
      bundle install
+     NODE_OPTIONS=--openssl-legacy-provider bundle exec rake webpacker:compile
+     NODE_OPTIONS=--openssl-legacy-provider bundle exec rake assets:precompile
      rails db:migrate
     ```
      
@@ -159,10 +161,6 @@ gem install wdm -- --with-cflags=-Wno-implicit-function-declaration
 (Забаненные IP можно узнать командой:`sudo fail2ban-client status twilight`)
 ### Темы
 Для создания своей темы необходимо создать файл в формате `app/assets/stylesheets/название_theme.scss`, отредактировать его, затем перезапустить приложение;
-### Продакшн
-Для прода не забыть прекомпилировать ассеты:
-
-`RAILS_ENV=production bundle exec rake assets:precompile`
 
 ## Текущие возможности
   

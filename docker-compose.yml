@@ -4,6 +4,7 @@ services:
   redis:
     image: "redis:7-alpine"
     volumes:
+      - ./uploads:/root/app/uploads
       - ./tmp/redis_data:/var/lib/redis/data
     networks:
       - twilightnet
